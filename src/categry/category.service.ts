@@ -7,6 +7,7 @@ import { Repository } from 'typeorm';
 
 @Injectable()
 export class CategoryService {
+  
   constructor(
     @InjectRepository(Category)
     private readonly categoryRepository: Repository<Category>,
@@ -14,5 +15,10 @@ export class CategoryService {
     private readonly categoryPerUserRepository: Repository<CategoryPerUser>,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-  ) {}
-}
+  )
+  {}
+  async getList(){
+    const categoryList=await this.categoryRepository.find({});
+    return categoryList;
+  }
+  }
