@@ -1,6 +1,6 @@
 import { Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import User from './user.entity';
-import Category from './categry.entity';
+import Category from './category.entity';
 
 @Entity()
 class CategoryPerUser {
