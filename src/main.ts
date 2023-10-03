@@ -17,3 +17,5 @@ async function bootstrap() {
   await app.listen(3000);
 }
 bootstrap();
+
+//http://localhost:3000/api

@@ -9,9 +9,9 @@ import { ConfigModule } from '@nestjs/config';
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DB_HOST,
-      port: Number(process.env.DB_PORT),
+      port: Number(process.env.DB_PORT) || 3000,
       username: process.env.DB_USERNAME,
-      password: process.env.DB_PASSWORD,
+      password: process.env.DB_PASSWORD || 5334,
       database: process.env.DB_DATABASE,
       autoLoadEntities: true,
       synchronize: true,
@@ -21,3 +21,14 @@ import { ConfigModule } from '@nestjs/config';
   providers: [AppService],
 })
 export class AppModule {}
+
+/*
+dotenv.config();
+
+const dataSource = new typeorm.DataSource({
+  type: "postgres", //어떤 DB를 사용하는지 설정.
+  host: (process.env.DB_HOST as string) || "localhost",
+  port: Number(process.env.DB_PORT) || 5432,
+  username: (process.env.DB_USER as string) || "postgres",
+  password: "5334" || "postgres",
+  database: (process.env.DB_NAME as string) || "postgres",*/
