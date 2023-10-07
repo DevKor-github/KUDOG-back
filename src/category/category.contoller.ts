@@ -1,7 +1,8 @@
-import { Body, Controller, Get } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { CategoryService } from './category.service';
-import Category from 'src/entities/category.entity';
+//import Category from 'src/entities/category.entity';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { Entity } from 'typeorm';
 @ApiTags('카테고리 api')
 @Controller('category')
 export class CategoryController {
@@ -9,7 +10,7 @@ export class CategoryController {
 
   @Get('/List')
   @ApiOperation({ summary: 'List 조회 api', description: 'list 반환' })
-  @ApiResponse({ description: '리스트 전체 반환' })
+  @ApiResponse({ description: '리스트 전체 반환', type:Array<Entity>})
   async getList() {
     try {
       return this.categoryService.getList();
