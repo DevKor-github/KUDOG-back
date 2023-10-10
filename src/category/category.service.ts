@@ -6,8 +6,10 @@ import CategoryPerUser from 'src/entities/categoryPerUser.entity';
 import Category from 'src/entities/category.entity';
 import User from 'src/entities/user.entity';
 import { In, Repository } from 'typeorm';
+import { ApiOperation, ApiTags, ApiParam, ApiResponse } from '@nestjs/swagger';
 
 @Injectable()
+@ApiTags('categories')
 export class CategoryService {
   constructor(
     @InjectRepository(Category)
@@ -20,6 +22,12 @@ export class CategoryService {
 
   //사용자 ID와 구독하려는 카테고리 ID 목록 받기 (하나의 사용자가 여러 카테고리를 동시에 구독)
 
+
+  @ApiOperation({ summary: 'Subscribe to categories and get list of category ID' }) 
+  @ApiParam({ name: 'userId', description: 'UserID' }) 
+  @ApiParam({ name: 'categoryId', description: 'category ID' }) 
+  @ApiResponse({ status: 200, description: 'Successfully get userID and subscribed to category lists' }) //성공
+  @ApiResponse({ status: 404, description: 'User or category ID is not found' }) //오류
   async subscribe(userId: number, categoryId: number[]) {
     const finduser = await this.userRepository.findOne({ where: { userId } }); // findOne()은 documents 객체 하나를 반환한다.
 
@@ -37,8 +45,8 @@ export class CategoryService {
 
     const CategoryPerUser = categoryId.map((category) => {
       const categoryPerUser = new CategoryPerUser(); //CategoryPerUser entitiy의 ID를 생성
-      categoryPerUser.user = userId;
-      categoryPerUser.category = categoryId;
+      categoryPerUser.user = finduser;
+      categoryPerUser.category = category;
       return categoryPerUser;
     });
 

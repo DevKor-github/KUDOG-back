@@ -6,10 +6,13 @@ import User from 'src/entities/user.entity';
 import { CategoryController } from './category.controller';
 import { CategoryService } from './category.service';
 import { ConfigModule } from '@nestjs/config';
+import CategoryPerUser from 'src/entities/categoryPerUser.entity';
+import { ApiTags } from '@nestjs/swagger';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Category])],
+  imports: [TypeOrmModule.forFeature([User, Category, CategoryPerUser])],
   controllers: [CategoryController],
   providers: [CategoryService],
 })
+@ApiTags('categories')
 export class CategoryModule {}

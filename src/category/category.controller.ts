@@ -1,21 +1,14 @@
 import { Controller, Post, Body, Param } from '@nestjs/common';
 import { CategoryService } from './category.service';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('categories')
 @Controller('category')
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
-  // TODO: category List get api
-  // SWAGGER 작성 - status code, data 형식 명시
 
-  // TODO: 유저 카테고리 구독 POST api
-  // SWAGGER 작성 - status code, data 형식 명시
-}
-
-@Controller('users')
-export class UserController {
-  constructor(private readonly categoryService: CategoryService) {}
-
-  @Post(':userId/subscribe')
+  @Post('/subscribe/:userId')
+  @ApiResponse({ description: 'subscribe' })
   async subscribelist(
     @Param('userId') userId: number,
     @Body() body: { categoryId: number[] },
