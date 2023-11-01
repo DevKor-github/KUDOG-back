@@ -1,5 +1,13 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import CategoryPerUser from './categoryPerUser.entity';
+import MailEntity from './mail.entity';
 
 @Entity('users')
 class User {
@@ -9,11 +17,9 @@ class User {
   @OneToMany(() => CategoryPerUser, (categoryPerUser) => categoryPerUser.user)
   categoryPerUsers: CategoryPerUser[];
 
-  @Column({ unique: true })
-  email: string;
-
-  @Column()
-  subscribeMail: string;
+  @OneToOne(() => MailEntity, (mail) => mail.user)
+  @JoinColumn()
+  mail: MailEntity;
 
   @Column()
   password: string;
