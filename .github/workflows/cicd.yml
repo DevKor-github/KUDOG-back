@@ -46,6 +46,8 @@ jobs:
           echo "DB_DATABASE=${{ secrets.DB_DATABASE }}" >> .env
           echo "MAIL_USER=${{ secrets.MAIL_USER }}" >> .env
           echo "MAIL_PW=${{ secrets.MAIL_PW }}" >> .env
+          echo "JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}" >> .env
+          echo "JWT_REFRESH_SECRET_KEY=${{ secrets.JWT_REFRESH_SECRET_KEY }}" >> .env
           cat .env
       - name: Run Docker
         run: |
