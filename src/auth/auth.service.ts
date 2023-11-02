@@ -11,7 +11,9 @@ export class AuthService {
   ) {}
 
   async validateUser(email: string, password: string) {
-    const user = await this.userRepository.findOne({ where: { email } });
+    const user = await this.userRepository.findOne({
+      where: { mail: { portalEmail: email } },
+    });
     if (!user) {
     }
   }
