@@ -4,6 +4,7 @@ import { SignupRequestDto } from './dtos/signupRequest.dto';
 import { AuthGuard } from '@nestjs/passport';
 import {
   ApiBadRequestResponse,
+  ApiBody,
   ApiCreatedResponse,
   ApiHeader,
   ApiOperation,
@@ -12,6 +13,7 @@ import {
 } from '@nestjs/swagger';
 import { TokenResponseDto } from './dtos/tokenResponse.dto';
 import { DocumentedException } from 'src/interfaces/docsException';
+import { LoginRequestDto } from './dtos/loginRequestDto';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -24,6 +26,10 @@ export class AuthController {
     description:
       'portal email, password를 통해 로그인, access, refresh JWT 발급',
     summary: '로그인',
+  })
+  @ApiBody({
+    type: LoginRequestDto,
+    description: 'portal email을 이용하여 로그인합니다.',
   })
   @ApiCreatedResponse({ description: '로그인 성공', type: TokenResponseDto })
   @ApiUnauthorizedResponse({
