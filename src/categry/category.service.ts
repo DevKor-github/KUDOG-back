@@ -1,8 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import CategoryPerUser from 'src/entities/categoryPerUser.entity';
-import Category from 'src/entities/categry.entity';
-import User from 'src/entities/user.entity';
+import { CategoryPerUser, Category, UserEntity } from 'src/entities';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -12,7 +10,7 @@ export class CategoryService {
     private readonly categoryRepository: Repository<Category>,
     @InjectRepository(CategoryPerUser)
     private readonly categoryPerUserRepository: Repository<CategoryPerUser>,
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
   ) {}
 }

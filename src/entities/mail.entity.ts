@@ -1,8 +1,14 @@
-import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
-import User from './user.entity';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { UserEntity } from 'src/entities';
 
 @Entity()
-class MailEntity {
+export class MailEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -12,8 +18,9 @@ class MailEntity {
   @Column()
   subscriberEmail: string;
 
-  @OneToOne(() => User, (user) => user.mail)
-  user: User;
-}
+  @CreateDateColumn()
+  createdAt: Date;
 
-export default MailEntity;
+  @OneToOne(() => UserEntity, (user) => user.mail)
+  user: UserEntity;
+}
