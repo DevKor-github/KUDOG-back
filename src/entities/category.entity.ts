@@ -1,8 +1,8 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import CategoryPerUser from './categoryPerUser.entity';
+import { CategoryPerUser } from 'src/entities';
 
 @Entity('category')
-class Category {
+export class Category {
   @PrimaryGeneratedColumn()
   categoryId: number;
 
@@ -15,5 +15,3 @@ class Category {
   )
   categoryPerUsers: CategoryPerUser[];
 }
-
-export default Category;

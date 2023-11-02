@@ -1,8 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import CategoryPerUser from 'src/entities/categoryPerUser.entity';
-import Category from 'src/entities/categry.entity';
-import User from 'src/entities/user.entity';
+import { CategoryPerUser, Category, UserEntity } from 'src/entities';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtModule } from '@nestjs/jwt';
@@ -11,7 +9,7 @@ import { LocalStrategy } from './passport/local.strategy';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Category, CategoryPerUser]),
+    TypeOrmModule.forFeature([UserEntity, Category, CategoryPerUser]),
     JwtModule.register({}),
   ],
   controllers: [AuthController],

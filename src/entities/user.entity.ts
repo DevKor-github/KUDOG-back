@@ -6,11 +6,10 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import CategoryPerUser from './categoryPerUser.entity';
-import MailEntity from './mail.entity';
+import { CategoryPerUser, MailEntity } from 'src/entities';
 
 @Entity('users')
-class User {
+export class UserEntity {
   @PrimaryGeneratedColumn()
   userId: number;
 
@@ -39,5 +38,3 @@ class User {
   @Column()
   major: string;
 }
-
-export default User;

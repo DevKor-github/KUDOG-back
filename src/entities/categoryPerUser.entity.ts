@@ -1,9 +1,7 @@
 import { Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import User from './user.entity';
-import Category from './categry.entity';
 
 @Entity()
-class CategoryPerUser {
+export class CategoryPerUser {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -13,5 +11,3 @@ class CategoryPerUser {
   @ManyToOne(() => Category, (category) => category.categoryPerUsers)
   category: Category;
 }
-
-export default CategoryPerUser;

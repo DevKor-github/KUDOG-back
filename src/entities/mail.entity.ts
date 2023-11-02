@@ -1,8 +1,8 @@
 import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
-import User from './user.entity';
+import { UserEntity } from 'src/entities';
 
 @Entity()
-class MailEntity {
+export class MailEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -12,8 +12,6 @@ class MailEntity {
   @Column()
   subscriberEmail: string;
 
-  @OneToOne(() => User, (user) => user.mail)
-  user: User;
+  @OneToOne(() => UserEntity, (user) => user.mail)
+  user: UserEntity;
 }
-
-export default MailEntity;

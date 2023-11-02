@@ -1,17 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import MailEntity from 'src/entities/mail.entity';
-import User from 'src/entities/user.entity';
+import { MailEntity, UserEntity } from 'src/entities';
 import { Repository } from 'typeorm';
-import crypto from 'crypto';
 import { MailerService } from '@nestjs-modules/mailer';
 
 @Injectable()
 export class MailService {
   constructor(
     private readonly mailerService: MailerService,
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
     @InjectRepository(MailEntity)
     private readonly mailRepository: Repository<MailEntity>,
   ) {}
