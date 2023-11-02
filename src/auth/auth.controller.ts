@@ -5,6 +5,7 @@ import { AuthGuard } from '@nestjs/passport';
 import {
   ApiBadRequestResponse,
   ApiCreatedResponse,
+  ApiHeader,
   ApiOperation,
   ApiTags,
   ApiUnauthorizedResponse,
@@ -58,6 +59,12 @@ export class AuthController {
 
   @Post('/refresh')
   @UseGuards(AuthGuard('jwt-refresh'))
+  @ApiHeader({
+    description:
+      'Authorization header에 Bearer token 형태로 refresh token을 넣어주세요.',
+    name: 'authorization',
+    required: true,
+  })
   @ApiOperation({
     description:
       'refresh token을 통해 access token 재발급, refresh token도 회전됩니다.',
