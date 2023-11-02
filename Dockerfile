@@ -11,4 +11,3 @@ RUN npm run build
 EXPOSE 3050
 
 ENTRYPOINT npm run start:prod
-

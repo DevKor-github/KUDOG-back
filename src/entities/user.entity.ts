@@ -21,7 +21,7 @@ export class UserEntity {
   mail: MailEntity;
 
   @Column()
-  password: string;
+  passwordHash: string;
 
   @Column({ nullable: true })
   refreshToken: string;
@@ -30,7 +30,7 @@ export class UserEntity {
   name: string;
 
   @Column()
-  studentId: number;
+  studentId: string;
 
   @Column()
   grade: number;

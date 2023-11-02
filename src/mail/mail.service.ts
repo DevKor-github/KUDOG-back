@@ -3,6 +3,7 @@ import {
   ConflictException,
   Injectable,
   NotFoundException,
+  RequestTimeoutException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MailEntity, UserEntity } from 'src/entities';
@@ -23,12 +24,20 @@ export class MailService {
     const existingMailEntity = await this.mailRepository.findOne({
       where: { portalEmail: to },
     });
-    if (existingMailEntity.subscriberEmail.includes('@'))
-      throw new ConflictException('사용중인 이메일입니다.');
-    else if (existingMailEntity.createdAt.getTime() + 10000 > Date.now())
-      throw new BadRequestException('잠시 후에 다시 시도해주세요.');
+    if (!to.endsWith('@korea.ac.kr'))
+      throw new BadRequestException('korea.ac.kr 이메일이 아닙니다.');
 
-    const code = (Math.random() * 1000000).toString().padStart(6, '0');
+    if (existingMailEntity) {
+      if (existingMailEntity.createdAt.getTime() + 1000 * 10 > Date.now())
+        throw new BadRequestException('잠시 후에 다시 시도해주세요.');
+      else if (existingMailEntity.subscriberEmail.includes('@'))
+        throw new ConflictException('사용중인 이메일입니다.');
+      await this.mailRepository.remove(existingMailEntity);
+    }
+    const code = (Math.random() * 1000000)
+      .toString()
+      .slice(0, 6)
+      .padStart(6, '0');
 
     await this.mailerService.sendMail({
       from: process.env.MAIL_USER,
@@ -50,6 +59,14 @@ export class MailService {
       where: { portalEmail: email },
     });
     if (!mailEntity) throw new NotFoundException('이메일이 존재하지 않습니다.');
+
+    if (mailEntity.subscriberEmail.includes('@'))
+      throw new ConflictException('이미 인증된 이메일입니다.');
+
+    if (mailEntity.createdAt.getTime() + 1000 * 60 * 3 < Date.now()) {
+      throw new RequestTimeoutException('인증 요청에서 3분이 지났습니다.');
+    }
+
     if (mailEntity.subscriberEmail === code) {
       mailEntity.subscriberEmail = email;
       await this.mailRepository.save(mailEntity);
