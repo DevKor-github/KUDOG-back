@@ -1,4 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MailEntity, UserEntity } from 'src/entities';
 import { Repository } from 'typeorm';
@@ -14,7 +19,15 @@ export class MailService {
     private readonly mailRepository: Repository<MailEntity>,
   ) {}
 
-  async sendVerificationCode(userId: number, to: string) {
+  async sendVerificationCode(to: string) {
+    const existingMailEntity = await this.mailRepository.findOne({
+      where: { portalEmail: to },
+    });
+    if (existingMailEntity.subscriberEmail.includes('@'))
+      throw new ConflictException('사용중인 이메일입니다.');
+    else if (existingMailEntity.createdAt.getTime() + 10000 > Date.now())
+      throw new BadRequestException('잠시 후에 다시 시도해주세요.');
+
     const code = (Math.random() * 1000000).toString().padStart(6, '0');
 
     await this.mailerService.sendMail({
@@ -27,7 +40,6 @@ export class MailService {
     const entity = this.mailRepository.create({
       portalEmail: to,
       subscriberEmail: code,
-      user: { userId },
     });
 
     await this.mailRepository.save(entity);
@@ -37,7 +49,12 @@ export class MailService {
     const mailEntity = await this.mailRepository.findOne({
       where: { portalEmail: email },
     });
-
-    //if(mailEntity.portalEmail)
+    if (!mailEntity) throw new NotFoundException('이메일이 존재하지 않습니다.');
+    if (mailEntity.subscriberEmail === code) {
+      mailEntity.subscriberEmail = email;
+      await this.mailRepository.save(mailEntity);
+      return;
+    }
+    throw new BadRequestException('인증 코드가 일치하지 않습니다.');
   }
 }
