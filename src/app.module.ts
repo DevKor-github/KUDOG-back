@@ -4,6 +4,9 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { MailerModule } from '@nestjs-modules/mailer';
+import { MailModule } from './mail/mail.module';
+import { AuthModule } from './auth/auth.module';
+import { CategoryModule } from './category/category.module';
 
 @Module({
   imports: [
@@ -28,6 +31,9 @@ import { MailerModule } from '@nestjs-modules/mailer';
         },
       },
     }),
+    MailModule,
+    AuthModule,
+    CategoryModule,
   ],
   controllers: [AppController],
   providers: [AppService],
