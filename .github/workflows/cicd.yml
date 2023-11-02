@@ -44,6 +44,8 @@ jobs:
           echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
           echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> .env
           echo "DB_DATABASE=${{ secrets.DB_DATABASE }}" >> .env
+          echo "MAIL_USER=${{ secrets.MAIL_USER }}" >> .env
+          echo "MAIL_PW=${{ secrets.MAIL_PW }}" >> .env
           cat .env
       - name: Run Docker
         run: |
