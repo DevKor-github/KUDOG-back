@@ -5,8 +5,8 @@ on:
     branches: ['main']
 
 env:
-  DOCKER_IMAGE: ghcr.io/overthestream/blurting
-  DOCKER_CONTAINER: blurting
+  DOCKER_IMAGE: ghcr.io/overthestream/kudog
+  DOCKER_CONTAINER: kudog
 
 jobs:
   build:
