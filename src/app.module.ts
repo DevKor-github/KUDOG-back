@@ -8,6 +8,7 @@ import { MailModule } from './mail/mail.module';
 import { AuthModule } from './auth/auth.module';
 import { CategoryModule } from './category/category.module';
 import { FetchModule } from './fetch/fetch.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { FetchModule } from './fetch/fetch.module';
         },
       },
     }),
+    ScheduleModule.forRoot(),
     MailModule,
     AuthModule,
     CategoryModule,
