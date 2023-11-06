@@ -7,6 +7,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { MailModule } from './mail/mail.module';
 import { AuthModule } from './auth/auth.module';
 import { CategoryModule } from './category/category.module';
+import { FetchModule } from './fetch/fetch.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { CategoryModule } from './category/category.module';
     MailModule,
     AuthModule,
     CategoryModule,
+    FetchModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { compare, hash } from 'bcrypt';
-import { MailEntity, UserEntity } from 'src/entities';
+import { Mail, KudogUser } from 'src/entities';
 import { Repository } from 'typeorm';
 import { SignupRequestDto } from './dtos/signupRequest.dto';
 import { JwtService } from '@nestjs/jwt';
@@ -14,10 +14,10 @@ import { TokenResponseDto } from './dtos/tokenResponse.dto';
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(UserEntity)
-    private readonly userRepository: Repository<UserEntity>,
-    @InjectRepository(MailEntity)
-    private readonly mailRepository: Repository<MailEntity>,
+    @InjectRepository(KudogUser)
+    private readonly userRepository: Repository<KudogUser>,
+    @InjectRepository(Mail)
+    private readonly mailRepository: Repository<Mail>,
     private jwtService: JwtService,
   ) {}
   saltOrRounds = 10;
@@ -109,21 +109,20 @@ export class AuthService {
     if (!studentId.endsWith('학번'))
       throw new BadRequestException('학번 형식은 NN학번으로 입력해주세요.');
 
-    const mailEntity = await this.mailRepository.findOne({
+    const mail = await this.mailRepository.findOne({
       where: { portalEmail },
     });
 
-    if (!mailEntity)
-      throw new BadRequestException('인증되지 않은 이메일입니다.');
-    if (mailEntity.subscriberEmail !== portalEmail) {
+    if (!mail) throw new BadRequestException('인증되지 않은 이메일입니다.');
+    if (mail.subscriberEmail !== portalEmail) {
       throw new BadRequestException('사용중인 이메일입니다.');
     }
-    mailEntity.subscriberEmail = subscriberEmail;
-    await this.mailRepository.save(mailEntity);
+    mail.subscriberEmail = subscriberEmail;
+    await this.mailRepository.save(mail);
 
     const passwordHash = await hash(password, this.saltOrRounds);
     const user = this.userRepository.create({
-      mail: mailEntity,
+      mail: mail,
       name,
       major,
       grade,

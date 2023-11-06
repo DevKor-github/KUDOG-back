@@ -6,19 +6,19 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { CategoryPerUser, MailEntity } from 'src/entities';
+import { CategoryPerUser, Mail } from 'src/entities';
 
-@Entity('users')
-export class UserEntity {
+@Entity()
+export class KudogUser {
   @PrimaryGeneratedColumn()
   userId: number;
 
   @OneToMany(() => CategoryPerUser, (categoryPerUser) => categoryPerUser.user)
   categoryPerUsers: CategoryPerUser[];
 
-  @OneToOne(() => MailEntity, (mail) => mail.user)
+  @OneToOne(() => Mail, (mail) => mail.user)
   @JoinColumn()
-  mail: MailEntity;
+  mail: Mail;
 
   @Column()
   passwordHash: string;

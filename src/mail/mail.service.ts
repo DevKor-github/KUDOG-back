@@ -6,7 +6,7 @@ import {
   RequestTimeoutException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { MailEntity, UserEntity } from 'src/entities';
+import { Mail, KudogUser } from 'src/entities';
 import { Repository } from 'typeorm';
 import { MailerService } from '@nestjs-modules/mailer';
 
@@ -14,25 +14,25 @@ import { MailerService } from '@nestjs-modules/mailer';
 export class MailService {
   constructor(
     private readonly mailerService: MailerService,
-    @InjectRepository(UserEntity)
-    private readonly userRepository: Repository<UserEntity>,
-    @InjectRepository(MailEntity)
-    private readonly mailRepository: Repository<MailEntity>,
+    @InjectRepository(KudogUser)
+    private readonly userRepository: Repository<KudogUser>,
+    @InjectRepository(Mail)
+    private readonly mailRepository: Repository<Mail>,
   ) {}
 
   async sendVerificationCode(to: string) {
-    const existingMailEntity = await this.mailRepository.findOne({
+    const existingMail = await this.mailRepository.findOne({
       where: { portalEmail: to },
     });
     if (!to.endsWith('@korea.ac.kr'))
       throw new BadRequestException('korea.ac.kr 이메일이 아닙니다.');
 
-    if (existingMailEntity) {
-      if (existingMailEntity.createdAt.getTime() + 1000 * 10 > Date.now())
+    if (existingMail) {
+      if (existingMail.createdAt.getTime() + 1000 * 10 > Date.now())
         throw new BadRequestException('잠시 후에 다시 시도해주세요.');
-      else if (existingMailEntity.subscriberEmail.includes('@'))
+      else if (existingMail.subscriberEmail.includes('@'))
         throw new ConflictException('사용중인 이메일입니다.');
-      await this.mailRepository.remove(existingMailEntity);
+      await this.mailRepository.remove(existingMail);
     }
     const code = (Math.random() * 1000000)
       .toString()
@@ -55,21 +55,21 @@ export class MailService {
   }
 
   async checkVerificationCode(email: string, code: string) {
-    const mailEntity = await this.mailRepository.findOne({
+    const mail = await this.mailRepository.findOne({
       where: { portalEmail: email },
     });
-    if (!mailEntity) throw new NotFoundException('이메일이 존재하지 않습니다.');
+    if (!mail) throw new NotFoundException('이메일이 존재하지 않습니다.');
 
-    if (mailEntity.subscriberEmail.includes('@'))
+    if (mail.subscriberEmail.includes('@'))
       throw new ConflictException('이미 인증된 이메일입니다.');
 
-    if (mailEntity.createdAt.getTime() + 1000 * 60 * 3 < Date.now()) {
+    if (mail.createdAt.getTime() + 1000 * 60 * 3 < Date.now()) {
       throw new RequestTimeoutException('인증 요청에서 3분이 지났습니다.');
     }
 
-    if (mailEntity.subscriberEmail === code) {
-      mailEntity.subscriberEmail = email;
-      await this.mailRepository.save(mailEntity);
+    if (mail.subscriberEmail === code) {
+      mail.subscriberEmail = email;
+      await this.mailRepository.save(mail);
       return;
     }
     throw new BadRequestException('인증 코드가 일치하지 않습니다.');

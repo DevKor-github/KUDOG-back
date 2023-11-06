@@ -5,10 +5,10 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { UserEntity } from 'src/entities';
+import { KudogUser } from 'src/entities';
 
 @Entity()
-export class MailEntity {
+export class Mail {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -21,6 +21,6 @@ export class MailEntity {
   @CreateDateColumn()
   createdAt: Date;
 
-  @OneToOne(() => UserEntity, (user) => user.mail)
-  user: UserEntity;
+  @OneToOne(() => KudogUser, (user) => user.mail)
+  user: KudogUser;
 }
