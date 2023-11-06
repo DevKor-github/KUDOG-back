@@ -1,5 +1,12 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { CategoryPerUser } from 'src/entities';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { CategoryPerUser, Notice } from 'src/entities';
+import { Provider } from 'src/entities';
 
 @Entity('category')
 export class Category {
@@ -8,6 +15,12 @@ export class Category {
 
   @Column()
   categoryName: string;
+
+  @ManyToOne(() => Provider, (provider) => provider.categories)
+  provider: Provider;
+
+  @OneToMany(() => Notice, (notice) => notice.category)
+  notices: Notice[];
 
   @OneToMany(
     () => CategoryPerUser,
