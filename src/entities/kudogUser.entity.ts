@@ -11,7 +11,7 @@ import { CategoryPerUser, Mail } from 'src/entities';
 @Entity()
 export class KudogUser {
   @PrimaryGeneratedColumn()
-  userId: number;
+  id: number;
 
   @OneToMany(() => CategoryPerUser, (categoryPerUser) => categoryPerUser.user)
   categoryPerUsers: CategoryPerUser[];

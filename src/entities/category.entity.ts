@@ -11,10 +11,13 @@ import { Provider } from 'src/entities';
 @Entity('category')
 export class Category {
   @PrimaryGeneratedColumn()
-  categoryId: number;
+  id: number;
 
   @Column()
-  categoryName: string;
+  name: string;
+
+  @Column()
+  url: string;
 
   @ManyToOne(() => Provider, (provider) => provider.categories)
   provider: Provider;
