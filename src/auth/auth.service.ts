@@ -37,18 +37,18 @@ export class AuthService {
         '이메일 또는 비밀번호가 일치하지 않습니다.',
       );
     }
-    return user.userId;
+    return user.id;
   }
 
-  async refreshJWT(userId: number, refreshToken: string) {
-    const user = await this.userRepository.findOne({ where: { userId } });
+  async refreshJWT(id: number, refreshToken: string) {
+    const user = await this.userRepository.findOne({ where: { id } });
     if (!user) throw new UnauthorizedException('존재하지 않는 유저입니다.');
 
     if (user.refreshToken !== refreshToken)
       throw new UnauthorizedException('invalid refresh token');
 
     const payload: JwtPayload = {
-      id: userId,
+      id,
       name: user.name,
       signedAt: Date.now().toString(),
     };
@@ -66,12 +66,12 @@ export class AuthService {
     return { accessToken, refreshToken: newRefreshToken };
   }
 
-  async getToken(userId: number): Promise<TokenResponseDto> {
-    const user = await this.userRepository.findOne({ where: { userId } });
+  async getToken(id: number): Promise<TokenResponseDto> {
+    const user = await this.userRepository.findOne({ where: { id } });
     if (!user) throw new UnauthorizedException('존재하지 않는 유저입니다.');
 
     const payload: JwtPayload = {
-      id: userId,
+      id,
       name: user.name,
       signedAt: Date.now().toString(),
     };
@@ -130,6 +130,6 @@ export class AuthService {
       passwordHash,
     });
     await this.userRepository.save(user);
-    return user.userId;
+    return user.id;
   }
 }
