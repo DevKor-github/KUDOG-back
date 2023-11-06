@@ -9,6 +9,7 @@ import { AuthModule } from './auth/auth.module';
 import { CategoryModule } from './category/category.module';
 import { FetchModule } from './fetch/fetch.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { NoticeModule } from './notice/notice.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     AuthModule,
     CategoryModule,
     FetchModule,
+    NoticeModule,
   ],
   controllers: [AppController],
   providers: [AppService],
