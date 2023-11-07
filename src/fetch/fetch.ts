@@ -311,6 +311,11 @@ const getContent = async (link: url): Promise<string> => {
   }
   let article = html.substring(startidx, endidx);
 
+  article = article.replaceAll(
+    `href="?`,
+    `href="${link.substring(0, link.indexOf('?'))}?`,
+  );
+
   const imgStart = article.indexOf('<img src="');
 
   if (imgStart !== -1) {
