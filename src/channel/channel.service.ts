@@ -23,9 +23,9 @@ export class ChannelService {
           value:
             message.category +
             '에서 ' +
-            (new Date().getMonth() + 1) +
+            (new Date().getMonth() + 1).toString().padStart(2, '0') +
             '-' +
-            new Date().getDate() +
+            new Date().getDate().toString().padStart(2, '0') +
             '에 올라온 공지사항을 가져왔습니다.',
         };
         const bulletBlocks = message.notices.map((notice) => {
