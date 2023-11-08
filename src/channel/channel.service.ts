@@ -34,16 +34,10 @@ export class ChannelService {
             : notice.url;
           const title = notice.title.replace(/[&<>=,]/g, function (match) {
             switch (match) {
-              case '&':
-                return '&amp;';
               case '<':
                 return '&lt;';
               case '>':
                 return '&gt;';
-              case ',':
-                return '&#x2C;';
-              case '=':
-                return '&#x3D;';
               default:
                 return match;
             }
