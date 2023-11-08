@@ -27,7 +27,7 @@ export class FetchService {
       categories.map(async (category) => {
         const titleUrlData = await this.fetchNotice(category);
         return {
-          category: category.provider.name + category.name,
+          category: category.provider.name + ' ' + category.name,
           notices: titleUrlData,
         };
       }),
