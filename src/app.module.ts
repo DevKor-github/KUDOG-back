@@ -10,6 +10,7 @@ import { CategoryModule } from './category/category.module';
 import { FetchModule } from './fetch/fetch.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { NoticeModule } from './notice/notice.module';
+import { ChannelModule } from './channel/channel.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { NoticeModule } from './notice/notice.module';
     CategoryModule,
     FetchModule,
     NoticeModule,
+    ChannelModule,
   ],
   controllers: [AppController],
   providers: [AppService],
