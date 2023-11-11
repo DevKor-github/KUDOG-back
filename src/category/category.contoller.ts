@@ -12,7 +12,7 @@ export class CategoryController {
     description: '해당 category 가져옴',
   })
   @ApiCreatedResponse({ description: 'category 반환 ', type: Category })
-  async getcategories(@Param('id') providerId: string) {
+  async getcategories(@Param('id') providerId: number) {
     try {
       return await this.categoryService.getcategories(providerId);
     } catch (err) {
