@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CategoryPerUser, Category, KudogUser } from 'src/entities';
 import { Repository } from 'typeorm';
@@ -13,4 +13,12 @@ export class CategoryService {
     @InjectRepository(KudogUser)
     private readonly userRepository: Repository<KudogUser>,
   ) {}
+
+  async getcategories(providerId: string) {
+    const categories = await this.categoryRepository.findOne({
+      where: { name: providerId },
+    });
+    if (!categories)
+      throw new NotFoundException('provider가 존재하지 않습니다.');
+  }
 }
