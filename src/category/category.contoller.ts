@@ -1,13 +1,17 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { CategoryService } from './category.service';
+import {
+} from '@nestjs/swagger';
 
 @Controller('category')
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
-
-  // TODO: category List get api
-  // SWAGGER 작성 - status code, data 형식 명시
-
-  // TODO: 유저 카테고리 구독 POST api
-  // SWAGGER 작성 - status code, data 형식 명시
+  @Get('/:id/categories')
+  async getcategories(@Param('id') providerId: number) {
+    try {
+      return await this.categoryService.findById(providerId);
+    } catch (err) {
+      return err;
+    }
+  }
 }
