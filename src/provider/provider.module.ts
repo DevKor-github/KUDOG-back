@@ -1,11 +1,12 @@
 import { Module } from '@nestjs/common';
-import { FetchService } from './fetch.service';
+import { ProviderService } from './provider.service';
+import { ProviderController } from './provider.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Category, Notice, Provider } from 'src/entities';
-import { ChannelService } from 'src/channel/channel.service';
 
 @Module({
-  providers: [FetchService, ChannelService],
+  providers: [ProviderService],
+  controllers: [ProviderController],
   imports: [TypeOrmModule.forFeature([Notice, Provider, Category])],
 })
-export class FetchModule {}
+export class ProviderModule {}

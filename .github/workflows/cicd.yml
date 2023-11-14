@@ -48,6 +48,9 @@ jobs:
           echo "MAIL_PW=${{ secrets.MAIL_PW }}" >> .env
           echo "JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}" >> .env
           echo "JWT_REFRESH_SECRET_KEY=${{ secrets.JWT_REFRESH_SECRET_KEY }}" >> .env
+          echo "CHANNEL_API_KEY=${{ secrets.CHANNEL_API_KEY }}" >> .env
+          echo "CHANNEL_API_SECRET=${{ secrets.CHANNEL_API_SECRET }}" >> .env
+          
           cat .env
       - name: Run Docker
         run: |
