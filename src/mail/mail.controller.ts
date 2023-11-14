@@ -10,7 +10,7 @@ import {
   ApiTags,
   ApiTooManyRequestsResponse,
 } from '@nestjs/swagger';
-import { verifyRequestDto } from './dtos/verifyReqest.dto';
+import { verifyRequestDto } from './dtos/verifyRequest.dto';
 import { verifyCodeRequestDto } from './dtos/verifyCodeRequest.dto';
 import { DocumentedException } from 'src/interfaces/docsException';
 
