@@ -1,4 +1,4 @@
-import { page, url } from 'src/interfaces/urls';
+import { page, url } from 'src/interfaces/urls'; //6시에 올라온 공지를 가져오는 코드. notice에 저장
 import { dto } from 'src/interfaces/dto';
 import { AnyNode } from 'domhandler';
 

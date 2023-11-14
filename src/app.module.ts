@@ -10,6 +10,7 @@ import { CategoryModule } from './category/category.module';
 import { FetchModule } from './fetch/fetch.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { NoticeModule } from './notice/notice.module';
+import { ProviderModule } from './provider/provider.module';
 
 @Module({
   imports: [
@@ -19,7 +20,7 @@ import { NoticeModule } from './notice/notice.module';
       host: process.env.DB_HOST,
       port: Number(process.env.DB_PORT),
       username: process.env.DB_USERNAME,
-      password: process.env.DB_PASSWORD,
+      password: process.env.DB_PASSWORD || '5334',
       database: process.env.DB_DATABASE,
       autoLoadEntities: true,
       synchronize: true,
@@ -40,6 +41,7 @@ import { NoticeModule } from './notice/notice.module';
     CategoryModule,
     FetchModule,
     NoticeModule,
+    ProviderModule,
   ],
   controllers: [AppController],
   providers: [AppService],

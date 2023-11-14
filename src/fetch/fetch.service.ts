@@ -15,7 +15,7 @@ export class FetchService {
   ) {}
   private readonly logger = new Logger(FetchService.name);
 
-  @Cron('0 0 18 * * *', { timeZone: 'Asia/Seoul' })
+  @Cron('0 0 18 * * *', { timeZone: 'Asia/Seoul' }) //매일 오후 6시에 올라온 공지사항을 가져온다는 것. 
   async fetchNotices() {
     const categories = await this.categoryRepository.find({
       relations: ['provider'],
