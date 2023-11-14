@@ -11,6 +11,7 @@ import { FetchModule } from './fetch/fetch.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { NoticeModule } from './notice/notice.module';
 import { ProviderModule } from './provider/provider.module';
+import { ChannelModule } from './channel/channel.module';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { ProviderModule } from './provider/provider.module';
     FetchModule,
     NoticeModule,
     ProviderModule,
+    ChannelModule,
   ],
   controllers: [AppController],
   providers: [AppService],
