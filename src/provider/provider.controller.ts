@@ -1,10 +1,9 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { ProviderService } from './provider.service';
 import {
   ApiInternalServerErrorResponse,
   ApiOkResponse,
   ApiOperation,
-  ApiParam,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
@@ -14,7 +13,7 @@ import { providerResponseDto } from './dtos/providerResponse.dto';
 @Controller('provider')
 @ApiTags('Provider') //: Swagger 문서에서 해당 컨트롤러와 관련된 API에 태그를 추가
 export class ProviderController {
-  constructor(private readonly ProviderService: ProviderService) {}
+  constructor(private readonly providerService: ProviderService) {}
   //readonly로 객체의 의존성 주입
   @Get('')
   @ApiOperation({
@@ -34,7 +33,7 @@ export class ProviderController {
   })
   async getProviderLinksById() {
     try {
-      return await this.ProviderService.getProviderList();
+      return await this.providerService.getProviderList();
     } catch (err) {
       return err;
     }
