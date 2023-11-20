@@ -3,13 +3,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { MailController } from './mail.controller';
 import { MailService } from './mail.service';
 import { MailerModule } from '@nestjs-modules/mailer';
-import { Category, CategoryPerUser, Mail, KudogUser } from 'src/entities';
+import { Mail } from 'src/entities';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([KudogUser, Mail, Category, CategoryPerUser]),
-    MailerModule,
-  ],
+  imports: [TypeOrmModule.forFeature([Mail]), MailerModule],
   controllers: [MailController],
   providers: [MailService],
 })
