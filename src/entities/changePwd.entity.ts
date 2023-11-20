@@ -8,7 +8,7 @@ import {
 import { KudogUser } from './kudogUser.entity';
 
 @Entity('change_pwd_authentication')
-export class changePwdAuthenticationEntity {
+export class ChangePwdAuthenticationEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
