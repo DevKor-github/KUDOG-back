@@ -1,4 +1,12 @@
-import { Controller, Get, Param, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Put,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { CategoryService } from './category.service';
 import {
   ApiOperation,
@@ -7,11 +15,13 @@ import {
   ApiParam,
   ApiNotFoundResponse,
   ApiTags,
+  ApiBadRequestResponse,
 } from '@nestjs/swagger';
 
 import { CategoryReponseDto } from './dtos/categoryResponse.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { DocumentedException } from 'src/interfaces/docsException';
+import { CategoryRequestDto } from './dtos/categoryRequest.dto';
 
 @Controller('category')
 @ApiTags('category')
@@ -46,5 +56,32 @@ export class CategoryController {
   })
   async getcategories(@Param('id') providerId: number) {
     return await this.categoryService.getcategories(providerId);
+  }
+
+  @UseGuards(AuthGuard('jwt-access'))
+  @Put('subscribe')
+  @ApiOperation({
+    summary: 'subscribe/unsubscribe category',
+    description:
+      '카테고리를 구독/구독취소합니다. Authorization Header에 Bearer ${accessToken}을 넣어주세요.',
+  })
+  @ApiOkResponse({ description: '카테고리 구독/구독취소 성공' })
+  @ApiUnauthorizedResponse({
+    description: 'token 만료 또는 invalid',
+    type: DocumentedException,
+  })
+  @ApiBadRequestResponse({
+    description: 'invalid category id',
+    type: DocumentedException,
+  })
+  async subscribeCategories(@Body() body: CategoryRequestDto, @Req() req: any) {
+    await this.categoryService.subscribeCategories(
+      req.user.id,
+      body.subscribeIds,
+    );
+    await this.categoryService.deleteCategories(
+      req.user.id,
+      body.unsubscribeIds,
+    );
   }
 }

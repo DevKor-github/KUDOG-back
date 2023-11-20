@@ -16,7 +16,9 @@ export class KudogUser {
   @OneToMany(() => CategoryPerUser, (categoryPerUser) => categoryPerUser.user)
   categoryPerUsers: CategoryPerUser[];
 
-  @OneToOne(() => Mail, (mail) => mail.user)
+  @OneToOne(() => Mail, (mail) => mail.user, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn()
   mail: Mail;
 
