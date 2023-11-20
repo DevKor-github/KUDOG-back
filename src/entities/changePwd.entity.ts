@@ -1,5 +1,6 @@
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   OneToOne,
@@ -12,12 +13,15 @@ export class ChangePwdAuthenticationEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToOne(() => changePwdAuthenticationEntity, () => undefined)
+  @OneToOne(() => ChangePwdAuthenticationEntity, () => undefined)
   @JoinColumn()
   user: KudogUser;
 
-  @Column()
-  expireAt: Date;
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @Column({ nullable: true })
+  expireAt?: Date;
 
   @Column()
   authenticated: boolean;

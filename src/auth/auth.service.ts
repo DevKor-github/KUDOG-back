@@ -1,11 +1,12 @@
 import {
   BadRequestException,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { compare, hash } from 'bcrypt';
-import { Mail, KudogUser } from 'src/entities';
+import { Mail, KudogUser, ChangePwdAuthenticationEntity } from 'src/entities';
 import { Repository } from 'typeorm';
 import { SignupRequestDto } from './dtos/signupRequest.dto';
 import { JwtService } from '@nestjs/jwt';
@@ -18,6 +19,8 @@ export class AuthService {
     private readonly userRepository: Repository<KudogUser>,
     @InjectRepository(Mail)
     private readonly mailRepository: Repository<Mail>,
+    @InjectRepository(ChangePwdAuthenticationEntity)
+    private readonly changePwdAuthRepository: Repository<ChangePwdAuthenticationEntity>,
     private jwtService: JwtService,
   ) {}
   saltOrRounds = 10;
@@ -131,5 +134,22 @@ export class AuthService {
     });
     await this.userRepository.save(user);
     return user.id;
+  }
+
+  async changePwdRequest(portalEmail: string) {
+    if (!portalEmail.endsWith('@korea.ac.kr'))
+      throw new BadRequestException('korea.ac.kr 이메일을 입력하세요.');
+
+    const user = await this.userRepository.findOne({
+      where: { mail: { portalEmail } },
+    });
+
+    if (!user)
+      throw new NotFoundException('해당 이메일의 유저가 존재하지 않습니다.');
+
+    const existingEntity = await this.changePwdAuthRepository.findOne({
+      where: { user: { id: user.id } },
+    });
+
   }
 }
