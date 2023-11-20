@@ -4,3 +4,4 @@ export * from './kudogUser.entity';
 export * from './mail.entity';
 export * from './notice.entity';
 export * from './provider.entity';
+export * from './changePwd.entity';
