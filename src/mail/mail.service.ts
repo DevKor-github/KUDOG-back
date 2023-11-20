@@ -6,7 +6,7 @@ import {
   RequestTimeoutException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Mail, KudogUser } from 'src/entities';
+import { Mail } from 'src/entities';
 import { Repository } from 'typeorm';
 import { MailerService } from '@nestjs-modules/mailer';
 
@@ -14,8 +14,6 @@ import { MailerService } from '@nestjs-modules/mailer';
 export class MailService {
   constructor(
     private readonly mailerService: MailerService,
-    @InjectRepository(KudogUser)
-    private readonly userRepository: Repository<KudogUser>,
     @InjectRepository(Mail)
     private readonly mailRepository: Repository<Mail>,
   ) {}

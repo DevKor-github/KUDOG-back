@@ -23,7 +23,7 @@ export class ChangePwdAuthenticationEntity {
   @Column({ nullable: true })
   expireAt?: Date;
 
-  @Column()
+  @Column({ default: false })
   authenticated: boolean;
 
   @Column()

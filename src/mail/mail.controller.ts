@@ -39,11 +39,7 @@ export class MailController {
     type: DocumentedException,
   })
   async sendVerifyMail(@Body() body: verifyRequestDto) {
-    try {
-      return await this.mailService.sendVerificationCode(body.email);
-    } catch (err) {
-      return err;
-    }
+    return await this.mailService.sendVerificationCode(body.email);
   }
 
   @Post('/verify/check')
@@ -66,13 +62,6 @@ export class MailController {
   })
   @ApiRequestTimeoutResponse({ description: '요청한지 3분 경과' })
   async checkVerifyCode(@Body() body: verifyCodeRequestDto) {
-    try {
-      return await this.mailService.checkVerificationCode(
-        body.email,
-        body.code,
-      );
-    } catch (err) {
-      return err;
-    }
+    return await this.mailService.checkVerificationCode(body.email, body.code);
   }
 }
