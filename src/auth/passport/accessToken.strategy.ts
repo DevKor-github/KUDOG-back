@@ -7,7 +7,7 @@ import { JwtPayload } from 'src/interfaces/auth';
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt-access') {
   constructor() {
     super({
-      secretOrKey: process.env.JWT_REFRESH_SECRET_KEY,
+      secretOrKey: process.env.JWT_SECRET_KEY,
       ignoreExpiration: false,
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
     });
