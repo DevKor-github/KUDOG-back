@@ -27,7 +27,7 @@ import { AuthGuard } from '@nestjs/passport';
 export class NoticeController {
   constructor(private readonly noticeService: NoticeService) {}
 
-  //@UseGuards(AuthGuard('jwt-access'))
+  @UseGuards(AuthGuard('jwt-access'))
   @Get('/list/bydate')
   @ApiOperation({
     summary: '공지 리스트 조회',
@@ -53,7 +53,7 @@ export class NoticeController {
     description: '1 for default',
   })
   async getNoticeListByDate(@Req() req: any, @Query('page') page: number) {
-    return await this.noticeService.getNoticesByTime(1, page);
+    return await this.noticeService.getNoticesByTime(req.user.id, page);
   }
 
   @UseGuards(AuthGuard('jwt-access'))
@@ -229,5 +229,45 @@ export class NoticeController {
   })
   async scrapNotice(@Param('noticeId') noticeId: number, @Req() req: any) {
     return await this.noticeService.scrapNotice(req.user.id, noticeId);
+  }
+
+  @UseGuards(AuthGuard('jwt-access'))
+  @Get('/list/search')
+  @ApiOperation({
+    summary: '공지사항 검색',
+    description:
+      '공지사항을 검색합니다. search keyword로 제목, 내용, 글쓴이를 기준으로 검색합니다. Authorization 헤더에 Bearer ${accessToken} 을 넣어주세요.',
+  })
+  @ApiOkResponse({
+    description: 'well done',
+    type: PagedNoticeListDto,
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'internal server error',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'token 만료 또는 잘못된 token',
+    type: DocumentedException,
+  })
+  @ApiQuery({
+    name: 'page',
+    type: Number,
+    required: false,
+    example: 1,
+    description: '1 for default',
+  })
+  @ApiQuery({
+    name: 'keyword',
+    type: String,
+    required: true,
+    example: '장학금',
+    description: '검색 키워드',
+  })
+  async searchNotice(
+    @Query('keyword') keyword: string,
+    @Query('page') page: number,
+    @Req() req: any,
+  ) {
+    return await this.noticeService.searchNotice(keyword, req.user.id, page);
   }
 }

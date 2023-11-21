@@ -189,4 +189,37 @@ export class NoticeService {
     });
     return true;
   }
+
+  async searchNotice(keyword: string, userId: number, page: number = 1) {
+    const scraps = await this.scrapRepository.find({
+      where: { user: { id: userId } },
+      relations: ['notice'],
+    });
+
+    const [notices, total] = await this.noticeRepository
+      .createQueryBuilder('notice')
+      .where('notice.title like :keyword', { keyword: `%${keyword}%` })
+      .orWhere('notice.content like :keyword', { keyword: `%${keyword}%` })
+      .orWhere('notice.writer like :keyword', { keyword: `%${keyword}%` })
+      .orderBy('notice.date', 'DESC')
+      .skip((page - 1) * 10)
+      .take(10)
+      .getManyAndCount();
+
+    const dtos: NoticeListResponseDto[] = notices.map((notice) => {
+      const { id, title, date } = notice;
+      return {
+        id,
+        title,
+        date,
+        scrapped: scraps.some((scrap) => scrap.notice.id === id),
+      };
+    });
+    return {
+      notices: dtos,
+      page: page,
+      totalNotice: total,
+      totalPage: Math.ceil(total / 10),
+    };
+  }
 }
