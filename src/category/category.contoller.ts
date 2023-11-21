@@ -16,6 +16,7 @@ import {
   ApiNotFoundResponse,
   ApiTags,
   ApiBadRequestResponse,
+  ApiConflictResponse,
 } from '@nestjs/swagger';
 
 import { CategoryReponseDto } from './dtos/categoryResponse.dto';
@@ -72,6 +73,10 @@ export class CategoryController {
   })
   @ApiBadRequestResponse({
     description: 'invalid category id',
+    type: DocumentedException,
+  })
+  @ApiConflictResponse({
+    description: '구독 목록에 이미 구독되어있는 카테고리 Id 존재',
     type: DocumentedException,
   })
   async subscribeCategories(@Body() body: CategoryRequestDto, @Req() req: any) {

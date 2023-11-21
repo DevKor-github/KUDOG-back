@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ConflictException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -25,29 +26,24 @@ export class CategoryService {
   }
 
   async subscribeCategories(userId: number, categoryIds: number[]) {
+    if (!categoryIds || categoryIds.length === 0) return;
     try {
-      const categoryPerUsers: CategoryPerUser[] = [];
-      await Promise.all(
-        categoryIds.map(async (categoryId) => {
-          const categoryPerUser = this.categoryPerUserRepository.create({
-            user: { id: userId },
-            category: { id: categoryId },
-          });
-          categoryPerUsers.push(categoryPerUser);
-        }),
-      );
-      await this.categoryPerUserRepository.save(categoryPerUsers);
+      const entityOptions = categoryIds.map((id) => {
+        return { user: { id: userId }, category: { id } };
+      });
+      await this.categoryPerUserRepository.insert(entityOptions);
     } catch (err) {
-      throw new BadRequestException('invalid category id');
+      throw new ConflictException('invalid category id');
     }
   }
 
   async deleteCategories(userId: number, categoryIds: number[]) {
+    if (!categoryIds || categoryIds.length === 0) return;
     try {
-      const categoryPerUsers = await this.categoryPerUserRepository.find({
-        where: { user: { id: userId }, category: { id: In(categoryIds) } },
+      await this.categoryPerUserRepository.delete({
+        user: { id: userId },
+        category: { id: In(categoryIds) },
       });
-      await this.categoryPerUserRepository.remove(categoryPerUsers);
     } catch (err) {
       throw new BadRequestException('invalid category id');
     }

@@ -1,5 +1,11 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { Category } from 'src/entities';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Category, Scrap } from 'src/entities';
 
 @Entity()
 export class Notice {
@@ -23,6 +29,9 @@ export class Notice {
 
   @ManyToOne(() => Category, (category) => category.notices)
   category: Category;
+
+  @OneToMany(() => Scrap, (scrap) => scrap.notice)
+  scraps: Scrap[];
 
   @Column({ default: 0 })
   view: number;

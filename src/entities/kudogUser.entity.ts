@@ -6,7 +6,7 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { CategoryPerUser, Mail } from 'src/entities';
+import { CategoryPerUser, Mail, Scrap } from 'src/entities';
 
 @Entity()
 export class KudogUser {
@@ -15,6 +15,9 @@ export class KudogUser {
 
   @OneToMany(() => CategoryPerUser, (categoryPerUser) => categoryPerUser.user)
   categoryPerUsers: CategoryPerUser[];
+
+  @OneToMany(() => Scrap, (scrap) => scrap.user)
+  scraps: Scrap[];
 
   @OneToOne(() => Mail, (mail) => mail.user, {
     onDelete: 'CASCADE',
