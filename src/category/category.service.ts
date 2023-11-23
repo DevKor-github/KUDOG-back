@@ -17,7 +17,7 @@ export class CategoryService {
   ) {}
 
   async getcategories(providerId: number) {
-    const categories = await this.categoryRepository.findOne({
+    const categories = await this.categoryRepository.find({
       where: { provider: { id: providerId } },
       relations: ['provider'],
     });

@@ -53,7 +53,7 @@ export class CategoryController {
   })
   @ApiOkResponse({
     description: 'category 반환 ',
-    type: CategoryReponseDto,
+    type: [CategoryReponseDto],
   })
   async getcategories(@Param('id') providerId: number) {
     return await this.categoryService.getcategories(providerId);
