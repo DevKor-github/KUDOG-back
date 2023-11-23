@@ -23,6 +23,8 @@ export class CategoryService {
     });
     if (!categories)
       throw new NotFoundException('provider가 존재하지 않습니다.');
+
+    return categories;
   }
 
   async subscribeCategories(userId: number, categoryIds: number[]) {
