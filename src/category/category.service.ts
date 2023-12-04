@@ -31,7 +31,7 @@ export class CategoryService {
     if (!categoryIds || categoryIds.length === 0) return;
     try {
       const entityOptions = categoryIds.map((id) => {
-        return { user: { id: userId }, category: { id } };
+        return { user_id: userId, category_id: id };
       });
       await this.categoryPerUserRepository.insert(entityOptions);
     } catch (err) {
@@ -43,8 +43,8 @@ export class CategoryService {
     if (!categoryIds || categoryIds.length === 0) return;
     try {
       await this.categoryPerUserRepository.delete({
-        user: { id: userId },
-        category: { id: In(categoryIds) },
+        user_id: userId,
+        category_id: In(categoryIds),
       });
     } catch (err) {
       throw new BadRequestException('invalid category id');
