@@ -142,7 +142,7 @@ export class AuthService {
   }
 
   async changePwdRequest(portalEmail: string) {
-    if (!portalEmail.endsWith('@korea.ac.kr'))
+    if (!portalEmail || !portalEmail.endsWith('@korea.ac.kr'))
       throw new BadRequestException('korea.ac.kr 이메일을 입력하세요.');
 
     const user = await this.userRepository.findOne({

@@ -13,7 +13,7 @@ export class ChangePwdAuthenticationEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToOne(() => ChangePwdAuthenticationEntity, () => undefined)
+  @OneToOne(() => KudogUser, () => undefined)
   @JoinColumn()
   user: KudogUser;
 
