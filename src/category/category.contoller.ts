@@ -60,6 +60,28 @@ export class CategoryController {
   }
 
   @UseGuards(AuthGuard('jwt-access'))
+  @Get('subscribe')
+  @ApiOperation({
+    summary: 'get subscribed category list',
+    description:
+      '구독한 카테고리 목록을 가져옵니다. Authorization Header에 Bearer ${accessToken}을 넣어주세요.',
+  })
+  @ApiOkResponse({
+    description: '구독한 카테고리 목록 반환',
+    type: [CategoryReponseDto],
+  })
+  @ApiUnauthorizedResponse({
+    description: 'token 만료 또는 invalid',
+    type: DocumentedException,
+  })
+  async getSubscribedCategories(
+    @Req() req: any,
+  ): Promise<CategoryReponseDto[]> {
+    const { id } = req.user;
+    return await this.categoryService.getSubscribedCategories(id);
+  }
+
+  @UseGuards(AuthGuard('jwt-access'))
   @Put('subscribe')
   @ApiOperation({
     summary: 'subscribe/unsubscribe category',

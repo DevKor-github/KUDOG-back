@@ -7,6 +7,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Category, CategoryPerUser } from 'src/entities';
 import { In, Repository } from 'typeorm';
+import { CategoryReponseDto } from './dtos/categoryResponse.dto';
 @Injectable()
 export class CategoryService {
   constructor(
@@ -15,6 +16,22 @@ export class CategoryService {
     @InjectRepository(CategoryPerUser)
     private readonly categoryPerUserRepository: Repository<CategoryPerUser>,
   ) {}
+
+  async getSubscribedCategories(userId: number): Promise<CategoryReponseDto[]> {
+    const categories = await this.categoryPerUserRepository.find({
+      where: { user: { id: userId } },
+      relations: ['category', 'category.provider'],
+    });
+
+    return categories.map((category) => {
+      return {
+        id: category.category.id,
+        url: category.category.url,
+        name: category.category.name,
+        provider: category.category.provider,
+      };
+    });
+  }
 
   async getcategories(providerId: number) {
     const categories = await this.categoryRepository.find({
