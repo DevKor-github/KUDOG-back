@@ -1,8 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Notice, Scrap } from 'src/entities';
-import { Repository } from 'typeorm';
-import { NoticeListResponseDto } from './dtos/NoticeListResponse.dto';
+import { Category, CategoryPerUser, Notice, Scrap } from 'src/entities';
+import { In, Repository } from 'typeorm';
+import {
+  NoticeListResponseDto,
+  PagedNoticeListDto,
+} from './dtos/NoticeListResponse.dto';
 import { NoticeInfoResponseDto } from './dtos/NoticeInfoResponse.dto';
 
 @Injectable()
@@ -12,7 +15,44 @@ export class NoticeService {
     private readonly noticeRepository: Repository<Notice>,
     @InjectRepository(Scrap)
     private readonly scrapRepository: Repository<Scrap>,
+    @InjectRepository(CategoryPerUser)
+    private readonly categoryPerUserRepository: Repository<CategoryPerUser>,
   ) {}
+
+  async getNoticesBySubscribedCategories(
+    userId: number,
+    page: number = 1,
+  ): Promise<PagedNoticeListDto> {
+    const subscribedCategories = await this.categoryPerUserRepository.find({
+      where: { user_id: userId },
+    });
+    const [notices, total] = await this.noticeRepository.findAndCount({
+      skip: (page - 1) * 10,
+      take: 10,
+      order: {
+        date: 'DESC',
+      },
+      where: {
+        category: {
+          id: In(subscribedCategories.map((category) => category.category_id)),
+        },
+      },
+    });
+    const dtos: NoticeListResponseDto[] = notices.map((notice) => {
+      return {
+        id: notice.id,
+        title: notice.title,
+        date: notice.date,
+        scrapped: false,
+      };
+    });
+    return {
+      notices: dtos,
+      page: page,
+      totalNotice: total,
+      totalPage: Math.ceil(total / 10),
+    };
+  }
 
   async getNoticesByTime(userId: number, page: number = 1) {
     const scraps = await this.scrapRepository.find({
