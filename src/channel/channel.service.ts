@@ -9,7 +9,7 @@ export class ChannelService {
       'x-access-key': process.env.CHANNEL_API_KEY,
       'x-access-secret': process.env.CHANNEL_API_SECRET,
     },
-    baseURL: ' https://api.channel.io/open',
+    baseURL: 'https://api.channel.io/open',
   });
   botName = 'KUDOG 알리미';
   groupName = 'KUDOG';
