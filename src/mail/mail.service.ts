@@ -9,7 +9,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Mail } from 'src/entities';
 import { Repository } from 'typeorm';
 import { MailerService } from '@nestjs-modules/mailer';
-import { Cron } from '@nestjs/schedule';
 
 @Injectable()
 export class MailService {
@@ -73,6 +72,4 @@ export class MailService {
     }
     throw new BadRequestException('인증 코드가 일치하지 않습니다.');
   }
-
-  //@Cron()
 }
