@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Category, CategoryPerUser, Notice, Scrap } from 'src/entities';
+import { CategoryPerUser, Notice, Scrap } from 'src/entities';
 import { In, Repository } from 'typeorm';
 import {
   NoticeListResponseDto,
