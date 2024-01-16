@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   Post,
   Put,
   Req,
@@ -115,6 +116,19 @@ export class AuthController {
     await this.authService.logout(req.user.id);
   }
 
+  @UseGuards(AuthGuard('jwt-access'))
+  @Delete('/user-info')
+  @ApiOperation({
+    summary: '회원 탈퇴',
+    description:
+      '회원 탈퇴합니다. authorization header에 Bearer ${accessToken} 을 담아주세요.',
+  })
+  @ApiUnauthorizedResponse({ description: 'invalid access token' })
+  @ApiOkResponse({ description: '회원 탈퇴 성공' })
+  async deleteUser(@Req() req: any) {
+    await this.authService.deleteUser(req.user.id);
+  }
+
   @Post('/change-password/request')
   @ApiOperation({
     summary: '비밀번호 변경 이메일 인증 요청',
@@ -143,6 +157,11 @@ export class AuthController {
   })
   async changePwdRequest(@Body() body: ChangePasswordRequestDto) {
     await this.authService.changePwdRequest(body.portalEmail);
+  }
+
+  @Get('/token')
+  async getToken() {
+    return await this.authService.getHash();
   }
 
   @Post('/change-password/verify')

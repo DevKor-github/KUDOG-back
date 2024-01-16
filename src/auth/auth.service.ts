@@ -30,6 +30,12 @@ export class AuthService {
   ) {}
   saltOrRounds = 10;
 
+  async deleteUser(id: number) {
+    const user = await this.userRepository.findOne({ where: { id } });
+    if (!user) throw new NotFoundException('존재하지 않는 유저입니다.');
+    await this.userRepository.remove(user);
+  }
+
   async validateUser(email: string, password: string) {
     const user = await this.userRepository.findOne({
       where: { mail: { portalEmail: email } },
@@ -72,6 +78,9 @@ export class AuthService {
     user.refreshToken = newRefreshToken;
     await this.userRepository.save(user);
     return { accessToken, refreshToken: newRefreshToken };
+  }
+  async getHash() {
+    return await hash('1217admin1217', this.saltOrRounds);
   }
 
   async getToken(id: number): Promise<TokenResponseDto> {
