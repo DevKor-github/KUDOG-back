@@ -19,7 +19,9 @@ export class KudogUser {
   @OneToMany(() => Scrap, (scrap) => scrap.user)
   scraps: Scrap[];
 
-  @OneToOne(() => Mail, (mail) => mail.user)
+  @OneToOne(() => Mail, (mail) => mail.user, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn()
   mail: Mail;
 

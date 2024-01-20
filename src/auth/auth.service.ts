@@ -33,6 +33,8 @@ export class AuthService {
   async deleteUser(id: number) {
     const user = await this.userRepository.findOne({ where: { id } });
     if (!user) throw new NotFoundException('존재하지 않는 유저입니다.');
+    await this.mailRepository.delete({ id: user.mail.id });
+
     await this.userRepository.remove(user);
   }
 
@@ -46,8 +48,6 @@ export class AuthService {
         '이메일 또는 비밀번호가 일치하지 않습니다.',
       );
     }
-
-    await this.mailRepository.delete({ id: user.mail.id });
 
     const passwordMatch = await compare(password, user.passwordHash);
     if (!passwordMatch) {
