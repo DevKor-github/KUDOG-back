@@ -83,9 +83,6 @@ export class AuthService {
     await this.userRepository.save(user);
     return { accessToken, refreshToken: newRefreshToken };
   }
-  async getHash() {
-    return await hash('1217admin1217', this.saltOrRounds);
-  }
 
   async getToken(id: number): Promise<TokenResponseDto> {
     const user = await this.userRepository.findOne({ where: { id } });

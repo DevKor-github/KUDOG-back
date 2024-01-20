@@ -159,11 +159,6 @@ export class AuthController {
     await this.authService.changePwdRequest(body.portalEmail);
   }
 
-  @Get('/token')
-  async getToken() {
-    return await this.authService.getHash();
-  }
-
   @Post('/change-password/verify')
   @ApiOperation({
     summary: '비밀번호 변경 인증 코드 확인',
