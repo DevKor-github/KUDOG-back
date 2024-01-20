@@ -31,7 +31,10 @@ export class AuthService {
   saltOrRounds = 10;
 
   async deleteUser(id: number) {
-    const user = await this.userRepository.findOne({ where: { id } });
+    const user = await this.userRepository.findOne({
+      where: { id },
+      relations: ['mail'],
+    });
     if (!user) throw new NotFoundException('존재하지 않는 유저입니다.');
     await this.mailRepository.delete({ id: user.mail.id });
 
@@ -41,7 +44,6 @@ export class AuthService {
   async validateUser(email: string, password: string) {
     const user = await this.userRepository.findOne({
       where: { mail: { portalEmail: email } },
-      relations: ['mail'],
     });
     if (!user) {
       throw new UnauthorizedException(
