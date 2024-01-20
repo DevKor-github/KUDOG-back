@@ -13,7 +13,7 @@ export class ChangePwdAuthenticationEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToOne(() => KudogUser, () => undefined)
+  @OneToOne(() => KudogUser, () => undefined, { onDelete: 'CASCADE' })
   @JoinColumn()
   user: KudogUser;
 

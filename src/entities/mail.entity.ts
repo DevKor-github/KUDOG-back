@@ -21,6 +21,6 @@ export class Mail {
   @CreateDateColumn()
   createdAt: Date;
 
-  @OneToOne(() => KudogUser, (user) => user.mail)
+  @OneToOne(() => KudogUser, (user) => user.mail, { onDelete: 'CASCADE' })
   user: KudogUser;
 }
