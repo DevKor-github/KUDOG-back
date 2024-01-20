@@ -39,12 +39,16 @@ export class AuthService {
   async validateUser(email: string, password: string) {
     const user = await this.userRepository.findOne({
       where: { mail: { portalEmail: email } },
+      relations: ['mail'],
     });
     if (!user) {
       throw new UnauthorizedException(
         '이메일 또는 비밀번호가 일치하지 않습니다.',
       );
     }
+
+    await this.mailRepository.delete({ id: user.mail.id });
+
     const passwordMatch = await compare(password, user.passwordHash);
     if (!passwordMatch) {
       throw new UnauthorizedException(
