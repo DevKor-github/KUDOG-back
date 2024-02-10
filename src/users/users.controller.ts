@@ -82,4 +82,20 @@ export class UsersController {
   ) {
     return await this.userService.modifyUserInfo(req.user.id, body);
   }
+
+  @UseGuards(AuthGuard('jwt-access'))
+  @Put('/subscribe')
+  @ApiOperation({
+    summary: 'modify subscribing',
+    description:
+      '구독 여부를 수정합니다. Authorization 헤더에 Bearer ${accessToken} 을 넣어주세요.',
+  })
+  @ApiOkResponse({ description: '수정 성공' })
+  @ApiUnauthorizedResponse({
+    description: 'token 만료 또는 잘못된 token',
+    type: DocumentedException,
+  })
+  async modifySubscribing(@Req() req: any) {
+    return await this.userService.modifySubscribing(req.user.id);
+  }
 }

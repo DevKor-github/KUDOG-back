@@ -42,4 +42,7 @@ export class KudogUser {
 
   @Column()
   major: string;
+
+  @Column({ default: true })
+  subscribing: boolean;
 }

@@ -31,6 +31,14 @@ export class UsersService {
       portalEmail: user.mail.portalEmail,
     };
   }
+  async modifySubscribing(id: number) {
+    const user = await this.userRepository.findOne({
+      where: { id },
+    });
+    if (!user) throw new NotFoundException('존재하지 않는 유저입니다.');
+    user.subscribing = !user.subscribing;
+    await this.userRepository.save(user);
+  }
 
   async modifyUserInfo(id: number, dto: modifyInfoRequestDto) {
     const user = await this.userRepository.findOne({
