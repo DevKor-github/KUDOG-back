@@ -18,6 +18,15 @@ export class MailService {
     private readonly mailRepository: Repository<Mail>,
   ) {}
 
+  async sendMail(to: string, subject: string, html: string) {
+    await this.mailerService.sendMail({
+      from: process.env.MAIL_USER,
+      to: to,
+      subject: subject,
+      html: html,
+    });
+  }
+
   async sendVerificationCode(to: string) {
     const existingMail = await this.mailRepository.findOne({
       where: { portalEmail: to },
