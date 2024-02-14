@@ -27,18 +27,32 @@ export class FetchService {
       relations: ['provider'],
     });
 
-    const data = await Promise.all(
-      categories.map(async (category) => {
-        const titleUrlData = await this.fetchNotice(category);
-        return {
-          category: category.provider.name + ' ' + category.name,
-          notices: titleUrlData,
-          categoryId: category.id,
-        };
-      }),
-    );
+    const data = (
+      await Promise.all(
+        categories.map(async (category) => {
+          try {
+            const titleUrlData = await this.fetchNotice(category);
+
+            return {
+              category: category.provider.name + ' ' + category.name,
+              notices: titleUrlData,
+              categoryId: category.id,
+            };
+          } catch (e) {
+            console.log(
+              category.provider.name + ' ' + category.name + '에서 에러 발생',
+            );
+          }
+        }),
+      )
+    ).filter((d) => d !== undefined && d.notices.length > 0);
+    if (data.length === 0) return;
     await this.channelService.sendMessage(data);
-    await this.sendMail(data);
+    try {
+      await this.sendMail(data);
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   async sendMail(
@@ -69,7 +83,7 @@ export class FetchService {
 	<div style="width: 95%; margin: 0 auto;">`);
         noticesToSend.forEach((data) => {
           html = html.concat(
-            `<h4 style="text-align: left;">${data.category}/h4>`,
+            `<h4 style="text-align: left;">${data.category}</h4>`,
           );
           html = html.concat(
             data.notices
@@ -82,11 +96,12 @@ export class FetchService {
         html = html.concat(`	</div>
 </body>
 </html>`);
-        await this.mailService.sendMail(
-          user.mail.subscriberEmail,
-          `[KUDOG] ${user.name}님을 위한 ${today}의 공지사항`,
-          html,
-        );
+        if (user.mail.subscriberEmail != 'admin')
+          await this.mailService.sendMail(
+            user.mail.subscriberEmail,
+            `[KUDOG] ${user.name}님을 위한 ${today}의 공지사항`,
+            html,
+          );
       }),
     );
   }
