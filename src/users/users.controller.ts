@@ -90,12 +90,27 @@ export class UsersController {
     description:
       '구독 여부를 수정합니다. Authorization 헤더에 Bearer ${accessToken} 을 넣어주세요.',
   })
-  @ApiOkResponse({ description: '수정 성공' })
+  @ApiOkResponse({ description: '수정 성공, 결과 boolean', type: Boolean })
   @ApiUnauthorizedResponse({
     description: 'token 만료 또는 잘못된 token',
     type: DocumentedException,
   })
-  async modifySubscribing(@Req() req: any) {
+  async modifySubscribing(@Req() req: any): Promise<boolean> {
     return await this.userService.modifySubscribing(req.user.id);
+  }
+
+  @UseGuards(AuthGuard('jwt-access'))
+  @Get('/subscribe')
+  @ApiOperation({
+    summary: 'GET 구독정보',
+    description: '구독 정보 가져오기, Authorization 헤더에 Bearer accessToken',
+  })
+  @ApiOkResponse({ description: '가져오기 성공, boolean 값', type: Boolean })
+  @ApiUnauthorizedResponse({
+    description: 'token 만료 또는 잘못된 token',
+    type: DocumentedException,
+  })
+  async getSubscribing(@Req() req: any): Promise<boolean> {
+    return await this.userService.getSubscribing(req.user.id);
   }
 }

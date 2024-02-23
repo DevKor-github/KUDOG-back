@@ -31,13 +31,14 @@ export class UsersService {
       portalEmail: user.mail.portalEmail,
     };
   }
-  async modifySubscribing(id: number) {
+  async modifySubscribing(id: number): Promise<boolean> {
     const user = await this.userRepository.findOne({
       where: { id },
     });
     if (!user) throw new NotFoundException('존재하지 않는 유저입니다.');
     user.subscribing = !user.subscribing;
-    await this.userRepository.save(user);
+    const savedUser = await this.userRepository.save(user);
+    return savedUser.subscribing;
   }
 
   async modifyUserInfo(id: number, dto: modifyInfoRequestDto) {
@@ -60,5 +61,13 @@ export class UsersService {
       user.passwordHash = passwordHash;
     }
     await this.userRepository.save(user);
+  }
+
+  async getSubscribing(id: number): Promise<boolean> {
+    const user = await this.userRepository.findOne({
+      where: { id },
+    });
+    if (!user) throw new NotFoundException('존재하지 않는 유저입니다.');
+    return user.subscribing;
   }
 }
