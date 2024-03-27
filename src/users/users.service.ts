@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { KudogUser, Mail } from 'src/entities';
+import { KudogUser } from 'src/entities';
 import { Repository } from 'typeorm';
 import { modifyInfoRequestDto } from './dtos/userInfo.dto';
 import { hash } from 'bcrypt';
@@ -10,8 +10,6 @@ export class UsersService {
   constructor(
     @InjectRepository(KudogUser)
     private readonly userRepository: Repository<KudogUser>,
-    @InjectRepository(Mail)
-    private readonly mailRepository: Repository<Mail>,
   ) {}
   saltOrRounds = 10;
 
@@ -24,21 +22,8 @@ export class UsersService {
 
     return {
       name: user.name,
-      studentId: user.studentId,
-      grade: user.grade,
-      major: user.major,
-      subscriberEmail: user.mail.subscriberEmail,
-      portalEmail: user.mail.portalEmail,
+      email: user.email,
     };
-  }
-  async modifySubscribing(id: number): Promise<boolean> {
-    const user = await this.userRepository.findOne({
-      where: { id },
-    });
-    if (!user) throw new NotFoundException('존재하지 않는 유저입니다.');
-    user.subscribing = !user.subscribing;
-    const savedUser = await this.userRepository.save(user);
-    return savedUser.subscribing;
   }
 
   async modifyUserInfo(id: number, dto: modifyInfoRequestDto) {
@@ -48,26 +33,14 @@ export class UsersService {
     });
     if (!user) throw new NotFoundException('존재하지 않는 유저입니다.');
 
-    if (dto.subscriberEmail) {
-      user.mail.subscriberEmail = dto.subscriberEmail;
-      await this.mailRepository.save(user.mail);
+    if (dto.email) {
+      user.email = dto.email;
     }
     if (dto.name) user.name = dto.name;
-    if (dto.studentId) user.studentId = dto.studentId;
-    if (dto.grade) user.grade = dto.grade;
-    if (dto.major) user.major = dto.major;
     if (dto.password) {
       const passwordHash = await hash(dto.password, this.saltOrRounds);
       user.passwordHash = passwordHash;
     }
     await this.userRepository.save(user);
-  }
-
-  async getSubscribing(id: number): Promise<boolean> {
-    const user = await this.userRepository.findOne({
-      where: { id },
-    });
-    if (!user) throw new NotFoundException('존재하지 않는 유저입니다.');
-    return user.subscribing;
   }
 }
