@@ -9,7 +9,11 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { compare, hash } from 'bcrypt';
-import { Mail, KudogUser, ChangePwdAuthenticationEntity } from 'src/entities';
+import {
+  KudogUser,
+  ChangePwdAuthenticationEntity,
+  EmailAuthenticationEntity,
+} from 'src/entities';
 import { Repository } from 'typeorm';
 import { SignupRequestDto } from './dtos/signupRequest.dto';
 import { JwtService } from '@nestjs/jwt';
@@ -21,10 +25,10 @@ export class AuthService {
   constructor(
     @InjectRepository(KudogUser)
     private readonly userRepository: Repository<KudogUser>,
-    @InjectRepository(Mail)
-    private readonly mailRepository: Repository<Mail>,
     @InjectRepository(ChangePwdAuthenticationEntity)
     private readonly changePwdAuthRepository: Repository<ChangePwdAuthenticationEntity>,
+    @InjectRepository(EmailAuthenticationEntity)
+    private readonly emailAuthenticationRepository: Repository<EmailAuthenticationEntity>,
     private jwtService: JwtService,
     private readonly mailerService: MailerService,
   ) {}
@@ -33,17 +37,15 @@ export class AuthService {
   async deleteUser(id: number) {
     const user = await this.userRepository.findOne({
       where: { id },
-      relations: ['mail'],
     });
     if (!user) throw new NotFoundException('존재하지 않는 유저입니다.');
-    await this.mailRepository.delete({ id: user.mail.id });
 
     await this.userRepository.remove(user);
   }
 
   async validateUser(email: string, password: string) {
     const user = await this.userRepository.findOne({
-      where: { mail: { portalEmail: email } },
+      where: { email },
     });
     if (!user) {
       throw new UnauthorizedException(
@@ -110,55 +112,55 @@ export class AuthService {
   }
 
   async signup(signupInfo: SignupRequestDto) {
-    const {
-      subscriberEmail,
-      portalEmail,
-      password,
-      name,
-      major,
-      grade,
-      studentId,
-    } = signupInfo;
+    const { password, name, email } = signupInfo;
 
-    if (!portalEmail.endsWith('@korea.ac.kr'))
+    if (!email.endsWith('@korea.ac.kr'))
       throw new BadRequestException('korea.ac.kr 이메일이 아닙니다.');
     if (!/^[a-z0-9]{6,16}$/.test(password))
       throw new BadRequestException(
         '비밀번호는 6~16자의 영문 소문자와 숫자로만 입력해주세요.',
       );
-    if (!studentId.endsWith('학번'))
-      throw new BadRequestException('학번 형식은 NN학번으로 입력해주세요.');
 
-    const mail = await this.mailRepository.findOne({
-      where: { portalEmail },
+    const existingUser = await this.userRepository.findOne({
+      where: {
+        email,
+      },
     });
+    if (existingUser) throw new BadRequestException('사용중인 이메일입니다.');
 
-    if (!mail) throw new BadRequestException('인증되지 않은 이메일입니다.');
-    if (mail.subscriberEmail !== portalEmail) {
-      throw new BadRequestException('사용중인 이메일입니다.');
-    }
-    mail.subscriberEmail = subscriberEmail;
-    await this.mailRepository.save(mail);
-
+    const mailAuthentication = await this.emailAuthenticationRepository.findOne(
+      {
+        where: {
+          email,
+        },
+        order: { createdAt: 'DESC' },
+      },
+    );
+    if (!mailAuthentication)
+      throw new BadRequestException('인증되지 않은 이메일입니다.');
+    if (
+      mailAuthentication.createdAt.getTime() + 1000 * 60 * 10 <
+      new Date().getTime()
+    )
+      throw new RequestTimeoutException(
+        '인증 후 너무 오랜 시간이 지났습니다. 다시 인증해주세요.',
+      );
     const passwordHash = await hash(password, this.saltOrRounds);
     const user = this.userRepository.create({
-      mail: mail,
+      email,
       name,
-      major,
-      grade,
-      studentId,
       passwordHash,
     });
     await this.userRepository.save(user);
     return user.id;
   }
 
-  async changePwdRequest(portalEmail: string) {
-    if (!portalEmail || !portalEmail.endsWith('@korea.ac.kr'))
+  async changePwdRequest(email: string) {
+    if (!email || !email.endsWith('@korea.ac.kr'))
       throw new BadRequestException('korea.ac.kr 이메일을 입력하세요.');
 
     const user = await this.userRepository.findOne({
-      where: { mail: { portalEmail } },
+      where: { email },
     });
 
     if (!user)
@@ -184,7 +186,7 @@ export class AuthService {
     try {
       await this.mailerService.sendMail({
         from: process.env.MAIL_USER,
-        to: portalEmail,
+        to: email,
         subject: '[KUDOG] 비밀번호 재설정 이메일 인증 코드입니다.',
         html: `인증 번호 ${code}를 입력해주세요.`,
       });
@@ -228,9 +230,9 @@ export class AuthService {
     await this.changePwdAuthRepository.save(entity);
   }
 
-  async changePassword(portalEmail: string, password: string) {
+  async changePassword(email: string, password: string) {
     const user = await this.userRepository.findOne({
-      where: { mail: { portalEmail } },
+      where: { email },
     });
     if (!user) throw new NotFoundException('존재하지 않는 유저입니다.');
 

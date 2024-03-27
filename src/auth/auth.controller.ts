@@ -65,7 +65,25 @@ export class AuthController {
   })
   @ApiCreatedResponse({ description: '회원가입 성공', type: TokenResponseDto })
   @ApiBadRequestResponse({
-    description: '회원가입 실패, 세부 사항은 에러 메시지에 있습니다.',
+    description: '"message": "korea.ac.kr 이메일이 아닙니다."',
+    type: DocumentedException,
+  })
+  @ApiBadRequestResponse({
+    description:
+      '"message" : "비밀번호는 6~16자의 영문 소문자와 숫자로만 입력해주세요."',
+    type: DocumentedException,
+  })
+  @ApiBadRequestResponse({
+    description: '"message" : "사용중인 이메일입니다."',
+    type: DocumentedException,
+  })
+  @ApiBadRequestResponse({
+    description: '"message" : "인증되지 않은 이메일입니다."',
+    type: DocumentedException,
+  })
+  @ApiBadRequestResponse({
+    description:
+      '"message" : "인증 후 너무 오랜 시간이 지났습니다. 다시 인증해주세요."',
     type: DocumentedException,
   })
   async signup(@Body() body: SignupRequestDto) {
@@ -155,7 +173,7 @@ export class AuthController {
     type: DocumentedException,
   })
   async changePwdRequest(@Body() body: ChangePasswordRequestDto) {
-    await this.authService.changePwdRequest(body.portalEmail);
+    await this.authService.changePwdRequest(body.email);
   }
 
   @Post('/change-password/verify')
@@ -198,6 +216,6 @@ export class AuthController {
     type: DocumentedException,
   })
   async changePassword(@Body() body: ChangePasswordDto) {
-    await this.authService.changePassword(body.portalEmail, body.password);
+    await this.authService.changePassword(body.email, body.password);
   }
 }

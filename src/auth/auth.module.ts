@@ -1,6 +1,10 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { KudogUser, Mail, ChangePwdAuthenticationEntity } from 'src/entities';
+import {
+  KudogUser,
+  ChangePwdAuthenticationEntity,
+  EmailAuthenticationEntity,
+} from 'src/entities';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtModule } from '@nestjs/jwt';
@@ -11,7 +15,11 @@ import { MailerModule } from '@nestjs-modules/mailer';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([KudogUser, Mail, ChangePwdAuthenticationEntity]),
+    TypeOrmModule.forFeature([
+      KudogUser,
+      ChangePwdAuthenticationEntity,
+      EmailAuthenticationEntity,
+    ]),
     MailerModule,
     JwtModule.register({}),
   ],

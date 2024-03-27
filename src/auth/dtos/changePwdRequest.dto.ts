@@ -3,7 +3,7 @@ import { SignupRequestDto } from './signupRequest.dto';
 import { IsString } from 'class-validator';
 
 export class ChangePasswordRequestDto extends PickType(SignupRequestDto, [
-  'portalEmail',
+  'email',
 ] as const) {}
 
 export class VerifyChangePasswordRequestDto {
@@ -14,5 +14,5 @@ export class VerifyChangePasswordRequestDto {
 
 export class ChangePasswordDto extends PickType(SignupRequestDto, [
   'password',
-  'portalEmail',
+  'email',
 ] as const) {}
