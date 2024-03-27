@@ -50,7 +50,8 @@ jobs:
           echo "JWT_REFRESH_SECRET_KEY=${{ secrets.JWT_REFRESH_SECRET_KEY }}" >> .env
           echo "CHANNEL_API_KEY=${{ secrets.CHANNEL_API_KEY }}" >> .env
           echo "CHANNEL_API_SECRET=${{ secrets.CHANNEL_API_SECRET }}" >> .env
-          
+           echo "DISCORD_TOKEN=${{secrets.DISCORD_TOKEN}}" >> .env
+
           cat .env
       - name: Run Docker
         run: |

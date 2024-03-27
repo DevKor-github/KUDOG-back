@@ -47,7 +47,10 @@ export class FetchService {
       )
     ).filter((d) => d !== undefined && d.notices.length > 0);
     if (data.length === 0) return;
-    await this.channelService.sendMessage(data);
+    const message = this.channelService.createMessageFromNotices(data);
+    await this.channelService.sendMessageToAll(message);
+    await this.channelService.sendMessageToKudog(message);
+
     try {
       await this.sendMail(data);
     } catch (e) {
