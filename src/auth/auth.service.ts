@@ -136,7 +136,7 @@ export class AuthService {
         order: { createdAt: 'DESC' },
       },
     );
-    if (!mailAuthentication)
+    if (!mailAuthentication || mailAuthentication.authenticated !== true)
       throw new BadRequestException('인증되지 않은 이메일입니다.');
     if (
       mailAuthentication.createdAt.getTime() + 1000 * 60 * 10 <
