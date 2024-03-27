@@ -1,16 +1,17 @@
 import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { KudogUser, Notice } from 'src/entities';
+import { Notice } from 'src/entities';
+import { ScrapBox } from './scrapBox.entity';
 
 @Entity()
 export class Scrap {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => KudogUser, (user) => user.scraps, {
+  @ManyToOne(() => ScrapBox, (scrapBox) => scrapBox.scraps, {
     onDelete: 'CASCADE',
   })
-  @JoinColumn({ name: 'user_id' })
-  user: KudogUser;
+  @JoinColumn({ name: 'scrap_box_id' })
+  scrapBox: ScrapBox;
 
   @ManyToOne(() => Notice, (notice) => notice.scraps, {
     onDelete: 'CASCADE',

@@ -1,29 +1,16 @@
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  OneToMany,
-  OneToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
-import { CategoryPerUser, Mail, Scrap } from 'src/entities';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { ScrapBox } from 'src/entities';
 
 @Entity()
 export class KudogUser {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToMany(() => CategoryPerUser, (categoryPerUser) => categoryPerUser.user)
-  categoryPerUsers: CategoryPerUser[];
+  @OneToMany(() => ScrapBox, (scrapBox) => scrapBox.user)
+  scrapBoxes: ScrapBox[];
 
-  @OneToMany(() => Scrap, (scrap) => scrap.user)
-  scraps: Scrap[];
-
-  @OneToOne(() => Mail, (mail) => mail.user, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn()
-  mail: Mail;
+  @Column()
+  email: string;
 
   @Column()
   passwordHash: string;
@@ -33,16 +20,4 @@ export class KudogUser {
 
   @Column()
   name: string;
-
-  @Column()
-  studentId: string;
-
-  @Column()
-  grade: number;
-
-  @Column()
-  major: string;
-
-  @Column({ default: true })
-  subscribing: boolean;
 }
