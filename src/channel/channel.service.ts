@@ -6,7 +6,7 @@ import { NotiByCategory } from './dtos/notification.dto';
 export class ChannelService {
   client = axios.create({
     headers: {
-      Authorization: `Bot ${process.env.CHANNEL_API_KEY}`,
+      Authorization: `Bot ${process.env.DISCORD_TOKEN}`,
     },
     baseURL: 'https://discord.com/api',
   });
