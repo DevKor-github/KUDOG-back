@@ -1,34 +1,14 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Param,
-  Put,
-  Req,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { CategoryService } from './category.service';
-import {
-  ApiOperation,
-  ApiUnauthorizedResponse,
-  ApiOkResponse,
-  ApiParam,
-  ApiNotFoundResponse,
-  ApiTags,
-  ApiBadRequestResponse,
-  ApiConflictResponse,
-} from '@nestjs/swagger';
-
-import { CategoryReponseDto } from './dtos/categoryResponse.dto';
-import { AuthGuard } from '@nestjs/passport';
-import { DocumentedException } from 'src/interfaces/docsException';
-import { CategoryRequestDto } from './dtos/categoryRequest.dto';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('category')
 @ApiTags('category')
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
+  //TODO: 카테고리 맵 추가 / 필요없는 것삭제.
+  /*
   @UseGuards(AuthGuard('jwt-access'))
   @Get('by-provider/:id')
   @ApiOperation({
@@ -111,4 +91,5 @@ export class CategoryController {
       body.unsubscribeIds,
     );
   }
+  */
 }

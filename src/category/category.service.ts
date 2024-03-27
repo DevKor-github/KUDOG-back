@@ -1,22 +1,16 @@
-import {
-  BadRequestException,
-  ConflictException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Category, CategoryPerUser } from 'src/entities';
-import { In, Repository } from 'typeorm';
-import { CategoryReponseDto } from './dtos/categoryResponse.dto';
+import { Category } from 'src/entities';
+import { Repository } from 'typeorm';
+
 @Injectable()
 export class CategoryService {
   constructor(
     @InjectRepository(Category)
     private readonly categoryRepository: Repository<Category>,
-    @InjectRepository(CategoryPerUser)
-    private readonly categoryPerUserRepository: Repository<CategoryPerUser>,
   ) {}
 
+  /*
   async getSubscribedCategories(userId: number): Promise<CategoryReponseDto[]> {
     const categories = await this.categoryPerUserRepository.find({
       where: { user: { id: userId } },
@@ -67,4 +61,5 @@ export class CategoryService {
       throw new BadRequestException('invalid category id');
     }
   }
+  */
 }
