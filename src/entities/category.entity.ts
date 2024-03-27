@@ -8,6 +8,7 @@ import {
 import { Notice } from 'src/entities';
 import { Provider } from 'src/entities';
 import { CategoryMap } from 'src/enums';
+import { CategoryPerSubscribeBoxEntity } from './categoryPerSubscribes.entity';
 
 @Entity('category')
 export class Category {
@@ -28,4 +29,10 @@ export class Category {
 
   @OneToMany(() => Notice, (notice) => notice.category)
   notices: Notice[];
+
+  @OneToMany(
+    () => CategoryPerSubscribeBoxEntity,
+    (category) => category.category,
+  )
+  categoryPerUsers: CategoryPerSubscribeBoxEntity[];
 }

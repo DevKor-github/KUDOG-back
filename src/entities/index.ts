@@ -7,3 +7,4 @@ export * from './changePwd.entity';
 export * from './scrap.entity';
 export * from './scrapBox.entity';
 export * from './subscribeBox.entity';
+export * from './categoryPerSubscribes.entity';

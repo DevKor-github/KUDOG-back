@@ -1,5 +1,5 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { ScrapBox } from 'src/entities';
+import { ScrapBox, SubscribeBox } from 'src/entities';
 
 @Entity()
 export class KudogUser {
@@ -8,6 +8,9 @@ export class KudogUser {
 
   @OneToMany(() => ScrapBox, (scrapBox) => scrapBox.user)
   scrapBoxes: ScrapBox[];
+
+  @OneToMany(() => SubscribeBox, (subscribeBox) => subscribeBox.user)
+  subscribeBoxes: SubscribeBox[];
 
   @Column()
   email: string;
