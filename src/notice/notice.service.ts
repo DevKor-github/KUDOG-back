@@ -1,11 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CategoryPerUser, Notice, Scrap } from 'src/entities';
-import { In, Repository } from 'typeorm';
-import {
-  NoticeListResponseDto,
-  PagedNoticeListDto,
-} from './dtos/NoticeListResponse.dto';
+import { Notice, Scrap } from 'src/entities';
+import { Repository } from 'typeorm';
+import { NoticeListResponseDto } from './dtos/NoticeListResponse.dto';
 import { NoticeInfoResponseDto } from './dtos/NoticeInfoResponse.dto';
 
 @Injectable()
@@ -15,10 +12,9 @@ export class NoticeService {
     private readonly noticeRepository: Repository<Notice>,
     @InjectRepository(Scrap)
     private readonly scrapRepository: Repository<Scrap>,
-    @InjectRepository(CategoryPerUser)
-    private readonly categoryPerUserRepository: Repository<CategoryPerUser>,
   ) {}
 
+  /*
   async getNoticesBySubscribedCategories(
     userId: number,
     page: number = 1,
@@ -53,10 +49,14 @@ export class NoticeService {
       totalPage: Math.ceil(total / 10),
     };
   }
-
+*/
   async getNoticesByTime(userId: number, page: number = 1) {
     const scraps = await this.scrapRepository.find({
-      where: { user: { id: userId } },
+      where: {
+        scrapBox: {
+          user: { id: userId },
+        },
+      },
       relations: ['notice'],
     });
 
@@ -91,10 +91,13 @@ export class NoticeService {
     page: number = 1,
   ) {
     const scraps = await this.scrapRepository.find({
-      where: { user: { id: userId } },
+      where: {
+        scrapBox: {
+          user: { id: userId },
+        },
+      },
       relations: ['notice'],
     });
-
     const [notices, total] = await this.noticeRepository.findAndCount({
       where: {
         category: { id: categoryId },
@@ -128,7 +131,11 @@ export class NoticeService {
     page: number = 1,
   ) {
     const scraps = await this.scrapRepository.find({
-      where: { user: { id: userId } },
+      where: {
+        scrapBox: {
+          user: { id: userId },
+        },
+      },
       relations: ['notice'],
     });
 
@@ -162,7 +169,11 @@ export class NoticeService {
 
   async getScrappedNotices(userId: number, page: number = 1) {
     const [scraps, total] = await this.scrapRepository.findAndCount({
-      where: { user: { id: userId } },
+      where: {
+        scrapBox: {
+          user: { id: userId },
+        },
+      },
       relations: ['notice'],
       skip: (page - 1) * 10,
       take: 10,
@@ -214,7 +225,10 @@ export class NoticeService {
   async scrapNotice(userId: number, noticeId: number) {
     const entity = await this.scrapRepository.findOne({
       where: {
-        user: { id: userId },
+        scrapBox: {
+          user: { id: userId },
+        },
+
         notice: { id: noticeId },
       },
     });
@@ -224,7 +238,9 @@ export class NoticeService {
     }
 
     await this.scrapRepository.insert({
-      user: { id: userId },
+      scrapBox: {
+        user: { id: userId },
+      },
       notice: { id: noticeId },
     });
     return true;
@@ -232,7 +248,11 @@ export class NoticeService {
 
   async searchNotice(keyword: string, userId: number, page: number = 1) {
     const scraps = await this.scrapRepository.find({
-      where: { user: { id: userId } },
+      where: {
+        scrapBox: {
+          user: { id: userId },
+        },
+      },
       relations: ['notice'],
     });
 

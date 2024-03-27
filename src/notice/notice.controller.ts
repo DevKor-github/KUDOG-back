@@ -27,6 +27,7 @@ import { AuthGuard } from '@nestjs/passport';
 export class NoticeController {
   constructor(private readonly noticeService: NoticeService) {}
 
+  /*
   @UseGuards(AuthGuard('jwt-access'))
   @Get('/list/subscribe-categories')
   @ApiOperation({
@@ -61,6 +62,7 @@ export class NoticeController {
       page,
     );
   }
+  */
 
   @UseGuards(AuthGuard('jwt-access'))
   @Get('/list/bydate')
