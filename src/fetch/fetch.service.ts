@@ -52,12 +52,13 @@ export class FetchService {
     await this.channelService.sendMessageToKudog(message);
 
     try {
-      await this.sendMail(data);
+      //await this.sendMail(data);
     } catch (e) {
       console.log(e);
     }
   }
 
+  /*
   async sendMail(
     noticeData: {
       category: string;
@@ -108,7 +109,7 @@ export class FetchService {
       }),
     );
   }
-
+*/
   async fetchNotice(category: Category) {
     const dto = {
       provider: category.provider.name,
