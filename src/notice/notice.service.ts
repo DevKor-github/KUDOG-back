@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Notice, Scrap } from 'src/entities';
-import { Repository } from 'typeorm';
+import { Between, In, Repository } from 'typeorm';
 import { NoticeListResponseDto } from './dtos/NoticeListResponse.dto';
 import { NoticeInfoResponseDto } from './dtos/NoticeInfoResponse.dto';
+import { NoticeFilterRequestDto } from './dtos/NoticeFilterRequest.dto';
 
 @Injectable()
 export class NoticeService {
@@ -85,6 +86,58 @@ export class NoticeService {
     };
   }
 
+  async getNoticesByFilterOrderByDate(
+    userId: number,
+    filter: NoticeFilterRequestDto,
+    page: number = 1,
+  ) {
+    var { categories, providers, start_date, end_date } = filter;
+    const scraps = await this.scrapRepository.find({
+      where: {
+        scrapBox: {
+          user: { id: userId },
+        },
+      },
+      relations: ['notice'],
+    });
+    const categoryList = categories?.split(',') || [];
+    const providerList = providers?.split(',') || [];
+    if (!start_date) start_date = '2020-01-01';
+    if (!end_date) end_date = '2040-01-01';
+
+    const [notices, total] = await this.noticeRepository.findAndCount({
+      where: {
+        date: Between(start_date, end_date),
+        category: {
+          mappedCategory: categoryList.length > 0 ? In(categoryList) : null,
+          provider: {
+            name: providerList.length > 0 ? In(providerList) : null,
+          },
+        },
+      },
+      skip: (page - 1) * 10,
+      take: 10,
+      order: {
+        date: 'DESC',
+      },
+    });
+
+    const dtos: NoticeListResponseDto[] = notices.map((notice) => {
+      const { id, title, date } = notice;
+      return {
+        id,
+        title,
+        date,
+        scrapped: scraps.some((scrap) => scrap.notice.id === id),
+      };
+    });
+    return {
+      notices: dtos,
+      page: page,
+      totalNotice: total,
+      totalPage: Math.ceil(total / 10),
+    };
+  }
   async getNoticesByCategoryIdOrderByDate(
     userId: number,
     categoryId: number,
