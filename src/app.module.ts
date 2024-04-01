@@ -13,6 +13,7 @@ import { NoticeModule } from './notice/notice.module';
 import { ProviderModule } from './provider/provider.module';
 import { ChannelModule } from './channel/channel.module';
 import { UsersModule } from './users/users.module';
+import { ScrapModule } from './scrap/scrap.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { UsersModule } from './users/users.module';
     ProviderModule,
     ChannelModule,
     UsersModule,
+    ScrapModule,
   ],
   controllers: [AppController],
   providers: [AppService],
