@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { Cron } from '@nestjs/schedule';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Category, KudogUser, Notice } from 'src/entities';
 import { Repository } from 'typeorm';
@@ -21,7 +21,7 @@ export class FetchService {
   ) {}
   private readonly logger = new Logger(FetchService.name);
 
-  @Cron('0 0 18 * * *', { timeZone: 'Asia/Seoul' }) //매일 오후 6시에 올라온 공지사항을 가져온다는 것.
+  @Cron(CronExpression.EVERY_10_MINUTES, { timeZone: 'Asia/Seoul' })
   async fetchNotices() {
     const categories = await this.categoryRepository.find({
       relations: ['provider'],
@@ -39,9 +39,10 @@ export class FetchService {
               categoryId: category.id,
             };
           } catch (e) {
-            console.log(
+            this.channelService.sendMessageToKudog(
               category.provider.name + ' ' + category.name + '에서 에러 발생',
             );
+            this.channelService.sendMessageToKudog(e.toString());
           }
         }),
       )
@@ -50,12 +51,6 @@ export class FetchService {
     const message = this.channelService.createMessageFromNotices(data);
     await this.channelService.sendMessageToAll(message);
     await this.channelService.sendMessageToKudog(message);
-
-    try {
-      //await this.sendMail(data);
-    } catch (e) {
-      console.log(e);
-    }
   }
 
   /*
@@ -117,9 +112,18 @@ export class FetchService {
       categoryId: category.id,
     };
     const dtos = await noticeFetcher(dto);
-
+    if (dtos.length === 0) return [];
+    const dataInDb = await this.noticeRepository.find({
+      where: {
+        category: { id: category.id },
+        date: dtos[0].writtenDate,
+      },
+    });
+    const filteredDtos = dtos.filter(
+      (dto) => !dataInDb.some((data) => data.title === dto.title),
+    );
     const datas = await Promise.all(
-      dtos.map(async (data) => {
+      filteredDtos.map(async (data) => {
         await this.noticeRepository.insert({
           title: data.title,
           content: data.content,
@@ -128,6 +132,7 @@ export class FetchService {
           url: data.page.url,
           category,
         });
+
         return { title: data.title, url: data.page.url, content: data.content };
       }),
     );
