@@ -1,21 +1,38 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import CategoryPerUser from './categoryPerUser.entity';
-import { ApiTags } from '@nestjs/swagger';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Notice } from 'src/entities';
+import { Provider } from 'src/entities';
+import { CategoryMap } from 'src/enums';
+import { CategoryPerSubscribeBoxEntity } from './categoryPerSubscribes.entity';
 
-@ApiTags('categories')
 @Entity('category')
-class Category {
+export class Category {
   @PrimaryGeneratedColumn()
-  categoryId: number;
+  id: number;
 
   @Column()
-  categoryName: string;
+  name: string;
+
+  @Column()
+  url: string;
+
+  @Column({ type: 'enum', enum: CategoryMap, default: CategoryMap.공지사항 })
+  mappedCategory: CategoryMap;
+
+  @ManyToOne(() => Provider, (provider) => provider.categories)
+  provider: Provider;
+
+  @OneToMany(() => Notice, (notice) => notice.category)
+  notices: Notice[];
 
   @OneToMany(
-    () => CategoryPerUser,
-    (categoryPerUser) => categoryPerUser.category,
+    () => CategoryPerSubscribeBoxEntity,
+    (category) => category.category,
   )
-  categoryPerUsers: CategoryPerUser[];
+  categoryPerUsers: CategoryPerSubscribeBoxEntity[];
 }
-
-export default Category;
