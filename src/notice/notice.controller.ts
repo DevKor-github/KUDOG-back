@@ -99,7 +99,7 @@ export class NoticeController {
   @ApiOperation({
     summary: '공지 리스트 조회 by filter',
     description:
-      'database의 공지사항들을 작성날짜순으로 가져옵니다. category id 설정, page size 10, Authorization 헤더에 Bearer ${accessToken} 을 넣어주세요.',
+      'database의 공지사항들을 작성날짜순으로 필터링하여 가져옵니다. 필터와 관련된 정보들은 쿼리 스트링으로, page size 10, Authorization 헤더에 Bearer ${accessToken} 을 넣어주세요.',
   })
   @ApiQuery({
     name: 'page',
@@ -128,14 +128,14 @@ export class NoticeController {
     name: 'start_date',
     type: String,
     required: false,
-    description: 'start_date',
+    description: 'start date',
     example: '2024-01-01',
   })
   @ApiQuery({
     name: 'end_date',
     type: String,
     required: false,
-    description: 'end_date',
+    description: 'end date',
     example: '2024-01-01',
   })
   async getNoticeListByFiltersOrderByDate(
