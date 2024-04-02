@@ -12,6 +12,7 @@ import { JwtStrategy as RefreshStrategy } from './passport/refreshToken.strategy
 import { JwtStrategy as AccessStrategy } from './passport/accessToken.strategy';
 import { LocalStrategy } from './passport/local.strategy';
 import { MailerModule } from '@nestjs-modules/mailer';
+import { ChannelModule } from 'src/channel/channel.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
     ]),
     MailerModule,
     JwtModule.register({}),
+    ChannelModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, RefreshStrategy, AccessStrategy, LocalStrategy],
