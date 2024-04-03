@@ -5,7 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { KudogUser, ScrapBox } from 'src/entities';
 
 @Module({
-  imports:[TypeOrmModule.forFeature([ScrapBox,KudogUser])],
+  imports: [TypeOrmModule.forFeature([ScrapBox, KudogUser])],
   providers: [ScrapService],
   controllers: [ScrapController],
 })
