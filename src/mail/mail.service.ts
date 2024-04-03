@@ -6,9 +6,15 @@ import {
   RequestTimeoutException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EmailAuthenticationEntity, KudogUser } from 'src/entities';
-import { Repository } from 'typeorm';
+import {
+  EmailAuthenticationEntity,
+  KudogUser,
+  Notice,
+  SubscribeBox,
+} from 'src/entities';
+import { In, Repository } from 'typeorm';
 import { MailerService } from '@nestjs-modules/mailer';
+import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Injectable()
 export class MailService {
@@ -18,6 +24,10 @@ export class MailService {
     private readonly emailAuthenticationRepository: Repository<EmailAuthenticationEntity>,
     @InjectRepository(KudogUser)
     private readonly kudogUserRepository: Repository<KudogUser>,
+    @InjectRepository(SubscribeBox)
+    private readonly subscribeBoxRepository: Repository<SubscribeBox>,
+    @InjectRepository(Notice)
+    private readonly noticeRepository: Repository<Notice>,
   ) {}
 
   async sendMail(to: string, subject: string, html: string) {
@@ -95,5 +105,58 @@ export class MailService {
       return;
     }
     throw new BadRequestException('인증 코드가 일치하지 않습니다.');
+  }
+  @Cron(CronExpression.EVERY_DAY_AT_6PM, { timeZone: 'Asia/Seoul' })
+  async sendMailBySubBox() {
+    const subscribeBoxes = await this.subscribeBoxRepository.find({
+      relations: ['categories'],
+    });
+
+    await Promise.all(
+      subscribeBoxes.map(async (box) => {
+        const notices = await this.noticeRepository.find({
+          where: {
+            category: {
+              id: In(box.categories.map((category) => category.category_id)),
+            },
+            date: new Date().toISOString().slice(0, 10),
+          },
+          relations: ['category'],
+        });
+
+        let html = '';
+        const today = new Date().toISOString().slice(0, 10);
+        html = html.concat(`<html><head></head><body>`);
+        html =
+          html.concat(`	<h2 style="width: 100%; margin: 0 auto; text-align: center;">구독함: ${box.name}의 공지사항</h2>
+        	<div style="width: 95%; text-align: right; margin: 0 auto;">${today}</div>
+	        <div style="width: 95%; margin: 0 auto;">`);
+
+        const noticeByCategory = new Map<string, Array<Notice>>();
+        notices.forEach((notice) => {
+          const category = notice.category.name;
+          if (!noticeByCategory.has(category))
+            noticeByCategory.set(category, []);
+          noticeByCategory.get(category).push(notice);
+        });
+        for (const category of noticeByCategory.keys()) {
+          html = html.concat(`<h4 style="text-align: left;">${category}</h4>`);
+          html = html.concat(
+            noticeByCategory
+              .get(category)
+              .map((notice) => {
+                return `<p>${notice.content}</p>`;
+              })
+              .join('<hr style="height: 2px; width: 100%;">'),
+          );
+        }
+
+        await this.sendMail(
+          box.mail,
+          `[KUDOG] 구독함 ${box.name}의 공지사항 ${today}`,
+          html,
+        );
+      }),
+    );
   }
 }

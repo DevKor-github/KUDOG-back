@@ -20,6 +20,7 @@ import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from 'src/interfaces/auth';
 import { TokenResponseDto } from './dtos/tokenResponse.dto';
 import { MailerService } from '@nestjs-modules/mailer';
+import { ChannelService } from 'src/channel/channel.service';
 @Injectable()
 export class AuthService {
   constructor(
@@ -31,6 +32,7 @@ export class AuthService {
     private readonly emailAuthenticationRepository: Repository<EmailAuthenticationEntity>,
     private jwtService: JwtService,
     private readonly mailerService: MailerService,
+    private readonly channelService: ChannelService,
   ) {}
   saltOrRounds = 10;
 
@@ -152,6 +154,8 @@ export class AuthService {
       passwordHash,
     });
     await this.userRepository.save(user);
+    const userCount = await this.userRepository.count();
+    this.channelService.sendMessageToKudog(`가입자 수 ${userCount}명 돌파🔥`);
     return user.id;
   }
 

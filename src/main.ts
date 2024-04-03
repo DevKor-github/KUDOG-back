@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AllExceptionFilter } from './all.exception.filter';
+import { ChannelService } from './channel/channel.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -14,8 +15,8 @@ async function bootstrap() {
 
   const docs = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('api', app, docs);
-
-  app.useGlobalFilters(new AllExceptionFilter());
+  const channelService = app.get<ChannelService>(ChannelService);
+  app.useGlobalFilters(new AllExceptionFilter(channelService));
   await app.listen(3050);
 }
 bootstrap();
