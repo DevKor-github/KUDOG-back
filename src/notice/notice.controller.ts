@@ -28,43 +28,6 @@ import { NoticeFilterRequestDto } from './dtos/NoticeFilterRequest.dto';
 export class NoticeController {
   constructor(private readonly noticeService: NoticeService) {}
 
-  /*
-  @UseGuards(AuthGuard('jwt-access'))
-  @Get('/list/subscribe-categories')
-  @ApiOperation({
-    summary: '구독한 카테고리의 공지 리스트 조회',
-    description:
-      '구독한 카테고리의 공지 리스트를 조회합니다. page size 10, Authorization 헤더에 Bearer ${accessToken} 을 넣어주세요.',
-  })
-  @ApiOkResponse({
-    description: 'well done',
-    type: PagedNoticeListDto,
-  })
-  @ApiInternalServerErrorResponse({
-    description: 'internal server error',
-  })
-  @ApiUnauthorizedResponse({
-    description: 'token 만료 또는 잘못된 token',
-    type: DocumentedException,
-  })
-  @ApiQuery({
-    name: 'page',
-    type: Number,
-    required: false,
-    example: 1,
-    description: '1 for default',
-  })
-  async getNoticeListBySubscribedCategories(
-    @Req() req: any,
-    @Query('page') page: number,
-  ): Promise<PagedNoticeListDto> {
-    return await this.noticeService.getNoticesBySubscribedCategories(
-      req.user.id,
-      page,
-    );
-  }
-  */
-
   @UseGuards(AuthGuard('jwt-access'))
   @Get('/list/bydate')
   @ApiOperation({
