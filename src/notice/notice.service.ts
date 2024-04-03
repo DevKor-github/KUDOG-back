@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Notice, Scrap } from 'src/entities';
 import { Between, In, Repository } from 'typeorm';
-import { NoticeListResponseDto } from './dtos/NoticeListResponse.dto';
+import {
+  NoticeListResponseDto,
+  PagedNoticeListDto,
+} from './dtos/NoticeListResponse.dto';
 import { NoticeInfoResponseDto } from './dtos/NoticeInfoResponse.dto';
 import { NoticeFilterRequestDto } from './dtos/NoticeFilterRequest.dto';
 
@@ -54,8 +57,16 @@ export class NoticeService {
     userId: number,
     filter: NoticeFilterRequestDto,
     page: number = 1,
-  ) {
-    var { categories, providers, start_date, end_date } = filter;
+  ): Promise<PagedNoticeListDto> {
+    const {
+      categories,
+      providers,
+      start_date = '2020-01-01',
+      end_date = '2040-01-01',
+    } = filter;
+    const categoryList = categories?.split(',') || [];
+    const providerList = providers?.split(',') || [];
+
     const scraps = await this.scrapRepository.find({
       where: {
         scrapBox: {
@@ -64,10 +75,6 @@ export class NoticeService {
       },
       relations: ['notice'],
     });
-    const categoryList = categories?.split(',') || [];
-    const providerList = providers?.split(',') || [];
-    if (!start_date) start_date = '2020-01-01';
-    if (!end_date) end_date = '2040-01-01';
 
     const [notices, total] = await this.noticeRepository.findAndCount({
       where: {
