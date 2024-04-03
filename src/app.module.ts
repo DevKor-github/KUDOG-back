@@ -25,7 +25,6 @@ import { UsersModule } from './users/users.module';
       password: process.env.DB_PASSWORD || '5334',
       database: process.env.DB_DATABASE,
       autoLoadEntities: true,
-      synchronize: true,
     }),
     MailerModule.forRoot({
       transport: {
