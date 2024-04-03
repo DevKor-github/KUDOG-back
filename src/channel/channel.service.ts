@@ -14,10 +14,30 @@ export class ChannelService {
   kudogChannelPath = '/channels/1220053997201653841/messages';
 
   async sendMessageToAll(content: string) {
+    if (content.length >= 2000) {
+      const sliceIndex = content.lastIndexOf('\n', 2000);
+
+      await this.client.post(this.allChannelPath, {
+        content: content.slice(0, sliceIndex),
+      });
+      await this.sendMessageToAll(content.slice(sliceIndex + 1));
+
+      return;
+    }
     await this.client.post(this.allChannelPath, { content });
   }
 
   async sendMessageToKudog(content: string) {
+    if (content.length >= 2000) {
+      const sliceIndex = content.lastIndexOf('\n', 2000);
+
+      await this.client.post(this.kudogChannelPath, {
+        content: content.slice(0, sliceIndex),
+      });
+      await this.sendMessageToKudog(content.slice(sliceIndex + 1));
+
+      return;
+    }
     await this.client.post(this.kudogChannelPath, { content });
   }
 
