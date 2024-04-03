@@ -33,7 +33,10 @@ export class ScrapController {
     summary: '스크랩박스 생성',
     description: '사용자를 위한 새 스크랩박스를 생성합니다.',
   })
-  @ApiBody({ description: '스크랩박스 정보,스크랩박스 아이디',type:ScrapBoxDto })
+  @ApiBody({
+    description: '스크랩박스 정보,스크랩박스 아이디',
+    type: ScrapBoxDto,
+  })
   @ApiResponse({
     description: '스크랩박스가 성공적으로 생성되었습니다.',
   })
@@ -88,7 +91,10 @@ export class ScrapController {
     type: 'number',
     description: '스크랩박스 ID',
   })
-  @ApiBody({ description: '새 스크랩박스 이름,스크랩박스 id',type:ScrapBoxDto })
+  @ApiBody({
+    description: '새 스크랩박스 이름,스크랩박스 id',
+    type: ScrapBoxDto,
+  })
   @ApiResponse({
     description: '스크랩박스 이름이 성공적으로 변경되었습니다.',
   })
