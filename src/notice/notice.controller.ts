@@ -64,6 +64,17 @@ export class NoticeController {
     description:
       'database의 공지사항들을 작성날짜순으로 필터링하여 가져옵니다. 필터와 관련된 정보들은 쿼리 스트링으로, page size 10, Authorization 헤더에 Bearer ${accessToken} 을 넣어주세요.',
   })
+  @ApiOkResponse({
+    description: 'well done',
+    type: PagedNoticeListDto,
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'internal server error',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'token 만료 또는 잘못된 token',
+    type: DocumentedException,
+  })
   @ApiQuery({
     name: 'page',
     type: Number,
@@ -105,7 +116,7 @@ export class NoticeController {
     @Query() filter: NoticeFilterRequestDto,
     @Query('page') page: number,
     @Req() req: any,
-  ) {
+  ): Promise<PagedNoticeListDto> {
     return await this.noticeService.getNoticesByFilterOrderByDate(
       req.user.id,
       filter,
