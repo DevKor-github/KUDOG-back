@@ -122,8 +122,8 @@ const getNoticeInfo = (
       writer: '심리학부',
     };
   }
-  let anchoridx = 0;
-  if (categoryId === 58) anchoridx = 1;
+  const anchoridx = 0;
+
   const anchor = DomUtils.getElementsByTagName('a', element)[anchoridx];
   const link = anchor.attribs.href;
   const title = DomUtils.innerText(anchor).trim();
