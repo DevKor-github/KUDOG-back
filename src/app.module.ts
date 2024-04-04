@@ -4,6 +4,16 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CategoryModule } from './category/category.module';
 import { ConfigModule } from '@nestjs/config';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { MailModule } from './mail/mail.module';
+import { AuthModule } from './auth/auth.module';
+import { FetchModule } from './fetch/fetch.module';
+import { ScheduleModule } from '@nestjs/schedule';
+import { NoticeModule } from './notice/notice.module';
+import { ProviderModule } from './provider/provider.module';
+import { ChannelModule } from './channel/channel.module';
+import { UsersModule } from './users/users.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({ envFilePath: '.env', isGlobal: true }),
@@ -12,25 +22,32 @@ import { ConfigModule } from '@nestjs/config';
       host: process.env.DB_HOST,
       port: Number(process.env.DB_PORT),
       username: process.env.DB_USERNAME,
-      password: process.env.DB_PASSWORD,
+      password: process.env.DB_PASSWORD || '5334',
       database: process.env.DB_DATABASE,
       autoLoadEntities: true,
-      synchronize: true,
     }),
+    MailerModule.forRoot({
+      transport: {
+        host: 'smtp.gmail.com',
+        port: 587,
+        auth: {
+          user: process.env.MAIL_USER,
+          pass: process.env.MAIL_PW,
+        },
+      },
+    }),
+    ScheduleModule.forRoot(),
+    MailModule,
+    AuthModule,
+    CategoryModule,
+    FetchModule,
+    NoticeModule,
+    ProviderModule,
+    ChannelModule,
+    UsersModule,
     CategoryModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {}
-
-/*
-dotenv.config();
-
-const dataSource = new typeorm.DataSource({
-  type: "postgres", //어떤 DB를 사용하는지 설정.
-  host: (process.env.DB_HOST as string) || "localhost",
-  port: Number(process.env.DB_PORT) || 5432,
-  username: (process.env.DB_USER as string) || "postgres",
-  password: "5334" || "postgres",
-  database: (process.env.DB_NAME as string) || "postgres",*/

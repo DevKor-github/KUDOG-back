@@ -1,9 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Notice, Scrap } from 'src/entities';
-import { Repository } from 'typeorm';
-import { NoticeListResponseDto } from './dtos/NoticeListResponse.dto';
+import { Between, In, Repository } from 'typeorm';
+import {
+  NoticeListResponseDto,
+  PagedNoticeListDto,
+} from './dtos/NoticeListResponse.dto';
 import { NoticeInfoResponseDto } from './dtos/NoticeInfoResponse.dto';
+import { NoticeFilterRequestDto } from './dtos/NoticeFilterRequest.dto';
 
 @Injectable()
 export class NoticeService {
@@ -14,42 +18,6 @@ export class NoticeService {
     private readonly scrapRepository: Repository<Scrap>,
   ) {}
 
-  /*
-  async getNoticesBySubscribedCategories(
-    userId: number,
-    page: number = 1,
-  ): Promise<PagedNoticeListDto> {
-    const subscribedCategories = await this.categoryPerUserRepository.find({
-      where: { user_id: userId },
-    });
-    const [notices, total] = await this.noticeRepository.findAndCount({
-      skip: (page - 1) * 10,
-      take: 10,
-      order: {
-        date: 'DESC',
-      },
-      where: {
-        category: {
-          id: In(subscribedCategories.map((category) => category.category_id)),
-        },
-      },
-    });
-    const dtos: NoticeListResponseDto[] = notices.map((notice) => {
-      return {
-        id: notice.id,
-        title: notice.title,
-        date: notice.date,
-        scrapped: false,
-      };
-    });
-    return {
-      notices: dtos,
-      page: page,
-      totalNotice: total,
-      totalPage: Math.ceil(total / 10),
-    };
-  }
-*/
   async getNoticesByTime(userId: number, page: number = 1) {
     const scraps = await this.scrapRepository.find({
       where: {
@@ -85,6 +53,62 @@ export class NoticeService {
     };
   }
 
+  async getNoticesByFilterOrderByDate(
+    userId: number,
+    filter: NoticeFilterRequestDto,
+    page: number = 1,
+  ): Promise<PagedNoticeListDto> {
+    const {
+      categories,
+      providers,
+      start_date = '2020-01-01',
+      end_date = '2040-01-01',
+    } = filter;
+    const categoryList = categories?.split(',') || [];
+    const providerList = providers?.split(',') || [];
+
+    const scraps = await this.scrapRepository.find({
+      where: {
+        scrapBox: {
+          user: { id: userId },
+        },
+      },
+      relations: ['notice'],
+    });
+
+    const [notices, total] = await this.noticeRepository.findAndCount({
+      where: {
+        date: Between(start_date, end_date),
+        category: {
+          mappedCategory: categoryList.length > 0 ? In(categoryList) : null,
+          provider: {
+            name: providerList.length > 0 ? In(providerList) : null,
+          },
+        },
+      },
+      skip: (page - 1) * 10,
+      take: 10,
+      order: {
+        date: 'DESC',
+      },
+    });
+
+    const dtos: NoticeListResponseDto[] = notices.map((notice) => {
+      const { id, title, date } = notice;
+      return {
+        id,
+        title,
+        date,
+        scrapped: scraps.some((scrap) => scrap.notice.id === id),
+      };
+    });
+    return {
+      notices: dtos,
+      page: page,
+      totalNotice: total,
+      totalPage: Math.ceil(total / 10),
+    };
+  }
   async getNoticesByCategoryIdOrderByDate(
     userId: number,
     categoryId: number,
