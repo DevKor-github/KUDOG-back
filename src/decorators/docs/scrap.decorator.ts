@@ -76,6 +76,10 @@ export function Docs(endPoint: ScrapEndPoints) {
           description: 'userId와 scrapBox 소유자의 id가 다릅니다.',
           type: DocumentedException,
         }),
+        ApiNotFoundResponse({
+          description: 'scrapBox Id에 해당하는 박스가 없습니다.',
+          type: DocumentedException,
+        }),
       );
     case 'getScrapBoxes':
       return applyDecorators(

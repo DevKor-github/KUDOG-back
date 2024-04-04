@@ -42,7 +42,8 @@ export class ScrapService {
       where: { id: scrapBoxId },
       relations: ['scraps', 'scraps.notice'],
     });
-
+    if (!scrapBox)
+      throw new NotFoundException('해당 ScrapBox가 존재하지 않습니다');
     if (scrapBox.userId !== userId)
       throw new ForbiddenException('권한이 없습니다');
     return ScrapBoxResponseWithNotices.entityToDto(scrapBox);
@@ -64,6 +65,7 @@ export class ScrapService {
   ): Promise<ScrapBoxResponseDto> {
     const scrapBox = await this.scrapBoxRepository.findOne({
       where: { id: scrapBoxId },
+      relations: ['scraps', 'scraps.notice'],
     });
     if (!scrapBox)
       throw new NotFoundException('해당 ScrapBox가 존재하지 않습니다');
