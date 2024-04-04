@@ -3,7 +3,6 @@ import {
   ApiBody,
   ApiCreatedResponse,
   ApiForbiddenResponse,
-  ApiInternalServerErrorResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
@@ -39,10 +38,6 @@ export function Docs(endPoint: ScrapEndPoints) {
           description:
             '스크랩박스가 성공적으로 생성되었습니다. 만들어진 박스 정보를 반환합니다.',
           type: ScrapBoxResponseDto,
-        }),
-        ApiInternalServerErrorResponse({
-          description: '서버 오류입니다.',
-          type: DocumentedException,
         }),
         ApiUnauthorizedResponse({
           description: 'token 만료 또는 잘못된 token',
