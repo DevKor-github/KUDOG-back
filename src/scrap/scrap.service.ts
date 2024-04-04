@@ -1,78 +1,89 @@
 import {
-  BadRequestException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ScrapBox, KudogUser } from 'src/entities';
+import { ScrapBox } from 'src/entities';
 import { Repository } from 'typeorm';
+import { ScrapBoxResponseDto } from './dtos/scrapBoxResponse.dto';
+import { ScrapBoxRequestDto } from './dtos/scrapBoxRequest.dto';
+import { ScrapBoxResponseWithNotices } from './dtos/scrapBoxResponseWithNotices.dto';
 
 @Injectable()
 export class ScrapService {
   constructor(
     @InjectRepository(ScrapBox)
     private readonly scrapBoxRepository: Repository<ScrapBox>,
-    @InjectRepository(KudogUser)
-    private readonly userRepository: Repository<KudogUser>,
   ) {}
 
-  async createScrapBox(userId: number, name: string) {
+  async createScrapBox(
+    userId: number,
+    dto: ScrapBoxRequestDto,
+  ): Promise<ScrapBoxResponseDto> {
     try {
-      const user = await this.userRepository.findOne({
-        where: { id: userId },
+      const scrapBox = await this.scrapBoxRepository.insert({
+        name: dto.name,
+        description: dto.description,
+        user: { id: userId },
       });
-      if (!user) throw new NotFoundException('해당 user가 존재하지 않습니다');
-      const existScrapBox = await this.scrapBoxRepository.findOne({
-        where: {
-          user: { id: userId },
-          name: name,
-        },
-      });
-      if (existScrapBox)
-        throw new BadRequestException('해당 이름의 scrapbox는 존재합니다');
-      const scrapBox = this.scrapBoxRepository.create({ user, name });
-      return await this.scrapBoxRepository.save(scrapBox);
+      return ScrapBoxResponseDto.entityToDto(scrapBox.raw[0]);
     } catch (err) {
-      throw new BadRequestException('ScrapBox 생성을 실패하였습니다');
-    }
-  }
-  async getScrapBoxes(userId: number) {
-    try {
-      const scrapBoxes = this.scrapBoxRepository.find({
-        where: { user: { id: userId } },
-      });
-      if (!scrapBoxes)
-        throw new NotFoundException('scrapBox가 존재하지 않습니다');
-
-      return scrapBoxes;
-    } catch (err) {
-      throw new BadRequestException('ScrapBox를 조회하는 것을 실패하였습니다');
+      throw new UnauthorizedException('token 만료 또는 잘못된 token');
     }
   }
 
-  async updateScrapBox(scrapBoxId: number, newName: string) {
-    try {
-      const scrapBox = await this.scrapBoxRepository.findOne({
-        where: { id: scrapBoxId },
-      });
-      if (!scrapBox)
-        throw new NotFoundException('해당 ScrapBox가 존재하지 않습니다');
+  async getScrapBoxInfo(
+    userId: number,
+    scrapBoxId: number,
+  ): Promise<ScrapBoxResponseWithNotices> {
+    const scrapBox = await this.scrapBoxRepository.findOne({
+      where: { id: scrapBoxId },
+      relations: ['scraps', 'scraps.notice'],
+    });
 
-      scrapBox.name = newName;
-      return this.scrapBoxRepository.save(scrapBox);
-    } catch (err) {
-      throw new BadRequestException('ScrapBox 업데이트를 실패하였습니다');
-    }
+    if (scrapBox.userId !== userId)
+      throw new ForbiddenException('권한이 없습니다');
+    return ScrapBoxResponseWithNotices.entityToDto(scrapBox);
   }
 
-  async deleteScrapBox(scrapBoxId: number) {
-    try {
-      const result = await this.scrapBoxRepository.delete(scrapBoxId);
-      if (result.affected === 0) {
-        throw new NotFoundException(`ScrapBox를 찾을 수 없습니다`);
-      }
-    } catch (err) {
-      throw new BadRequestException('지우는 것을 실패했습니다');
-    }
+  async getScrapBoxes(userId: number): Promise<ScrapBoxResponseDto[]> {
+    const scrapBoxes = await this.scrapBoxRepository.find({
+      where: { user: { id: userId } },
+    });
+    return scrapBoxes.map((scrapBox) => {
+      return ScrapBoxResponseDto.entityToDto(scrapBox);
+    });
+  }
+
+  async updateScrapBox(
+    scrapBoxId: number,
+    userId: number,
+    dto: ScrapBoxRequestDto,
+  ): Promise<ScrapBoxResponseDto> {
+    const scrapBox = await this.scrapBoxRepository.findOne({
+      where: { id: scrapBoxId },
+    });
+    if (!scrapBox)
+      throw new NotFoundException('해당 ScrapBox가 존재하지 않습니다');
+    if (scrapBox.userId !== userId)
+      throw new ForbiddenException('권한이 없습니다');
+    scrapBox.description = dto.description;
+    scrapBox.name = dto.name;
+
+    const saved = await this.scrapBoxRepository.save(scrapBox);
+    return ScrapBoxResponseDto.entityToDto(saved);
+  }
+
+  async deleteScrapBox(scrapBoxId: number, userId: number): Promise<void> {
+    const scrapBox = await this.scrapBoxRepository.findOne({
+      where: { id: scrapBoxId },
+    });
+    if (!scrapBox)
+      throw new NotFoundException('해당 ScrapBox가 존재하지 않습니다');
+    if (scrapBox.userId !== userId)
+      throw new ForbiddenException('권한이 없습니다');
+    await this.scrapBoxRepository.delete(scrapBoxId);
   }
 }
