@@ -32,8 +32,8 @@ export class ScrapController {
     return await this.scrapService.createScrapBox(user.id, body);
   }
 
-  @Get('/box/:scrapBoxId')
   @UseGuards(AuthGuard('jwt-access'))
+  @Get('/box/:scrapBoxId')
   @Docs('getScrapBoxInfo')
   async getScrapBoxInfo(
     @Param('scrapBoxId') scrapBoxId: number,
