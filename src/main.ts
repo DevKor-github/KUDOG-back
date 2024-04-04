@@ -1,8 +1,9 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { AllExceptionFilter } from './all.exception.filter';
+import { HttpExceptionFilter } from './filters/httpException.filter';
 import { ChannelService } from './channel/channel.service';
+import { InternalErrorFilter } from './filters/InternalError.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -16,9 +17,12 @@ async function bootstrap() {
   const docs = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('api', app, docs);
   const channelService = app.get<ChannelService>(ChannelService);
-  process.env.NODE_ENV === 'production' &&
-    (await channelService.sendMessageToKudog('Server Deployed'));
-  app.useGlobalFilters(new AllExceptionFilter(channelService));
+  app.useGlobalFilters(new HttpExceptionFilter());
+  if (process.env.NODE_ENV === 'production') {
+    await channelService.sendMessageToKudog('Server Deployed');
+    app.useGlobalFilters(new InternalErrorFilter(channelService));
+  }
+
   await app.listen(3050);
 }
 bootstrap();
