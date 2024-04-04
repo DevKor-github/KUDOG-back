@@ -15,7 +15,7 @@ export class ScrapBoxResponseDto extends ScrapBoxRequestDto {
   })
   noticeCount: number;
 
-  static entityToDto(entity: ScrapBox) {
+  static entityToDto(entity: ScrapBox): ScrapBoxResponseDto {
     return {
       noticeCount: entity.scraps ? entity.scraps.length : 0,
       id: entity.id,
