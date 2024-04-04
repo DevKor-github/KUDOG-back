@@ -5,6 +5,7 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  RelationId,
 } from 'typeorm';
 import { KudogUser, Scrap } from 'src/entities';
 
@@ -19,9 +20,16 @@ export class ScrapBox {
   @JoinColumn({ name: 'user_id' })
   user: KudogUser;
 
+  @RelationId((scrapBox: ScrapBox) => scrapBox.user)
+  @Column({ name: 'user_id' })
+  userId: number;
+
   @OneToMany(() => Scrap, (scrap) => scrap.scrapBox)
   scraps: Scrap[];
 
-  @Column()
+  @Column({ default: '나의 스크랩함' })
   name: string;
+
+  @Column({ default: '' })
+  description: string;
 }

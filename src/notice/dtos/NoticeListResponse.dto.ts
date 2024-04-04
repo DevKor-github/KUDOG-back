@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Notice } from 'src/entities';
 
 export class NoticeListResponseDto {
   @ApiProperty({ description: '공지사항 ID', example: 1 })
@@ -15,6 +16,15 @@ export class NoticeListResponseDto {
 
   @ApiProperty({ description: '공지사항 작성일', example: '2023-11-07' })
   date: string;
+
+  static entityToDto(entity: Notice, scrapped: boolean = false) {
+    return {
+      id: entity.id,
+      title: entity.title,
+      scrapped,
+      date: entity.date,
+    };
+  }
 }
 
 export class PagedNoticeListDto {
