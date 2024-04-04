@@ -3,7 +3,7 @@ import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { HttpExceptionFilter } from './filters/httpException.filter';
 import { ChannelService } from './channel/channel.service';
-import { InternalErrorFilter } from './filters/InternalError.filter';
+import { InternalErrorFilter } from './filters/internalError.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
