@@ -7,6 +7,7 @@ import { NoticeFilterRequestDto } from './dtos/NoticeFilterRequest.dto';
 import { Docs } from 'src/decorators/docs/notice.decorator';
 import { User } from 'src/decorators';
 import { JwtPayload } from 'src/interfaces/auth';
+import { NoticeInfoResponseDto } from './dtos/NoticeInfoResponse.dto';
 
 @Controller('notice')
 @ApiTags('notice')
@@ -14,17 +15,19 @@ export class NoticeController {
   constructor(private readonly noticeService: NoticeService) {}
 
   @UseGuards(AuthGuard('jwt-access'))
-  @Get('/list/filter')
-  @Docs('getNoticeListByFiltersOrderByDate')
-  async getNoticeListByFiltersOrderByDate(
+  @Get('/list')
+  @Docs('getNoticeList')
+  async getNoticeList(
     @Query() filter: NoticeFilterRequestDto,
     @Query('page') page: number,
     @User() user: JwtPayload,
+    @Query('keyword') keyword?: string,
   ): Promise<PagedNoticeListDto> {
-    return await this.noticeService.getNoticesByFilterOrderByDate(
+    return await this.noticeService.getNoticeList(
       user.id,
       filter,
       page,
+      keyword,
     );
   }
 
@@ -42,18 +45,10 @@ export class NoticeController {
   @UseGuards(AuthGuard('jwt-access'))
   @Get('/info/:id')
   @Docs('getNoticeInfoById')
-  async getNoticeInfoById(@Param('id') id: number) {
-    return await this.noticeService.getNoticeInfoById(id);
-  }
-
-  @UseGuards(AuthGuard('jwt-access'))
-  @Get('/list/search')
-  @Docs('searchNotice')
-  async searchNotice(
-    @Query('keyword') keyword: string,
-    @Query('page') page: number,
+  async getNoticeInfoById(
+    @Param('id') id: number,
     @User() user: JwtPayload,
-  ) {
-    return await this.noticeService.searchNotice(keyword, user.id, page);
+  ): Promise<NoticeInfoResponseDto> {
+    return await this.noticeService.getNoticeInfoById(id, user.id);
   }
 }

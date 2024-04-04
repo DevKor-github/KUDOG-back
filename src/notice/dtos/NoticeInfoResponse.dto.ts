@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Notice, ScrapBox } from 'src/entities';
 
 export class NoticeInfoResponseDto {
   @ApiProperty({ description: '공지사항 ID', example: 1 })
@@ -111,4 +112,44 @@ export class NoticeInfoResponseDto {
     examples: ['학부 공지사항, 장학 정보'],
   })
   category: string;
+
+  @ApiProperty({
+    description: '공지 사항이 포함된 스크랩박스들의 id',
+    example: [1, 2, 3],
+  })
+  scrapBoxId: number[];
+
+  @ApiProperty({
+    description: '전처리된 카테고리',
+    example: '장학정보',
+  })
+  mappedCategory: string;
+
+  static entityToDto(
+    entity: Notice,
+    scrapBoxes?: ScrapBox[],
+  ): NoticeInfoResponseDto {
+    const scrapBoxIds = scrapBoxes
+      ? scrapBoxes
+          .filter((scrapBox) =>
+            scrapBox.scraps.some((scrap) => scrap.noticeId === entity.id),
+          )
+          .map((scrapBox) => scrapBox.id)
+      : [];
+    return {
+      id: entity.id,
+      title: entity.title,
+      content: entity.content,
+      writer: entity.writer,
+      date: entity.date,
+      view: entity.view,
+      url: entity.url,
+      scrapped: scrapBoxIds.length > 0,
+      scrapCount: entity.scraps.length,
+      provider: entity.category.provider.name,
+      category: entity.category.name,
+      mappedCategory: entity.category.mappedCategory,
+      scrapBoxId: scrapBoxIds,
+    };
+  }
 }
