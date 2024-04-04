@@ -9,7 +9,7 @@ export class ScrapBoxResponseWithNotices extends ScrapBoxResponseDto {
   })
   notices: NoticeListResponseDto[];
 
-  static entityToDto(entity: ScrapBox) {
+  static entityToDto(entity: ScrapBox): ScrapBoxResponseWithNotices {
     return {
       ...super.entityToDto(entity),
       notices: entity.scraps.map((scrap) =>
