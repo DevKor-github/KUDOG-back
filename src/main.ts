@@ -16,6 +16,8 @@ async function bootstrap() {
   const docs = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('api', app, docs);
   const channelService = app.get<ChannelService>(ChannelService);
+  process.env.NODE_ENV === 'production' &&
+    (await channelService.sendMessageToKudog('Server Deployed'));
   app.useGlobalFilters(new AllExceptionFilter(channelService));
   await app.listen(3050);
 }
