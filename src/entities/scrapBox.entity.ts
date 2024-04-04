@@ -24,4 +24,7 @@ export class ScrapBox {
 
   @Column()
   name: string;
+
+  @Column()
+  description: string;
 }
