@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Put, Query, UseGuards } from '@nestjs/common';
 import { NoticeService } from './notice.service';
 import { ApiTags } from '@nestjs/swagger';
 import { PagedNoticeListDto } from './dtos/NoticeListResponse.dto';
@@ -26,6 +26,17 @@ export class NoticeController {
       filter,
       page,
     );
+  }
+
+  @UseGuards(AuthGuard('jwt-access'))
+  @Put('/:noticeId/scrap/:scrapBoxId')
+  @Docs('scrapNotice')
+  async scrapNotice(
+    @User() user: JwtPayload,
+    @Param('noticeId') noticeId: number,
+    @Param('scrapBoxId') scrapBoxId: number,
+  ): Promise<boolean> {
+    return await this.noticeService.scrapNotice(user.id, noticeId, scrapBoxId);
   }
 
   @UseGuards(AuthGuard('jwt-access'))

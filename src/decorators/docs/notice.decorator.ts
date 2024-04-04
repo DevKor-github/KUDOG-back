@@ -1,6 +1,8 @@
 import { applyDecorators } from '@nestjs/common';
 import {
+  ApiForbiddenResponse,
   ApiInternalServerErrorResponse,
+  ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
@@ -14,7 +16,8 @@ import { PagedNoticeListDto } from 'src/notice/dtos/NoticeListResponse.dto';
 type NoticeEndpoints =
   | 'getNoticeListByFiltersOrderByDate'
   | 'getNoticeInfoById'
-  | 'searchNotice';
+  | 'searchNotice'
+  | 'scrapNotice';
 
 export function Docs(endPoint: NoticeEndpoints) {
   switch (endPoint) {
@@ -131,6 +134,45 @@ export function Docs(endPoint: NoticeEndpoints) {
           required: true,
           example: '장학금',
           description: '검색 키워드',
+        }),
+      );
+    case 'scrapNotice':
+      return applyDecorators(
+        ApiOperation({
+          summary: '공지 스크랩',
+          description:
+            '공지사항을 스크랩합니다. 이미 스크랩되어있다면 취소합니다. 스크랩 시 true, 취소 시 false를 반환합니다. Authorization 헤더에 Bearer ${accessToken} 을 넣어주세요.',
+        }),
+        ApiParam({
+          name: 'noticeId',
+          type: Number,
+          description: 'notice id',
+          example: 1,
+          required: true,
+        }),
+        ApiParam({
+          name: 'scrapBoxId',
+          type: Number,
+          description: 'scrapBox id',
+          example: 1,
+          required: true,
+        }),
+        ApiOkResponse({
+          description:
+            '스크랩 성공 시 true, 스크랩 취소 시 false를 반환합니다.',
+          type: Boolean,
+        }),
+        ApiForbiddenResponse({
+          description: '스크랩함의 소유자가 아닙니다.',
+          type: DocumentedException,
+        }),
+        ApiNotFoundResponse({
+          description: '해당 id의 scrapBox가 존재하지 않습니다.',
+          type: DocumentedException,
+        }),
+        ApiNotFoundResponse({
+          description: '해당 id의 notice가 존재하지 않습니다.',
+          type: DocumentedException,
         }),
       );
   }

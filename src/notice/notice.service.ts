@@ -1,6 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Notice, Scrap } from 'src/entities';
+import { Notice, Scrap, ScrapBox } from 'src/entities';
 import { Between, In, Repository } from 'typeorm';
 import {
   NoticeListResponseDto,
@@ -16,6 +20,8 @@ export class NoticeService {
     private readonly noticeRepository: Repository<Notice>,
     @InjectRepository(Scrap)
     private readonly scrapRepository: Repository<Scrap>,
+    @InjectRepository(ScrapBox)
+    private readonly scrapBoxRepository: Repository<ScrapBox>,
   ) {}
 
   async getNoticesByFilterOrderByDate(
@@ -134,5 +140,41 @@ export class NoticeService {
       totalNotice: total,
       totalPage: Math.ceil(total / 10),
     };
+  }
+
+  async scrapNotice(
+    userId: number,
+    noticeId: number,
+    scrapBoxId: number,
+  ): Promise<boolean> {
+    const scrapBox = await this.scrapBoxRepository.findOne({
+      where: { id: scrapBoxId },
+    });
+    if (!scrapBox)
+      throw new NotFoundException('해당 id의 scrapBox가 존재하지 않습니다.');
+    if (scrapBox.userId !== userId)
+      throw new ForbiddenException('userId와 scrapBox 소유자의 id가 다릅니다.');
+
+    const scrap = await this.scrapRepository.findOne({
+      where: {
+        notice: { id: noticeId },
+        scrapBox: { id: scrapBoxId },
+      },
+      relations: ['scrapBox'],
+    });
+
+    if (scrap) {
+      await this.scrapRepository.remove(scrap);
+      return false;
+    }
+    try {
+      await this.scrapRepository.save({
+        notice: { id: noticeId },
+        scrapBox: { id: scrapBoxId },
+      });
+      return true;
+    } catch (err) {
+      throw new NotFoundException('해당 id의 notice가 존재하지 않습니다.');
+    }
   }
 }
