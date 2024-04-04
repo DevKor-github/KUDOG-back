@@ -27,9 +27,9 @@ export class ScrapBox {
   @OneToMany(() => Scrap, (scrap) => scrap.scrapBox)
   scraps: Scrap[];
 
-  @Column()
+  @Column({ default: '나의 스크랩함' })
   name: string;
 
-  @Column()
+  @Column({ default: '' })
   description: string;
 }
