@@ -16,7 +16,6 @@ export class UsersService {
   async getUserInfo(id: number) {
     const user = await this.userRepository.findOne({
       where: { id },
-      relations: ['mail'],
     });
     if (!user) throw new NotFoundException('존재하지 않는 유저입니다.');
 
@@ -29,7 +28,6 @@ export class UsersService {
   async modifyUserInfo(id: number, dto: modifyInfoRequestDto) {
     const user = await this.userRepository.findOne({
       where: { id },
-      relations: ['mail'],
     });
     if (!user) throw new NotFoundException('존재하지 않는 유저입니다.');
 
