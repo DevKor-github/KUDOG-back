@@ -26,6 +26,7 @@ import { ScrapModule } from './scrap/scrap.module';
       password: process.env.DB_PASSWORD || '5334',
       database: process.env.DB_DATABASE,
       autoLoadEntities: true,
+      logging: true,
     }),
     MailerModule.forRoot({
       transport: {
