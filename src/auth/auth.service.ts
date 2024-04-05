@@ -244,7 +244,7 @@ export class AuthService {
       where: { user },
     });
 
-    if (!entity.authenticated)
+    if (!entity || !entity.authenticated)
       throw new UnauthorizedException('인증 코드 인증이 완료되지 않았습니다.');
 
     if (entity.expireAt.getTime() + 1000 * 60 * 10 < new Date().getTime()) {
