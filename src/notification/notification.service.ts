@@ -8,12 +8,6 @@ import * as path from 'path';
 import { NotificationToken } from 'src/entities/notification-token.entity';
 import { NotificationCreateDto } from './dtos/NotificationCreate.dto';
 
-firebase.initializeApp({
-  credential: firebase.credential.cert(
-    path.join(__dirname, '..', '..', 'firebase-adminsdk.json'),
-  ),
-});
-
 @Injectable()
 export class NotificationService {
   constructor(
@@ -21,7 +15,13 @@ export class NotificationService {
     private readonly notificationsRepo: Repository<Notifications>,
     @InjectRepository(NotificationToken)
     private readonly notificationTokenRepo: Repository<NotificationToken>,
-  ) {}
+  ) {
+    firebase.initializeApp({
+      credential: firebase.credential.cert(
+        path.join(__dirname, '..', '..', 'firebase-adminsdk.json'),
+      ),
+    });
+  }
 
   //알림 조회
   getNotifications = async (userId: number): Promise<any> => {
@@ -42,13 +42,14 @@ export class NotificationService {
     user: any,
     title: string,
     body: string,
+    date: Date,
   ): Promise<void> => {
     try {
       // 알림 생성
       const newNotification = new NotificationCreateDto();
       newNotification.title = title;
       newNotification.body = body;
-      newNotification.status = 'ACTIVE';
+      newNotification.date = date;
       newNotification.createdBy = user.username;
 
       // 데이터베이스에 알림 저장
@@ -56,7 +57,7 @@ export class NotificationService {
 
       // 알림 토큰 조회 및 푸시 알림 보내기 -> 푸시 알람 만들어지면 삭제 가능
       const notificationToken = await this.notificationTokenRepo.findOne({
-        where: { user: { id: user.id }, status: 'ACTIVE' },
+        where: { user: { id: user.id } },
       });
       if (notificationToken) {
         await firebase
