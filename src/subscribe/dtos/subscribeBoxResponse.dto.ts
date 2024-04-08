@@ -27,11 +27,11 @@ export class SubscribeBoxResponseDto {
   })
   email: string;
 
-  @ApiProperty({ description: '구독된 학과', example: '정보대학' })
+  @ApiProperty({ description: '구독한 학과', example: '정보대학' })
   provider: string;
 
   @ApiProperty({
-    description: '구독된 카테고리 목록 (not mapped)',
+    description: '구독한 카테고리 목록 (not mapped)',
     example: '["학부 공지사항", "진로정보 - 인턴"]',
   })
   categories: string[];

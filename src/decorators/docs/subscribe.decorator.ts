@@ -149,18 +149,18 @@ export function Docs(endPoint: SubscribeEndPoint) {
           example: 1,
         }),
         ApiOkResponse({
-          description: '스크랩박스 삭제 성공',
+          description: '구독함 삭제 성공',
         }),
         ApiUnauthorizedResponse({
           description: 'token 만료 또는 잘못된 token',
           type: DocumentedException,
         }),
         ApiForbiddenResponse({
-          description: 'userId와 scrapBox 소유자의 id가 다릅니다.',
+          description: 'userId와 구독함 소유자의 id가 다릅니다.',
           type: DocumentedException,
         }),
         ApiNotFoundResponse({
-          description: 'scrapBox Id에 해당하는 박스가 없습니다.',
+          description: '구독함 Id에 해당하는 구독함이 없습니다.',
           type: DocumentedException,
         }),
       );
