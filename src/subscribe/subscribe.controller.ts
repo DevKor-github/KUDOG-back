@@ -68,7 +68,7 @@ export class SubscribeController {
   ): Promise<SubscribeBoxResponseDto> {
     return await this.subscribeService.updateSubscribeBox(
       subscribeBoxId,
-      1, //user.id,
+      user.id,
       body,
     );
   }

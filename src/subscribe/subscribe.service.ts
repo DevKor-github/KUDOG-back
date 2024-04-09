@@ -37,36 +37,34 @@ export class SubscribeService {
     userId: number,
     dto: SubscribeBoxRequestDto,
   ): Promise<SubscribeBoxResponseDto> {
-    const subscribeBox = await this.subscribeBoxRepository.insert({
-      name: dto.name,
-      mail: dto.email,
-      user: { id: userId },
-    });
+    try {
+      const subscribeBox = await this.subscribeBoxRepository.insert({
+        name: dto.name,
+        mail: dto.email,
+        user: { id: userId },
+      });
 
-    const categories = await this.categoryRepository.find({
-      where: { name: In(dto.categories), provider: { name: dto.provider } },
-    });
-    const subscriptions: CategoryPerSubscribeBoxEntity[] = [];
-    categories.forEach((category) => {
-      const subscription: CategoryPerSubscribeBoxEntity = {
-        subscribeBox: subscribeBox.raw[0],
-        box_id: subscribeBox.raw[0].id,
-        category_id: category.id,
-        category: category,
-      };
-      subscriptions.push(subscription);
-    });
-    await this.categoryPerSubscribeBoxRepository.save(subscriptions);
+      const categories = await this.categoryRepository.find({
+        where: { name: In(dto.categories), provider: { name: dto.provider } },
+      });
 
-    const box = await this.subscribeBoxRepository.findOne({
-      where: { id: subscribeBox.raw[0].id },
-      relations: [
-        'categories',
-        'categories.category',
-        'categories.category.provider',
-      ],
-    });
-    return SubscribeBoxResponseDto.entityToDto(box);
+      await this.categoryPerSubscribeBoxRepository.save(
+        categories.map((category) => ({
+          subscribeBox: subscribeBox.raw[0],
+          category: category,
+        })),
+      );
+
+      const box = await this.subscribeBoxRepository.findOne({
+        where: { id: subscribeBox.raw[0].id },
+        relations: [
+          'categories',
+          'categories.category',
+          'categories.category.provider',
+        ],
+      });
+      return SubscribeBoxResponseDto.entityToDto(box);
+    } catch (err) {}
   }
 
   async getSubscribeBoxes(userId: number): Promise<SubscribeBoxResponseDto[]> {
@@ -78,9 +76,9 @@ export class SubscribeService {
         'categories.category.provider',
       ],
     });
-    return subscribeBoxes.map((subscribeBox) => {
-      return SubscribeBoxResponseDto.entityToDto(subscribeBox);
-    });
+    return subscribeBoxes.map((subscribeBox) =>
+      SubscribeBoxResponseDto.entityToDto(subscribeBox),
+    );
   }
 
   async getSubscribeBoxInfo(
@@ -115,10 +113,12 @@ export class SubscribeService {
       },
       relations: ['scraps'],
     });
+
     if (!subscribeBox)
       throw new NotFoundException('해당 구독함이 존재하지 않습니다');
     if (subscribeBox.user.id !== userId)
       throw new ForbiddenException('권한이 없습니다');
+
     return SubscribeBoxResponseDtoWithNotices.toDto(
       subscribeBox,
       notices,
@@ -140,49 +140,43 @@ export class SubscribeService {
     if (subscribeBox.user.id !== userId)
       throw new ForbiddenException('권한이 없습니다');
 
+    //구독함 정보 수정
     subscribeBox.mail = dto.email;
     subscribeBox.name = dto.name;
-
     await this.subscribeBoxRepository.save(subscribeBox);
 
-    const categories = await this.categoryRepository.find({
+    //구독한 카테고리 수정
+    const newCategories = await this.categoryRepository.find({
       where: { name: In(dto.categories), provider: { name: dto.provider } },
     });
 
+    //기존 카테고리 삭제
     const categoriesToDelete: CategoryPerSubscribeBoxEntity[] =
-      subscribeBox.categories.filter((category) => {
-        return !categories.some((c) => c.id === category.category_id);
-      });
-    if (categoriesToDelete.length > 0) {
-      await Promise.all(
-        categoriesToDelete.map(
-          async (category) =>
-            await this.categoryPerSubscribeBoxRepository.delete({
-              category_id: category.category_id,
-              box_id: subscribeBoxId,
-            }),
-        ),
+      subscribeBox.categories.filter(
+        (category) => !newCategories.some((c) => c.id === category.category_id),
       );
-    }
+    await Promise.all(
+      categoriesToDelete.map((category) =>
+        this.categoryPerSubscribeBoxRepository.delete({
+          category_id: category.category_id,
+          box_id: subscribeBoxId,
+        }),
+      ),
+    );
 
-    const categoriesToAdd: Category[] = categories.filter((category) => {
-      return !subscribeBox.categories.some(
-        (c) => c.category_id === category.id,
-      );
-    });
-
-    const subscriptions: CategoryPerSubscribeBoxEntity[] = [];
-    categoriesToAdd.forEach((category) => {
-      const subscription: CategoryPerSubscribeBoxEntity = {
-        subscribeBox: subscribeBox,
-        box_id: subscribeBox.id,
-        category_id: category.id,
+    //새로운 카테고리 추가
+    const categoriesToAdd: Category[] = newCategories.filter(
+      (category) =>
+        !subscribeBox.categories.some((c) => c.category_id === category.id),
+    );
+    await this.categoryPerSubscribeBoxRepository.save(
+      categoriesToAdd.map((category) => ({
+        subscribeBox: { id: subscribeBox.id },
         category: category,
-      };
-      subscriptions.push(subscription);
-    });
+      })),
+    );
 
-    await this.categoryPerSubscribeBoxRepository.save(subscriptions);
+    //바뀐 구독함 조회
     const box = await this.subscribeBoxRepository.findOne({
       where: { id: subscribeBox.id },
       relations: [
