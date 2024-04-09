@@ -14,6 +14,7 @@ import { ProviderModule } from './provider/provider.module';
 import { ChannelModule } from './channel/channel.module';
 import { UsersModule } from './users/users.module';
 import { ScrapModule } from './scrap/scrap.module';
+import { PushModule } from './push/push.module';
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { ScrapModule } from './scrap/scrap.module';
     ChannelModule,
     UsersModule,
     ScrapModule,
+    PushModule,
   ],
   controllers: [AppController],
   providers: [AppService],

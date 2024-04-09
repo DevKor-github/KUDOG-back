@@ -1,6 +1,6 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { ScrapBox, SubscribeBox } from 'src/entities';
-
+import { FcmToken } from './fcmtoken.entity';
 @Entity()
 export class KudogUser {
   @PrimaryGeneratedColumn()
@@ -23,4 +23,6 @@ export class KudogUser {
 
   @Column()
   name: string;
+  @OneToMany(() => FcmToken, (fcmToken) => fcmToken.user)
+  fcmTokens: FcmToken[];
 }
