@@ -10,7 +10,7 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { DocumentedException } from 'src/interfaces/docsException';
-import { NotificationCreateDto } from 'src/notification/dtos/NotificationCreate.dto';
+import { NotificationInfoResponseDto } from 'src/notification/dtos/noticiationInfoResponse.dto';
 
 type NotificationEndPoints = 'getNotifications' | 'sendNotification';
 
@@ -30,7 +30,7 @@ export function Docs(endPoint: NotificationEndPoints) {
         }),
         ApiOkResponse({
           description: '알림 조회 성공',
-          type: NotificationCreateDto, // 응답으로 반환되는 데이터 형식에 맞게 수정 필요
+          type: NotificationInfoResponseDto, // 응답으로 반환되는 데이터 형식에 맞게 수정 필요
         }),
         ApiUnauthorizedResponse({
           description: '인증되지 않은 사용자 요청',
@@ -44,7 +44,7 @@ export function Docs(endPoint: NotificationEndPoints) {
         }),
         ApiBody({
           description: '알림 내용',
-          type: NotificationCreateDto, // 요청으로 받는 데이터 형식에 맞게 수정 필요
+          type: NotificationInfoResponseDto, // 요청으로 받는 데이터 형식에 맞게 수정 필요
         }),
         ApiCreatedResponse({
           description: '알림 전송 및 저장 성공',

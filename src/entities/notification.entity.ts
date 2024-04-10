@@ -5,6 +5,7 @@ import {
   JoinColumn,
   ManyToOne,
   CreateDateColumn,
+  RelationId,
 } from 'typeorm';
 import { KudogUser } from 'src/entities';
 
@@ -19,14 +20,17 @@ export class Notifications {
   @JoinColumn({ name: 'user_id' })
   user: KudogUser;
 
+  @RelationId((notification: Notifications) => notification.user)
+  userId: number;
+
   @Column()
   title: string;
 
-  @Column({ type: 'longtext', nullable: true })
+  @Column()
   body: string;
 
-  @CreateDateColumn({ name: 'created_date', type: 'timestamp' })
-  date: Date;
+  @CreateDateColumn()
+  createdAt: Date;
 
   @Column({ default: false })
   isRead: boolean;

@@ -1,79 +1,60 @@
-//- [ ]  알림 조회 alc  알림 생성 (DB 저장) → 다희
 import { Injectable } from '@nestjs/common';
+import { NotificationInfoResponseDto } from './dtos/noticiationInfoResponse.dto';
+import { PageResponse } from 'src/interfaces/pageResponse';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Notifications } from 'src/entities/notification.entity';
-import { Repository } from 'typeorm';
+import { NotificationToken, Notifications } from 'src/entities';
 import * as firebase from 'firebase-admin';
 import * as path from 'path';
-import { NotificationToken } from 'src/entities/notification-token.entity';
-import { NotificationCreateDto } from './dtos/NotificationCreate.dto';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class NotificationService {
   constructor(
-    @InjectRepository(Notifications)
-    private readonly notificationsRepo: Repository<Notifications>,
     @InjectRepository(NotificationToken)
-    private readonly notificationTokenRepo: Repository<NotificationToken>,
+    private readonly notificationTokenRepository: Repository<NotificationToken>,
+    @InjectRepository(Notifications)
+    private readonly notificationsRepository: Repository<Notifications>,
   ) {
+    const firebase_key = {
+      type: process.env.FCM_TYPE,
+      projectId: process.env.FCM_PROJECT_ID,
+      privateKeyId: process.env.FCM_PRIVATE_KEY_ID,
+      privateKey: process.env.FCM_PRIVATE_KEY.replace(/\\n/g, '\n'),
+      clientEmail: process.env.FCM_CLIENT_EMAIL,
+      clientId: process.env.FCM_CLIENT_ID,
+      authUri: process.env.FCM_AUTH_URI,
+      tokenUri: process.env.FCM_TOKEN_URI,
+      authProviderX509CertUrl: process.env.FCM_AUTH_CERT_URL,
+      clientX509CertUrl: process.env.FCM_CLIENT_CERT_URL,
+    };
+
     firebase.initializeApp({
-      credential: firebase.credential.cert(
-        path.join(__dirname, '..', '..', 'firebase-adminsdk.json'),
-      ),
+      credential: firebase.credential.cert(firebase_key),
     });
   }
 
-  //알림 조회
-  getNotifications = async (userId: number): Promise<any> => {
-    try {
-      // 현재 사용자의 ID를 조건으로 데이터베이스(notificationsRepo)에서 알림 조회
-      const notifications = await this.notificationsRepo.find({
-        where: { created_By: userId },
-      });
-      return notifications;
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  };
+  async getNotifications(
+    userId: number,
+  ): Promise<PageResponse<NotificationInfoResponseDto>> {
+    return null;
+  }
+  async getNewNotifications(
+    userId: number,
+  ): Promise<PageResponse<NotificationInfoResponseDto>> {
+    return null;
+  }
 
-  //알림 생성 및 DB 저장
-  sendNotification = async (
-    user: any,
+  async sendNotification(
+    userIds: number[],
     title: string,
     body: string,
-    date: Date,
-  ): Promise<void> => {
-    try {
-      // 알림 생성
-      const newNotification = new NotificationCreateDto();
-      newNotification.title = title;
-      newNotification.body = body;
-      newNotification.date = date;
-      newNotification.createdBy = user.username;
+  ): Promise<void> {}
 
-      // 데이터베이스에 알림 저장
-      const notification = await this.notificationsRepo.save(newNotification);
+  async registerToken(userId: number, token: string): Promise<void> {}
 
-      // 알림 토큰 조회 및 푸시 알림 보내기 -> 푸시 알람 만들어지면 삭제 가능
-      const notificationToken = await this.notificationTokenRepo.findOne({
-        where: { user: { id: user.id } },
-      });
-      if (notificationToken) {
-        await firebase
-          .messaging()
-          .send({
-            notification: { title, body },
-            token: notificationToken.notification_token,
-            android: { priority: 'high' },
-          })
-          .catch((error: any) => {
-            console.error(error);
-          });
-      }
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  };
+  async deleteToken(userId: number, token: string): Promise<void> {}
+
+  async getTokenStatus(userId: number, token: string): Promise<boolean> {
+    return null;
+  }
 }

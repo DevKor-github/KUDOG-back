@@ -1,22 +1,28 @@
-//사용자에게 푸시 알림을 보낼 때 사용되는 고유한 식별 token
-import { KudogUser } from 'src/entities/KudogUser.entity';
+import { KudogUser } from 'src/entities';
 import {
   Entity,
   Column,
-  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  RelationId,
 } from 'typeorm';
 
-@Entity({ name: 'notification_tokens' })
+@Entity()
 export class NotificationToken {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
-  @ManyToOne(() => KudogUser)
+  @ManyToOne(() => KudogUser, (user) => user.notificationTokens, {
+    onDelete: 'CASCADE',
+  })
   user: KudogUser;
+
+  @RelationId((notificationToken: NotificationToken) => notificationToken.user)
+  userId: number;
 
   @Column()
   notification_token: string;
+
+  @Column({ default: true })
+  is_active: boolean;
 }

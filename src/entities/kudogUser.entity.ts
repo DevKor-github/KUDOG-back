@@ -1,5 +1,10 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { ScrapBox, SubscribeBox, Notifications } from 'src/entities';
+import {
+  ScrapBox,
+  SubscribeBox,
+  Notifications,
+  NotificationToken,
+} from 'src/entities';
 
 @Entity()
 export class KudogUser {
@@ -14,6 +19,12 @@ export class KudogUser {
 
   @OneToMany(() => Notifications, (notification) => notification.user)
   notifications: Notification[];
+
+  @OneToMany(
+    () => NotificationToken,
+    (notificationToken) => notificationToken.user,
+  )
+  notificationTokens: NotificationToken[];
 
   @Column()
   email: string;
