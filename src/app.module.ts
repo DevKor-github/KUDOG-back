@@ -15,6 +15,7 @@ import { ChannelModule } from './channel/channel.module';
 import { UsersModule } from './users/users.module';
 import { ScrapModule } from './scrap/scrap.module';
 import { NotificationModule } from './notification/notification.module';
+import { SubscribeModule } from './subscribe/subscribe.module';
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { NotificationModule } from './notification/notification.module';
     UsersModule,
     ScrapModule,
     NotificationModule,
+    SubscribeModule,
   ],
   controllers: [AppController],
   providers: [AppService],

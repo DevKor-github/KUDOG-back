@@ -6,6 +6,8 @@ import { ChannelService } from './channel/channel.service';
 import { InternalErrorFilter } from './filters/internalError.filter';
 import { ExceptionFilter } from '@nestjs/common';
 
+import 'pinpoint-node-agent';
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
