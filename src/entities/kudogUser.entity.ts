@@ -1,6 +1,5 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { ScrapBox, SubscribeBox } from 'src/entities';
-import { Notifications } from 'src/entities/notification.entity';
+import { ScrapBox, SubscribeBox, Notifications } from 'src/entities';
 
 @Entity()
 export class KudogUser {

@@ -18,13 +18,5 @@ export class NotificationToken {
   user: KudogUser;
 
   @Column()
-  device_type: string;
-
-  @Column()
   notification_token: string;
-
-  @Column({
-    default: 'ACTIVE',
-  })
-  status: string;
 }
