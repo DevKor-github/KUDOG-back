@@ -2,7 +2,6 @@ import {
   ForbiddenException,
   Injectable,
   NotFoundException,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { SubscribeBoxRequestDto } from './dtos/subscribeBoxRequest.dto';
 import { SubscribeBoxResponseDto } from './dtos/subscribeBoxResponse.dto';
@@ -16,7 +15,6 @@ import {
   SubscribeBox,
 } from 'src/entities';
 import { SubscribeBoxResponseDtoWithNotices } from './dtos/subscribeBoxResponseWithNotices.dto';
-import { NoticeListResponseDto } from 'src/notice/dtos/NoticeListResponse.dto';
 
 @Injectable()
 export class SubscribeService {
