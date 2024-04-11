@@ -17,7 +17,7 @@ import { NotificationInfoResponseDto } from './dtos/noticiationInfoResponse.dto'
 import { PageResponse } from 'src/interfaces/pageResponse';
 import { TokenRequestDto } from './dtos/tokenRequest.dto';
 import { PageQuery } from 'src/interfaces/pageQuery';
-import { UsePage } from 'src/decorators/usePage.decorator';
+import { UsePagination } from 'src/decorators/usePagination.decorator';
 
 @Controller('notifications')
 @ApiTags('notifications')
@@ -29,7 +29,7 @@ export class NotificationController {
   @Docs('getNotifications')
   async getNotifications(
     @User() user: JwtPayload,
-    @UsePage() pageQuery: PageQuery,
+    @UsePagination() pageQuery: PageQuery,
   ): Promise<PageResponse<NotificationInfoResponseDto>> {
     return await this.notificationService.getNotifications(user.id, pageQuery);
   }
@@ -39,7 +39,7 @@ export class NotificationController {
   @Docs('getNewNotifications')
   async getNewNotifications(
     @User() user: JwtPayload,
-    @UsePage() pageQuery: PageQuery,
+    @UsePagination() pageQuery: PageQuery,
   ): Promise<PageResponse<NotificationInfoResponseDto>> {
     return await this.notificationService.getNewNotifications(
       user.id,

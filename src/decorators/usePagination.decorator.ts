@@ -6,7 +6,7 @@ import {
 import { Request } from 'express';
 import { PageQuery } from 'src/interfaces/pageQuery';
 
-export const UsePage = createParamDecorator(
+export const UsePagination = createParamDecorator(
   (_: unknown, cts: ExecutionContext): PageQuery => {
     const request: Request = cts.switchToHttp().getRequest();
     if (
