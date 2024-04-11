@@ -15,7 +15,7 @@ export class NotificationService {
     @InjectRepository(Notifications)
     private readonly notificationsRepository: Repository<Notifications>,
   ) {
-    const firebase_key = {
+    const firebaseKey = {
       type: process.env.FCM_TYPE,
       projectId: process.env.FCM_PROJECT_ID,
       privateKeyId: process.env.FCM_PRIVATE_KEY_ID,
@@ -29,7 +29,7 @@ export class NotificationService {
     };
 
     firebase.initializeApp({
-      credential: firebase.credential.cert(firebase_key),
+      credential: firebase.credential.cert(firebaseKey),
     });
   }
 
@@ -63,7 +63,7 @@ export class NotificationService {
   ): Promise<PageResponse<NotificationInfoResponseDto>> {
     const [records, total] = await this.notificationsRepository.findAndCount({
       where: {
-        userId: userId,
+        userId,
         isRead: false,
       },
       order: {
@@ -94,9 +94,9 @@ export class NotificationService {
     body: string,
   ): Promise<void> {
     const tokens = await this.notificationTokenRepository.find({
-      where: { userId: In(userIds), is_active: true },
+      where: { userId: In(userIds), isActive: true },
     });
-    const tokenList = tokens.map((token) => token.notification_token);
+    const tokenList = tokens.map((token) => token.token);
 
     const responses = await firebase.messaging().sendEachForMulticast({
       notification: {
@@ -111,12 +111,14 @@ export class NotificationService {
           if (response.success) return;
           if (response.error.code === 'messaging/invalid-registration-token') {
             return this.deleteToken(userIds[index], tokenList[index]);
-          } else if (
+          }
+          if (
             response.error.code ===
             'messaging/registration-token-not-registered'
           ) {
             return this.deleteToken(userIds[index], tokenList[index]);
-          } else if ((response.error.code = 'messaging/server-unavailable')) {
+          }
+          if (response.error.code === 'messaging/server-unavailable') {
             try {
               return firebase.messaging().send({
                 notification: {
@@ -128,9 +130,8 @@ export class NotificationService {
             } catch (err) {
               throw new InternalServerErrorException(err);
             }
-          } else {
-            throw new InternalServerErrorException(response.error);
           }
+          throw new InternalServerErrorException(response.error);
         }),
       );
     }
@@ -139,20 +140,20 @@ export class NotificationService {
   async registerToken(userId: number, token: string): Promise<void> {
     await this.notificationTokenRepository.insert({
       userId: userId,
-      notification_token: token,
+      token: token,
     });
   }
 
   async deleteToken(userId: number, token: string): Promise<void> {
     await this.notificationTokenRepository.update(
-      { userId: userId, notification_token: token },
-      { is_active: false },
+      { userId: userId, token: token },
+      { isActive: false },
     );
   }
 
   async getTokenStatus(userId: number, token: string): Promise<boolean> {
     const tokenInfo = await this.notificationTokenRepository.findOne({
-      where: { userId, notification_token: token, is_active: true },
+      where: { userId, token: token, isActive: true },
     });
     return !!tokenInfo;
   }

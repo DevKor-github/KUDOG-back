@@ -21,8 +21,8 @@ export class NotificationToken {
   userId: number;
 
   @Column()
-  notification_token: string;
+  token: string;
 
   @Column({ default: true })
-  is_active: boolean;
+  isActive: boolean;
 }
