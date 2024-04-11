@@ -14,8 +14,8 @@ export const UsePagination = createParamDecorator(
       typeof request.query.pageSize !== 'string'
     )
       throw new NotAcceptableException('Invalid page query');
-    const page = parseInt(request.query.page);
-    const pageSize = parseInt(request.query.pageSize);
+    const page = parseInt(request.query.page, 10);
+    const pageSize = parseInt(request.query.pageSize, 10);
 
     if (isNaN(page) || isNaN(pageSize) || page < 1 || pageSize < 1)
       throw new NotAcceptableException('Invalid page query');
