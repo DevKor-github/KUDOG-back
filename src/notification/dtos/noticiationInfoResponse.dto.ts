@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Notifications } from 'src/entities';
 
 export class NotificationInfoResponseDto {
   @ApiProperty({
@@ -17,8 +18,15 @@ export class NotificationInfoResponseDto {
     description: 'notification의 생성 Date, ISO String',
     example: '2024-04-10T09:21:19.132Z',
   })
-  date: Date;
+  date: string;
 
   @ApiProperty({ description: '새로운 알림인지 여부', example: true })
   isNew: boolean;
+
+  constructor(entity: Notifications) {
+    this.title = entity.title;
+    this.body = entity.body;
+    this.date = entity.createdAt.toISOString();
+    this.isNew = !entity.isRead;
+  }
 }

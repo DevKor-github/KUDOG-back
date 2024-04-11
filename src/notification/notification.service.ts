@@ -1,11 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { In, Repository } from 'typeorm';
+import * as firebase from 'firebase-admin';
 import { NotificationInfoResponseDto } from './dtos/noticiationInfoResponse.dto';
 import { PageResponse } from 'src/interfaces/pageResponse';
-import { InjectRepository } from '@nestjs/typeorm';
 import { NotificationToken, Notifications } from 'src/entities';
-import * as firebase from 'firebase-admin';
-import * as path from 'path';
-import { Repository } from 'typeorm';
+import { PageQuery } from 'src/interfaces/pageQuery';
 
 @Injectable()
 export class NotificationService {
@@ -35,26 +35,125 @@ export class NotificationService {
 
   async getNotifications(
     userId: number,
+    pageQuery: PageQuery,
   ): Promise<PageResponse<NotificationInfoResponseDto>> {
-    return null;
+    const [records, total] = await this.notificationsRepository.findAndCount({
+      where: {
+        userId: userId,
+      },
+      order: {
+        createdAt: 'DESC',
+      },
+      skip: (pageQuery.page - 1) * pageQuery.pageSize,
+      take: pageQuery.pageSize,
+    });
+    const dtos = records.map(
+      (record) => new NotificationInfoResponseDto(record),
+    );
+    return new PageResponse<NotificationInfoResponseDto>(
+      dtos,
+      total,
+      pageQuery.page,
+      pageQuery.pageSize,
+    );
   }
   async getNewNotifications(
     userId: number,
+    pageQuery: PageQuery,
   ): Promise<PageResponse<NotificationInfoResponseDto>> {
-    return null;
+    const [records, total] = await this.notificationsRepository.findAndCount({
+      where: {
+        userId: userId,
+        isRead: false,
+      },
+      order: {
+        createdAt: 'DESC',
+      },
+      skip: (pageQuery.page - 1) * pageQuery.pageSize,
+      take: pageQuery.pageSize,
+    });
+    const dtos = records.map(
+      (record) => new NotificationInfoResponseDto(record),
+    );
+
+    this.notificationsRepository.save(
+      records.map((record) => ({ isRead: true, ...record })),
+    );
+
+    return new PageResponse<NotificationInfoResponseDto>(
+      dtos,
+      total,
+      pageQuery.page,
+      pageQuery.pageSize,
+    );
   }
 
   async sendNotification(
     userIds: number[],
     title: string,
     body: string,
-  ): Promise<void> {}
+  ): Promise<void> {
+    const tokens = await this.notificationTokenRepository.find({
+      where: { userId: In(userIds), is_active: true },
+    });
+    const tokenList = tokens.map((token) => token.notification_token);
 
-  async registerToken(userId: number, token: string): Promise<void> {}
+    const responses = await firebase.messaging().sendEachForMulticast({
+      notification: {
+        title,
+        body,
+      },
+      tokens: tokenList,
+    });
+    if (responses.failureCount > 0) {
+      Promise.all(
+        responses.responses.map((response, index) => {
+          if (response.success) return;
+          if (response.error.code === 'messaging/invalid-registration-token') {
+            return this.deleteToken(userIds[index], tokenList[index]);
+          } else if (
+            response.error.code ===
+            'messaging/registration-token-not-registered'
+          ) {
+            return this.deleteToken(userIds[index], tokenList[index]);
+          } else if ((response.error.code = 'messaging/server-unavailable')) {
+            try {
+              return firebase.messaging().send({
+                notification: {
+                  title,
+                  body,
+                },
+                token: tokenList[index],
+              });
+            } catch (err) {
+              throw new InternalServerErrorException(err);
+            }
+          } else {
+            throw new InternalServerErrorException(response.error);
+          }
+        }),
+      );
+    }
+  }
 
-  async deleteToken(userId: number, token: string): Promise<void> {}
+  async registerToken(userId: number, token: string): Promise<void> {
+    await this.notificationTokenRepository.insert({
+      userId: userId,
+      notification_token: token,
+    });
+  }
+
+  async deleteToken(userId: number, token: string): Promise<void> {
+    await this.notificationTokenRepository.update(
+      { userId: userId, notification_token: token },
+      { is_active: false },
+    );
+  }
 
   async getTokenStatus(userId: number, token: string): Promise<boolean> {
-    return null;
+    const tokenInfo = await this.notificationTokenRepository.findOne({
+      where: { userId, notification_token: token, is_active: true },
+    });
+    return !!tokenInfo;
   }
 }

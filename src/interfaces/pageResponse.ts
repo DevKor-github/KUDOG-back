@@ -14,8 +14,8 @@ export class PageResponse<T> {
 
   constructor(
     records: T[],
-    page: number,
     totalRecords: number,
+    page: number,
     pageSize: number,
   ) {
     this.records = records;
