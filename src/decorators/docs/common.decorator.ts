@@ -2,7 +2,7 @@ import { applyDecorators } from '@nestjs/common';
 import { ApiNotAcceptableResponse, ApiQuery } from '@nestjs/swagger';
 import { DocumentedException } from 'src/interfaces/docsException';
 
-export function ApiPage() {
+export function ApiPagiation() {
   return applyDecorators(
     ApiQuery({
       name: 'page',

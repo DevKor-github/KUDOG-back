@@ -12,6 +12,7 @@ import { DocumentedException } from 'src/interfaces/docsException';
 import { PageResponse } from 'src/interfaces/pageResponse';
 import { NotificationInfoResponseDto } from 'src/notification/dtos/noticiationInfoResponse.dto';
 import { TokenRequestDto } from 'src/notification/dtos/tokenRequest.dto';
+import { ApiPagiation } from './common.decorator';
 
 type NotificationEndPoints =
   | 'getNotifications'
@@ -29,20 +30,7 @@ export function Docs(endPoint: NotificationEndPoints) {
           description:
             '유저에게 지금까지 전송된 알림 내역을 제공합니다. Authorization : Bearer ${JWT}, 페이지네이션 가능합니다.',
         }),
-        ApiQuery({
-          name: 'page',
-          type: Number,
-          required: false,
-          example: 1,
-          description: '1 for default',
-        }),
-        ApiQuery({
-          name: 'pageSize',
-          type: Number,
-          required: false,
-          example: 10,
-          description: '10 for default',
-        }),
+        ApiPagiation(),
         ApiOkResponse({
           type: PageResponse<NotificationInfoResponseDto>,
         }),
@@ -63,20 +51,7 @@ export function Docs(endPoint: NotificationEndPoints) {
           description:
             '유저에게 새롭게 전송된 알림 내역을 제공합니다. 메인화면에 구독함 새로 올라갔어요! 알림에 쓰면 될듯해요 Authorization : Bearer ${JWT}, 페이지네이션 가능합니다.',
         }),
-        ApiQuery({
-          name: 'page',
-          type: Number,
-          required: false,
-          example: 1,
-          description: '1 for default',
-        }),
-        ApiQuery({
-          name: 'pageSize',
-          type: Number,
-          required: false,
-          example: 10,
-          description: '10 for default',
-        }),
+        ApiPagiation(),
         ApiOkResponse({
           type: PageResponse<NotificationInfoResponseDto>,
         }),
