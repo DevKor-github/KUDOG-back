@@ -4,12 +4,22 @@ import {
   SubscribeBox,
   Notifications,
   NotificationToken,
+  RefreshToken,
 } from 'src/entities';
 
 @Entity()
 export class KudogUser {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @Column()
+  email: string;
+
+  @Column()
+  passwordHash: string;
+
+  @Column()
+  name: string;
 
   @OneToMany(() => ScrapBox, (scrapBox) => scrapBox.user)
   scrapBoxes: ScrapBox[];
@@ -26,15 +36,6 @@ export class KudogUser {
   )
   notificationTokens: NotificationToken[];
 
-  @Column()
-  email: string;
-
-  @Column()
-  passwordHash: string;
-
-  @Column({ nullable: true })
-  refreshToken: string;
-
-  @Column()
-  name: string;
+  @OneToMany(() => RefreshToken, (refreshToken) => refreshToken.user)
+  refreshTokens: RefreshToken[];
 }

@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { KudogUser } from 'src/entities';
 import { Repository } from 'typeorm';
-import { modifyInfoRequestDto } from './dtos/userInfo.dto';
+import { ModifyInfoRequestDto, UserInfoResponseDto } from './dtos/userInfo.dto';
 import { hash } from 'bcrypt';
 
 @Injectable()
@@ -13,19 +13,16 @@ export class UsersService {
   ) {}
   saltOrRounds = 10;
 
-  async getUserInfo(id: number) {
+  async getUserInfo(id: number): Promise<UserInfoResponseDto> {
     const user = await this.userRepository.findOne({
       where: { id },
     });
     if (!user) throw new NotFoundException('존재하지 않는 유저입니다.');
 
-    return {
-      name: user.name,
-      email: user.email,
-    };
+    return new UserInfoResponseDto(user);
   }
 
-  async modifyUserInfo(id: number, dto: modifyInfoRequestDto) {
+  async modifyUserInfo(id: number, dto: ModifyInfoRequestDto): Promise<void> {
     const user = await this.userRepository.findOne({
       where: { id },
     });
