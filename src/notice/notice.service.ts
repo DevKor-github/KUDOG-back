@@ -11,6 +11,8 @@ import { NoticeInfoResponseDto } from './dtos/NoticeInfoResponse.dto';
 import { NoticeFilterRequestDto } from './dtos/NoticeFilterRequest.dto';
 import { PageResponse } from 'src/interfaces/pageResponse';
 import { PageQuery } from 'src/interfaces/pageQuery';
+import { ChannelService } from 'src/channel/channel.service';
+import { AddRequestRequestDto } from './dtos/AddRequestRequest.dto';
 
 @Injectable()
 export class NoticeService {
@@ -21,7 +23,12 @@ export class NoticeService {
     private readonly scrapRepository: Repository<ScrapEntity>,
     @InjectRepository(ScrapBoxEntity)
     private readonly scrapBoxRepository: Repository<ScrapBoxEntity>,
+    private readonly channelService: ChannelService,
   ) {}
+
+  async addNoticeRequest(body: AddRequestRequestDto): Promise<void> {
+    await this.channelService.sendMessageToKudog(body.message);
+  }
 
   async getNoticeList(
     userId: number,

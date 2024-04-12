@@ -1,4 +1,13 @@
-import { Controller, Get, Param, Put, Query, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { NoticeService } from './notice.service';
 import { ApiTags } from '@nestjs/swagger';
 import { NoticeListResponseDto } from './dtos/NoticeListResponse.dto';
@@ -11,6 +20,7 @@ import { NoticeInfoResponseDto } from './dtos/NoticeInfoResponse.dto';
 import { UsePagination } from 'src/decorators';
 import { PageQuery } from 'src/interfaces/pageQuery';
 import { PageResponse } from 'src/interfaces/pageResponse';
+import { AddRequestRequestDto } from './dtos/AddRequestRequest.dto';
 
 @Controller('notice')
 @ApiTags('notice')
@@ -53,5 +63,15 @@ export class NoticeController {
     @InjectAccessUser() user: JwtPayload,
   ): Promise<NoticeInfoResponseDto> {
     return await this.noticeService.getNoticeInfoById(id, user.id);
+  }
+
+  @UseGuards(AuthGuard('jwt-access'))
+  @Post('/add-request')
+  @Docs('addNoticeRequest')
+  async addNoticeRequest(
+    @InjectAccessUser() user: JwtPayload,
+    @Body() body: AddRequestRequestDto,
+  ): Promise<void> {
+    return await this.noticeService.addNoticeRequest(body);
   }
 }

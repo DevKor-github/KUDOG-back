@@ -1,5 +1,7 @@
 import { applyDecorators } from '@nestjs/common';
 import {
+  ApiBody,
+  ApiCreatedResponse,
   ApiForbiddenResponse,
   ApiInternalServerErrorResponse,
   ApiNotFoundResponse,
@@ -13,8 +15,13 @@ import { DocumentedException } from 'src/interfaces/docsException';
 import { NoticeInfoResponseDto } from 'src/notice/dtos/NoticeInfoResponse.dto';
 import { ApiPagination } from './common.decorator';
 import { NoticeListResponseDto } from 'src/notice/dtos/NoticeListResponse.dto';
+import { AddRequestRequestDto } from 'src/notice/dtos/AddRequestRequest.dto';
 
-type NoticeEndpoints = 'getNoticeList' | 'getNoticeInfoById' | 'scrapNotice';
+type NoticeEndpoints =
+  | 'getNoticeList'
+  | 'getNoticeInfoById'
+  | 'scrapNotice'
+  | 'addNoticeRequest';
 
 export function Docs(endPoint: NoticeEndpoints) {
   switch (endPoint) {
@@ -136,6 +143,17 @@ export function Docs(endPoint: NoticeEndpoints) {
             '해당 id의 scrapBox가 존재하지 않습니다. | 해당 id의 notice가 존재하지 않습니다.',
           type: DocumentedException,
         }),
+      );
+    case 'addNoticeRequest':
+      return applyDecorators(
+        ApiOperation({
+          description: '공지사항 추가 요청, access token 보내주세요',
+          summary: '공지사항 추가 요청',
+        }),
+        ApiBody({
+          type: AddRequestRequestDto,
+        }),
+        ApiCreatedResponse({ description: 'OK' }),
       );
   }
 }
