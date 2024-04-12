@@ -12,7 +12,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { ScrapService } from './scrap.service';
 import { ScrapBoxRequestDto } from './dtos/scrapBoxRequest.dto';
-import { User } from 'src/decorators';
+import { InjectAccessUser } from 'src/decorators';
 import { JwtPayload } from 'src/interfaces/auth';
 import { ScrapBoxResponseDto } from './dtos/scrapBoxResponse.dto';
 import { Docs } from 'src/decorators/docs/scrap.decorator';
@@ -30,7 +30,7 @@ export class ScrapController {
   @Docs('createScrapBox')
   async createScrapBox(
     @Body() body: ScrapBoxRequestDto,
-    @User() user: JwtPayload,
+    @InjectAccessUser() user: JwtPayload,
   ): Promise<ScrapBoxResponseDto> {
     return await this.scrapService.createScrapBox(user.id, body);
   }
@@ -40,7 +40,7 @@ export class ScrapController {
   @Docs('getScrapBoxInfo')
   async getScrapBoxInfo(
     @Param('scrapBoxId') scrapBoxId: number,
-    @User() user: JwtPayload,
+    @InjectAccessUser() user: JwtPayload,
   ): Promise<ScrapBoxResponseWithNotices> {
     return await this.scrapService.getScrapBoxInfo(user.id, scrapBoxId);
   }
@@ -49,7 +49,7 @@ export class ScrapController {
   @Get('/box')
   @Docs('getScrapBoxes')
   async getScrapBoxes(
-    @User() user: JwtPayload,
+    @InjectAccessUser() user: JwtPayload,
     @UsePagination() pageQuery: PageQuery,
   ): Promise<PageResponse<ScrapBoxResponseDto>> {
     return await this.scrapService.getScrapBoxes(user.id, pageQuery);
@@ -60,7 +60,7 @@ export class ScrapController {
   @Docs('updateScrapBox')
   async updateScrapBox(
     @Param('scrapBoxId') scrapBoxId: number,
-    @User() user: JwtPayload,
+    @InjectAccessUser() user: JwtPayload,
     @Body() body: ScrapBoxRequestDto,
   ): Promise<ScrapBoxResponseDto> {
     return await this.scrapService.updateScrapBox(scrapBoxId, user.id, body);
@@ -71,7 +71,7 @@ export class ScrapController {
   @Docs('deleteScrapBox')
   async deleteScrapBox(
     @Param('scrapBoxId') scrapBoxId: number,
-    @User() user: JwtPayload,
+    @InjectAccessUser() user: JwtPayload,
   ): Promise<void> {
     return await this.scrapService.deleteScrapBox(scrapBoxId, user.id);
   }

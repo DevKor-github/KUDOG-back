@@ -5,7 +5,7 @@ import { NoticeListResponseDto } from './dtos/NoticeListResponse.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { NoticeFilterRequestDto } from './dtos/NoticeFilterRequest.dto';
 import { Docs } from 'src/decorators/docs/notice.decorator';
-import { User } from 'src/decorators';
+import { InjectAccessUser } from 'src/decorators';
 import { JwtPayload } from 'src/interfaces/auth';
 import { NoticeInfoResponseDto } from './dtos/NoticeInfoResponse.dto';
 import { UsePagination } from 'src/decorators';
@@ -21,7 +21,7 @@ export class NoticeController {
   @Get('/list')
   @Docs('getNoticeList')
   async getNoticeList(
-    @User() user: JwtPayload,
+    @InjectAccessUser() user: JwtPayload,
     @UsePagination() pageQuery: PageQuery,
     @Query() filter: NoticeFilterRequestDto,
     @Query('keyword') keyword?: string,
@@ -38,7 +38,7 @@ export class NoticeController {
   @Put('/:noticeId/scrap/:scrapBoxId')
   @Docs('scrapNotice')
   async scrapNotice(
-    @User() user: JwtPayload,
+    @InjectAccessUser() user: JwtPayload,
     @Param('noticeId') noticeId: number,
     @Param('scrapBoxId') scrapBoxId: number,
   ): Promise<boolean> {
@@ -50,7 +50,7 @@ export class NoticeController {
   @Docs('getNoticeInfoById')
   async getNoticeInfoById(
     @Param('id') id: number,
-    @User() user: JwtPayload,
+    @InjectAccessUser() user: JwtPayload,
   ): Promise<NoticeInfoResponseDto> {
     return await this.noticeService.getNoticeInfoById(id, user.id);
   }

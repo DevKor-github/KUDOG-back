@@ -4,7 +4,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { ApiTags } from '@nestjs/swagger';
 import { ModifyInfoRequestDto, UserInfoResponseDto } from './dtos/userInfo.dto';
 import { Docs } from 'src/decorators/docs/user.decorator';
-import { User } from 'src/decorators';
+import { InjectAccessUser } from 'src/decorators';
 import { JwtPayload } from 'src/interfaces/auth';
 
 @Controller('users')
@@ -15,7 +15,9 @@ export class UsersController {
   @UseGuards(AuthGuard('jwt-access'))
   @Get('/info')
   @Docs('getUserInfo')
-  async getUserInfo(@User() user: JwtPayload): Promise<UserInfoResponseDto> {
+  async getUserInfo(
+    @InjectAccessUser() user: JwtPayload,
+  ): Promise<UserInfoResponseDto> {
     return await this.userService.getUserInfo(user.id);
   }
 
@@ -23,7 +25,7 @@ export class UsersController {
   @Put('/info')
   @Docs('modifyUserInfo')
   async modifyUserInfo(
-    @User() user: JwtPayload,
+    @InjectAccessUser() user: JwtPayload,
     @Body() body: ModifyInfoRequestDto,
   ): Promise<void> {
     return await this.userService.modifyUserInfo(user.id, body);
