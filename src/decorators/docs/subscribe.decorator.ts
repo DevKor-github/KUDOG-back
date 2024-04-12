@@ -91,7 +91,7 @@ export function Docs(endPoint: SubscribeEndPoint) {
           description:
             '사용자의 구독함 목록을 조회합니다. Authorization 헤더에 Bearer ${accessToken} 을 넣어주세요.',
         }),
-        ApiPagination,
+        ApiPagination(),
         ApiOkResponse({
           description: '사용자의 구독함 목록',
           type: [SubscribeBoxResponseDto],
