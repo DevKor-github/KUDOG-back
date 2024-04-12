@@ -7,18 +7,18 @@ import {
   RelationId,
 } from 'typeorm';
 import { Notice } from 'src/entities';
-import { ScrapBox } from './scrapBox.entity';
+import { ScrapBoxEntity } from './scrapBox.entity';
 
-@Entity()
-export class Scrap {
+@Entity('scrap')
+export class ScrapEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => ScrapBox, (scrapBox) => scrapBox.scraps, {
+  @ManyToOne(() => ScrapBoxEntity, (scrapBox) => scrapBox.scraps, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'scrap_box_id' })
-  scrapBox: ScrapBox;
+  scrapBox: ScrapBoxEntity;
 
   @ManyToOne(() => Notice, (notice) => notice.scraps, {
     onDelete: 'CASCADE',
@@ -26,7 +26,7 @@ export class Scrap {
   @JoinColumn({ name: 'notice_id' })
   notice: Notice;
 
-  @RelationId((scrap: Scrap) => scrap.notice)
+  @RelationId((scrap: ScrapEntity) => scrap.notice)
   @Column({ name: 'notice_id' })
   noticeId: number;
 }

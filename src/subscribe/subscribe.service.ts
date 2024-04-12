@@ -8,11 +8,11 @@ import { SubscribeBoxResponseDto } from './dtos/subscribeBoxResponse.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import {
-  Category,
+  CategoryEntity,
   CategoryPerSubscribeBoxEntity,
   Notice,
-  ScrapBox,
-  SubscribeBox,
+  ScrapBoxEntity,
+  SubscribeBoxEntity,
 } from 'src/entities';
 import { SubscribeBoxResponseDtoWithNotices } from './dtos/subscribeBoxResponseWithNotices.dto';
 import { PageResponse } from 'src/interfaces/pageResponse';
@@ -21,14 +21,14 @@ import { PageQuery } from 'src/interfaces/pageQuery';
 @Injectable()
 export class SubscribeService {
   constructor(
-    @InjectRepository(SubscribeBox)
-    private readonly subscribeBoxRepository: Repository<SubscribeBox>,
-    @InjectRepository(Category)
-    private readonly categoryRepository: Repository<Category>,
+    @InjectRepository(SubscribeBoxEntity)
+    private readonly subscribeBoxRepository: Repository<SubscribeBoxEntity>,
+    @InjectRepository(CategoryEntity)
+    private readonly categoryRepository: Repository<CategoryEntity>,
     @InjectRepository(Notice)
     private readonly noticeRepository: Repository<Notice>,
-    @InjectRepository(ScrapBox)
-    private readonly scrapBoxRepository: Repository<ScrapBox>,
+    @InjectRepository(ScrapBoxEntity)
+    private readonly scrapBoxRepository: Repository<ScrapBoxEntity>,
     @InjectRepository(CategoryPerSubscribeBoxEntity)
     private readonly categoryPerSubscribeBoxRepository: Repository<CategoryPerSubscribeBoxEntity>,
   ) {}
@@ -103,9 +103,7 @@ export class SubscribeService {
       where: {
         date: date,
         category: In(
-          subscribeBox.categories.map((category) => {
-            return category.category_id;
-          }),
+          subscribeBox.categories.map((category) => category.categoryId),
         ),
       },
       relations: ['category.provider'],
@@ -158,21 +156,21 @@ export class SubscribeService {
     //기존 카테고리 삭제
     const categoriesToDelete: CategoryPerSubscribeBoxEntity[] =
       subscribeBox.categories.filter(
-        (category) => !newCategories.some((c) => c.id === category.category_id),
+        (category) => !newCategories.some((c) => c.id === category.categoryId),
       );
     await Promise.all(
       categoriesToDelete.map((category) =>
         this.categoryPerSubscribeBoxRepository.delete({
-          category_id: category.category_id,
-          box_id: subscribeBoxId,
+          categoryId: category.categoryId,
+          boxId: subscribeBoxId,
         }),
       ),
     );
 
     //새로운 카테고리 추가
-    const categoriesToAdd: Category[] = newCategories.filter(
+    const categoriesToAdd: CategoryEntity[] = newCategories.filter(
       (category) =>
-        !subscribeBox.categories.some((c) => c.category_id === category.id),
+        !subscribeBox.categories.some((c) => c.categoryId === category.id),
     );
     await this.categoryPerSubscribeBoxRepository.save(
       categoriesToAdd.map((category) => ({

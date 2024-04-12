@@ -9,8 +9,8 @@ import {
 } from 'typeorm';
 import { KudogUser } from 'src/entities';
 
-@Entity({ name: 'notifications' })
-export class Notifications {
+@Entity('notification')
+export class NotificationEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -20,7 +20,7 @@ export class Notifications {
   @JoinColumn({ name: 'user_id' })
   user: KudogUser;
 
-  @RelationId((notification: Notifications) => notification.user)
+  @RelationId((notification: NotificationEntity) => notification.user)
   userId: number;
 
   @Column()

@@ -1,13 +1,13 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import {
-  ScrapBox,
-  SubscribeBox,
-  Notifications,
-  NotificationToken,
-  RefreshToken,
+  ScrapBoxEntity,
+  SubscribeBoxEntity,
+  NotificationEntity,
+  NotificationTokenEntity,
+  RefreshTokenEntity,
 } from 'src/entities';
 
-@Entity()
+@Entity('kudog_user')
 export class KudogUser {
   @PrimaryGeneratedColumn()
   id: number;
@@ -21,21 +21,21 @@ export class KudogUser {
   @Column()
   name: string;
 
-  @OneToMany(() => ScrapBox, (scrapBox) => scrapBox.user)
-  scrapBoxes: ScrapBox[];
+  @OneToMany(() => ScrapBoxEntity, (scrapBox) => scrapBox.user)
+  scrapBoxes: ScrapBoxEntity[];
 
-  @OneToMany(() => SubscribeBox, (subscribeBox) => subscribeBox.user)
-  subscribeBoxes: SubscribeBox[];
+  @OneToMany(() => SubscribeBoxEntity, (subscribeBox) => subscribeBox.user)
+  subscribeBoxes: SubscribeBoxEntity[];
 
-  @OneToMany(() => Notifications, (notification) => notification.user)
+  @OneToMany(() => NotificationEntity, (notification) => notification.user)
   notifications: Notification[];
 
   @OneToMany(
-    () => NotificationToken,
+    () => NotificationTokenEntity,
     (notificationToken) => notificationToken.user,
   )
-  notificationTokens: NotificationToken[];
+  notificationTokens: NotificationTokenEntity[];
 
-  @OneToMany(() => RefreshToken, (refreshToken) => refreshToken.user)
-  refreshTokens: RefreshToken[];
+  @OneToMany(() => RefreshTokenEntity, (refreshToken) => refreshToken.user)
+  refreshTokens: RefreshTokenEntity[];
 }

@@ -7,8 +7,8 @@ import {
   RelationId,
 } from 'typeorm';
 
-@Entity()
-export class NotificationToken {
+@Entity('notification_token')
+export class NotificationTokenEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -17,7 +17,9 @@ export class NotificationToken {
   })
   user: KudogUser;
 
-  @RelationId((notificationToken: NotificationToken) => notificationToken.user)
+  @RelationId(
+    (notificationToken: NotificationTokenEntity) => notificationToken.user,
+  )
   userId: number;
 
   @Column()

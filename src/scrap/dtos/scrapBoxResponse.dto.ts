@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { ScrapBoxRequestDto } from './scrapBoxRequest.dto';
-import { ScrapBox } from 'src/entities';
+import { ScrapBoxEntity } from 'src/entities';
 
 export class ScrapBoxResponseDto extends ScrapBoxRequestDto {
   @ApiProperty({
@@ -15,7 +15,7 @@ export class ScrapBoxResponseDto extends ScrapBoxRequestDto {
   })
   noticeCount: number;
 
-  constructor(entity: ScrapBox) {
+  constructor(entity: ScrapBoxEntity) {
     super();
     this.noticeCount = entity.scraps ? entity.scraps.length : 0;
     this.id = entity.id;

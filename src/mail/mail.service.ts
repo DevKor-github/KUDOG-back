@@ -10,7 +10,7 @@ import {
   EmailAuthenticationEntity,
   KudogUser,
   Notice,
-  SubscribeBox,
+  SubscribeBoxEntity,
 } from 'src/entities';
 import { In, Repository } from 'typeorm';
 import { MailerService } from '@nestjs-modules/mailer';
@@ -24,8 +24,8 @@ export class MailService {
     private readonly emailAuthenticationRepository: Repository<EmailAuthenticationEntity>,
     @InjectRepository(KudogUser)
     private readonly kudogUserRepository: Repository<KudogUser>,
-    @InjectRepository(SubscribeBox)
-    private readonly subscribeBoxRepository: Repository<SubscribeBox>,
+    @InjectRepository(SubscribeBoxEntity)
+    private readonly subscribeBoxRepository: Repository<SubscribeBoxEntity>,
     @InjectRepository(Notice)
     private readonly noticeRepository: Repository<Notice>,
   ) {}
@@ -117,7 +117,7 @@ export class MailService {
         const notices = await this.noticeRepository.find({
           where: {
             category: {
-              id: In(box.categories.map((category) => category.category_id)),
+              id: In(box.categories.map((category) => category.categoryId)),
             },
             date: new Date().toISOString().slice(0, 10),
           },

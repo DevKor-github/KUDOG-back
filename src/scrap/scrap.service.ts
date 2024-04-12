@@ -5,7 +5,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ScrapBox } from 'src/entities';
+import { ScrapBoxEntity } from 'src/entities';
 import { Repository } from 'typeorm';
 import { ScrapBoxResponseDto } from './dtos/scrapBoxResponse.dto';
 import { ScrapBoxRequestDto } from './dtos/scrapBoxRequest.dto';
@@ -16,8 +16,8 @@ import { PageQuery } from 'src/interfaces/pageQuery';
 @Injectable()
 export class ScrapService {
   constructor(
-    @InjectRepository(ScrapBox)
-    private readonly scrapBoxRepository: Repository<ScrapBox>,
+    @InjectRepository(ScrapBoxEntity)
+    private readonly scrapBoxRepository: Repository<ScrapBoxEntity>,
   ) {}
 
   async createScrapBox(

@@ -7,7 +7,7 @@ import {
   EmailAuthenticationEntity,
   KudogUser,
   Notice,
-  SubscribeBox,
+  SubscribeBoxEntity,
 } from 'src/entities';
 
 @Module({
@@ -15,7 +15,7 @@ import {
     TypeOrmModule.forFeature([
       EmailAuthenticationEntity,
       KudogUser,
-      SubscribeBox,
+      SubscribeBoxEntity,
       Notice,
     ]),
     MailerModule,

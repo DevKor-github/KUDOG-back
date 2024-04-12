@@ -6,9 +6,9 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Category, Scrap } from 'src/entities';
+import { CategoryEntity, ScrapEntity } from 'src/entities';
 
-@Entity()
+@Entity('notice')
 export class Notice {
   @PrimaryGeneratedColumn()
   id: number;
@@ -28,11 +28,11 @@ export class Notice {
   @Column()
   url: string;
 
-  @ManyToOne(() => Category, (category) => category.notices)
-  category: Category;
+  @ManyToOne(() => CategoryEntity, (category) => category.notices)
+  category: CategoryEntity;
 
-  @OneToMany(() => Scrap, (scrap) => scrap.notice)
-  scraps: Scrap[];
+  @OneToMany(() => ScrapEntity, (scrap) => scrap.notice)
+  scraps: ScrapEntity[];
 
   @Column({ default: 0 })
   view: number;

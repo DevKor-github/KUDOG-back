@@ -1,6 +1,6 @@
 import { NoticeListResponseDto } from 'src/notice/dtos/NoticeListResponse.dto';
 import { ApiProperty } from '@nestjs/swagger';
-import { Notice, ScrapBox, SubscribeBox } from 'src/entities';
+import { Notice, ScrapBoxEntity, SubscribeBoxEntity } from 'src/entities';
 import { SubscribeBoxResponseDto } from './subscribeBoxResponse.dto';
 
 export class SubscribeBoxResponseDtoWithNotices extends SubscribeBoxResponseDto {
@@ -9,7 +9,11 @@ export class SubscribeBoxResponseDtoWithNotices extends SubscribeBoxResponseDto 
   })
   notices: NoticeListResponseDto[];
 
-  constructor(entity: SubscribeBox, notices: Notice[], scrapBoxes: ScrapBox[]) {
+  constructor(
+    entity: SubscribeBoxEntity,
+    notices: Notice[],
+    scrapBoxes: ScrapBoxEntity[],
+  ) {
     super(entity);
     this.notices = notices.map(
       (notice) => new NoticeListResponseDto(notice, scrapBoxes),

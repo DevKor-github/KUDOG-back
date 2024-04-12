@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { SubscribeService } from './subscribe.service';
 import {
-  Category,
+  CategoryEntity,
   CategoryPerSubscribeBoxEntity,
   Notice,
-  ScrapBox,
-  SubscribeBox,
+  ScrapBoxEntity,
+  SubscribeBoxEntity,
 } from 'src/entities';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SubscribeController } from './subscribe.controller';
@@ -16,10 +16,10 @@ import { SubscribeController } from './subscribe.controller';
 
   imports: [
     TypeOrmModule.forFeature([
-      SubscribeBox,
-      Category,
+      SubscribeBoxEntity,
+      CategoryEntity,
       Notice,
-      ScrapBox,
+      ScrapBoxEntity,
       CategoryPerSubscribeBoxEntity,
     ]),
   ],

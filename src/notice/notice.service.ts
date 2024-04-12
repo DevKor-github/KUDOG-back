@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Notice, Scrap, ScrapBox } from 'src/entities';
+import { Notice, ScrapEntity, ScrapBoxEntity } from 'src/entities';
 import { Repository } from 'typeorm';
 import { NoticeListResponseDto } from './dtos/NoticeListResponse.dto';
 import { NoticeInfoResponseDto } from './dtos/NoticeInfoResponse.dto';
@@ -17,10 +17,10 @@ export class NoticeService {
   constructor(
     @InjectRepository(Notice)
     private readonly noticeRepository: Repository<Notice>,
-    @InjectRepository(Scrap)
-    private readonly scrapRepository: Repository<Scrap>,
-    @InjectRepository(ScrapBox)
-    private readonly scrapBoxRepository: Repository<ScrapBox>,
+    @InjectRepository(ScrapEntity)
+    private readonly scrapRepository: Repository<ScrapEntity>,
+    @InjectRepository(ScrapBoxEntity)
+    private readonly scrapBoxRepository: Repository<ScrapBoxEntity>,
   ) {}
 
   async getNoticeList(

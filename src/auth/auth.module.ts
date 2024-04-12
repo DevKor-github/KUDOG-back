@@ -4,7 +4,7 @@ import {
   KudogUser,
   ChangePwdAuthenticationEntity,
   EmailAuthenticationEntity,
-  RefreshToken,
+  RefreshTokenEntity,
 } from 'src/entities';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
@@ -21,7 +21,7 @@ import { ChannelModule } from 'src/channel/channel.module';
       KudogUser,
       ChangePwdAuthenticationEntity,
       EmailAuthenticationEntity,
-      RefreshToken,
+      RefreshTokenEntity,
     ]),
     MailerModule,
     JwtModule.register({}),

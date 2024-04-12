@@ -5,5 +5,6 @@ export interface NoticeMetadata {
 
 export interface NotiByCategory {
   category: string;
+  categoryId: number;
   notices: NoticeMetadata[];
 }

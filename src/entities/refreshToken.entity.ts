@@ -7,8 +7,8 @@ import {
   RelationId,
 } from 'typeorm';
 
-@Entity()
-export class RefreshToken {
+@Entity('refresh_token')
+export class RefreshTokenEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -17,7 +17,7 @@ export class RefreshToken {
   })
   user: KudogUser;
 
-  @RelationId((refreshToken: RefreshToken) => refreshToken.user)
+  @RelationId((refreshToken: RefreshTokenEntity) => refreshToken.user)
   userId: number;
 
   @Column()

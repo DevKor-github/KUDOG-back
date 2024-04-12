@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { SubscribeBox } from 'src/entities';
+import { SubscribeBoxEntity } from 'src/entities';
 
 export class SubscribeBoxResponseDto {
   @ApiProperty({
@@ -35,7 +35,7 @@ export class SubscribeBoxResponseDto {
   })
   sendTime: string;
 
-  constructor(entity: SubscribeBox) {
+  constructor(entity: SubscribeBoxEntity) {
     this.id = entity.id;
     this.name = entity.name;
     this.email = entity.mail;

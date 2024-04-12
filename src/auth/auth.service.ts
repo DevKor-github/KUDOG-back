@@ -13,7 +13,7 @@ import {
   KudogUser,
   ChangePwdAuthenticationEntity,
   EmailAuthenticationEntity,
-  RefreshToken,
+  RefreshTokenEntity,
 } from 'src/entities';
 import { Repository } from 'typeorm';
 import { SignupRequestDto } from './dtos/signupRequest.dto';
@@ -36,8 +36,8 @@ export class AuthService {
     private readonly changePwdAuthRepository: Repository<ChangePwdAuthenticationEntity>,
     @InjectRepository(EmailAuthenticationEntity)
     private readonly emailAuthenticationRepository: Repository<EmailAuthenticationEntity>,
-    @InjectRepository(RefreshToken)
-    private readonly refreshTokenRepository: Repository<RefreshToken>,
+    @InjectRepository(RefreshTokenEntity)
+    private readonly refreshTokenRepository: Repository<RefreshTokenEntity>,
     private jwtService: JwtService,
     private readonly mailerService: MailerService,
     private readonly channelService: ChannelService,

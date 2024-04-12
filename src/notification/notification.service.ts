@@ -4,16 +4,23 @@ import { In, Repository } from 'typeorm';
 import * as firebase from 'firebase-admin';
 import { NotificationInfoResponseDto } from './dtos/noticiationInfoResponse.dto';
 import { PageResponse } from 'src/interfaces/pageResponse';
-import { NotificationToken, Notifications } from 'src/entities';
+import {
+  CategoryPerSubscribeBoxEntity,
+  NotificationTokenEntity,
+  NotificationEntity,
+} from 'src/entities';
 import { PageQuery } from 'src/interfaces/pageQuery';
+import { NotiByCategory } from 'src/channel/dtos/notification.dto';
 
 @Injectable()
 export class NotificationService {
   constructor(
-    @InjectRepository(NotificationToken)
-    private readonly notificationTokenRepository: Repository<NotificationToken>,
-    @InjectRepository(Notifications)
-    private readonly notificationsRepository: Repository<Notifications>,
+    @InjectRepository(NotificationTokenEntity)
+    private readonly notificationTokenRepository: Repository<NotificationTokenEntity>,
+    @InjectRepository(NotificationEntity)
+    private readonly notificationsRepository: Repository<NotificationEntity>,
+    @InjectRepository(CategoryPerSubscribeBoxEntity)
+    private readonly categoryMNRepository: Repository<CategoryPerSubscribeBoxEntity>,
   ) {
     const firebaseKey = {
       type: process.env.FCM_TYPE,
@@ -31,6 +38,22 @@ export class NotificationService {
     firebase.initializeApp({
       credential: firebase.credential.cert(firebaseKey),
     });
+  }
+
+  async sendPushOnNewNotices(noticeInfos: NotiByCategory[]) {
+    Promise.all(
+      noticeInfos.map(async (noticeInfo) => {
+        const entities = await this.categoryMNRepository.find({
+          where: { categoryId: noticeInfo.categoryId },
+          relations: ['subscribeBox'],
+        });
+        const userIds = entities.map((entity) => entity.subscribeBox.user.id);
+        noticeInfo.notices.map(async (notice) => {
+          const messageTitle = `${noticeInfo.category}에 새로운 공지사항이 등록되었습니다.`;
+          this.sendNotification(userIds, messageTitle, notice.title);
+        });
+      }),
+    );
   }
 
   async getNotifications(
@@ -95,7 +118,14 @@ export class NotificationService {
       where: { userId: In(userIds), isActive: true },
     });
     const tokenList = tokens.map((token) => token.token);
-
+    const newEntities = userIds.map((userId) =>
+      this.notificationsRepository.create({
+        userId,
+        title,
+        body,
+      }),
+    );
+    await this.notificationsRepository.save(newEntities);
     const responses = await firebase.messaging().sendEachForMulticast({
       notification: {
         title,

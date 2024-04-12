@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Notice, ScrapBox } from 'src/entities';
+import { Notice, ScrapBoxEntity } from 'src/entities';
 
 export class NoticeListResponseDto {
   @ApiProperty({ description: '공지사항 ID', example: 1 })
@@ -32,7 +32,7 @@ export class NoticeListResponseDto {
   })
   scrapBoxId: number[];
 
-  constructor(entity: Notice, scrapBoxes: ScrapBox[] = []) {
+  constructor(entity: Notice, scrapBoxes: ScrapBoxEntity[] = []) {
     const scrapBoxIds = scrapBoxes
       .filter((scrapBox) =>
         scrapBox.scraps.some((scrap) => scrap.noticeId === entity.id),

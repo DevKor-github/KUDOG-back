@@ -9,8 +9,8 @@ import {
 import { KudogUser } from 'src/entities';
 import { CategoryPerSubscribeBoxEntity } from './categoryPerSubscribes.entity';
 
-@Entity()
-export class SubscribeBox {
+@Entity('subscribe_box')
+export class SubscribeBoxEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
