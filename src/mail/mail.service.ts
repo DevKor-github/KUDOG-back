@@ -30,7 +30,7 @@ export class MailService {
     private readonly noticeRepository: Repository<Notice>,
   ) {}
 
-  async sendMail(to: string, subject: string, html: string) {
+  async sendMail(to: string, subject: string, html: string): Promise<void> {
     await this.mailerService.sendMail({
       from: process.env.MAIL_USER,
       to: to,
@@ -39,7 +39,7 @@ export class MailService {
     });
   }
 
-  async sendVerificationCode(to: string) {
+  async sendVerificationCode(to: string): Promise<void> {
     const existingUser = await this.kudogUserRepository.findOne({
       where: { email: to },
     });
@@ -81,7 +81,7 @@ export class MailService {
     await this.emailAuthenticationRepository.save(entity);
   }
 
-  async checkVerificationCode(email: string, code: string) {
+  async checkVerificationCode(email: string, code: string): Promise<void> {
     const existingUser = await this.kudogUserRepository.findOne({
       where: { email: email },
     });
@@ -107,7 +107,7 @@ export class MailService {
     throw new BadRequestException('인증 코드가 일치하지 않습니다.');
   }
   @Cron(CronExpression.EVERY_DAY_AT_6PM, { timeZone: 'Asia/Seoul' })
-  async sendMailBySubBox() {
+  async sendMailBySubBox(): Promise<void> {
     const subscribeBoxes = await this.subscribeBoxRepository.find({
       relations: ['categories'],
     });
