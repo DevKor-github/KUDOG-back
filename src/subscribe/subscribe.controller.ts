@@ -14,10 +14,13 @@ import { AuthGuard } from '@nestjs/passport';
 import { Docs } from 'src/decorators/docs/subscribe.decorator';
 import { SubscribeBoxRequestDto } from './dtos/subscribeBoxRequest.dto';
 import { JwtPayload } from 'src/interfaces/auth';
-import { User } from 'src/decorators';
+import { InjectAccessUser } from 'src/decorators';
 import { SubscribeBoxResponseDtoWithNotices } from './dtos/subscribeBoxResponseWithNotices.dto';
 import { SubscribeBoxResponseDto } from './dtos/subscribeBoxResponse.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { PageResponse } from 'src/interfaces/pageResponse';
+import { UsePagination } from 'src/decorators';
+import { PageQuery } from 'src/interfaces/pageQuery';
 
 @ApiTags('Subscribe')
 @Controller('subscribe')
@@ -29,7 +32,7 @@ export class SubscribeController {
   @Docs('createSubscribeBox')
   async createSubscribeBox(
     @Body() body: SubscribeBoxRequestDto,
-    @User() user: JwtPayload,
+    @InjectAccessUser() user: JwtPayload,
   ): Promise<SubscribeBoxResponseDto> {
     return await this.subscribeService.createSubscribeBox(user.id, body);
   }
@@ -39,7 +42,7 @@ export class SubscribeController {
   @Docs('getSubscribeBoxInfo')
   async getSubscribeInfo(
     @Param('subscribeBoxId') subscribeBoxId: number,
-    @User() user: JwtPayload,
+    @InjectAccessUser() user: JwtPayload,
     @Query('date') date: string,
   ): Promise<SubscribeBoxResponseDtoWithNotices> {
     return await this.subscribeService.getSubscribeBoxInfo(
@@ -53,9 +56,10 @@ export class SubscribeController {
   @Get('/box')
   @Docs('getSubscribeBoxes')
   async getSubscribees(
-    @User() user: JwtPayload,
-  ): Promise<SubscribeBoxResponseDto[]> {
-    return await this.subscribeService.getSubscribeBoxes(user.id);
+    @InjectAccessUser() user: JwtPayload,
+    @UsePagination() pageQuery: PageQuery,
+  ): Promise<PageResponse<SubscribeBoxResponseDto>> {
+    return await this.subscribeService.getSubscribeBoxes(user.id, pageQuery);
   }
 
   @UseGuards(AuthGuard('jwt-access'))
@@ -63,7 +67,7 @@ export class SubscribeController {
   @Docs('updateSubscribeBox')
   async updateSubscribe(
     @Param('subscribeBoxId') subscribeBoxId: number,
-    @User() user: JwtPayload,
+    @InjectAccessUser() user: JwtPayload,
     @Body() body: SubscribeBoxRequestDto,
   ): Promise<SubscribeBoxResponseDto> {
     return await this.subscribeService.updateSubscribeBox(
@@ -78,7 +82,7 @@ export class SubscribeController {
   @Docs('deleteSubscribeBox')
   async deleteSubscribe(
     @Param('subscribeBoxId') subscribeBoxId: number,
-    @User() user: JwtPayload,
+    @InjectAccessUser() user: JwtPayload,
   ): Promise<void> {
     return await this.subscribeService.deleteSubscribeBox(
       subscribeBoxId,

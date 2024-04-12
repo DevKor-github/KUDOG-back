@@ -13,6 +13,7 @@ import { DocumentedException } from 'src/interfaces/docsException';
 import { ScrapBoxRequestDto } from 'src/scrap/dtos/scrapBoxRequest.dto';
 import { ScrapBoxResponseDto } from 'src/scrap/dtos/scrapBoxResponse.dto';
 import { ScrapBoxResponseWithNotices } from 'src/scrap/dtos/scrapBoxResponseWithNotices.dto';
+import { ApiPagination } from './common.decorator';
 
 type ScrapEndPoints =
   | 'createScrapBox'
@@ -83,6 +84,7 @@ export function Docs(endPoint: ScrapEndPoints) {
           description:
             '사용자의 스크랩박스 목록을 조회합니다. Authorization 헤더에 Bearer ${accessToken} 을 넣어주세요.',
         }),
+        ApiPagination(),
         ApiOkResponse({
           description: '사용자의 스크랩박스 목록',
           type: [ScrapBoxResponseDto],

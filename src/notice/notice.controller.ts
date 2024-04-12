@@ -1,13 +1,26 @@
-import { Controller, Get, Param, Put, Query, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { NoticeService } from './notice.service';
 import { ApiTags } from '@nestjs/swagger';
-import { PagedNoticeListDto } from './dtos/NoticeListResponse.dto';
+import { NoticeListResponseDto } from './dtos/NoticeListResponse.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { NoticeFilterRequestDto } from './dtos/NoticeFilterRequest.dto';
 import { Docs } from 'src/decorators/docs/notice.decorator';
-import { User } from 'src/decorators';
+import { InjectAccessUser } from 'src/decorators';
 import { JwtPayload } from 'src/interfaces/auth';
 import { NoticeInfoResponseDto } from './dtos/NoticeInfoResponse.dto';
+import { UsePagination } from 'src/decorators';
+import { PageQuery } from 'src/interfaces/pageQuery';
+import { PageResponse } from 'src/interfaces/pageResponse';
+import { AddRequestRequestDto } from './dtos/AddRequestRequest.dto';
 
 @Controller('notice')
 @ApiTags('notice')
@@ -18,15 +31,15 @@ export class NoticeController {
   @Get('/list')
   @Docs('getNoticeList')
   async getNoticeList(
+    @InjectAccessUser() user: JwtPayload,
+    @UsePagination() pageQuery: PageQuery,
     @Query() filter: NoticeFilterRequestDto,
-    @Query('page') page: number,
-    @User() user: JwtPayload,
     @Query('keyword') keyword?: string,
-  ): Promise<PagedNoticeListDto> {
+  ): Promise<PageResponse<NoticeListResponseDto>> {
     return await this.noticeService.getNoticeList(
       user.id,
+      pageQuery,
       filter,
-      page,
       keyword,
     );
   }
@@ -35,7 +48,7 @@ export class NoticeController {
   @Put('/:noticeId/scrap/:scrapBoxId')
   @Docs('scrapNotice')
   async scrapNotice(
-    @User() user: JwtPayload,
+    @InjectAccessUser() user: JwtPayload,
     @Param('noticeId') noticeId: number,
     @Param('scrapBoxId') scrapBoxId: number,
   ): Promise<boolean> {
@@ -47,8 +60,18 @@ export class NoticeController {
   @Docs('getNoticeInfoById')
   async getNoticeInfoById(
     @Param('id') id: number,
-    @User() user: JwtPayload,
+    @InjectAccessUser() user: JwtPayload,
   ): Promise<NoticeInfoResponseDto> {
     return await this.noticeService.getNoticeInfoById(id, user.id);
+  }
+
+  @UseGuards(AuthGuard('jwt-access'))
+  @Post('/add-request')
+  @Docs('addNoticeRequest')
+  async addNoticeRequest(
+    @InjectAccessUser() user: JwtPayload,
+    @Body() body: AddRequestRequestDto,
+  ): Promise<void> {
+    return await this.noticeService.addNoticeRequest(body);
   }
 }

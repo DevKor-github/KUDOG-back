@@ -1,19 +1,21 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Category, Notice } from 'src/entities';
+import { CategoryEntity, Notice } from 'src/entities';
 import { Repository } from 'typeorm';
 import noticeFetcher from './fetch';
 import { ChannelService } from 'src/channel/channel.service';
+import { NotificationService } from 'src/notification/notification.service';
 
 @Injectable()
 export class FetchService {
   constructor(
     @InjectRepository(Notice)
     private readonly noticeRepository: Repository<Notice>,
-    @InjectRepository(Category)
-    private readonly categoryRepository: Repository<Category>,
-    private channelService: ChannelService,
+    @InjectRepository(CategoryEntity)
+    private readonly categoryRepository: Repository<CategoryEntity>,
+    private readonly channelService: ChannelService,
+    private readonly notificationService: NotificationService,
   ) {}
   private readonly logger = new Logger(FetchService.name);
 
@@ -44,12 +46,13 @@ export class FetchService {
       )
     ).filter((d) => d !== undefined && d.notices.length > 0);
     if (data.length === 0) return;
+    this.notificationService.sendPushOnNewNotices(data);
     const message = this.channelService.createMessageFromNotices(data);
     await this.channelService.sendMessageToAll(message);
     await this.channelService.sendMessageToKudog(message);
   }
 
-  async fetchNotice(category: Category) {
+  async fetchNotice(category: CategoryEntity) {
     const dto = {
       provider: category.provider.name,
       url: category.url,

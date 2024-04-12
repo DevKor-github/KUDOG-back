@@ -6,11 +6,9 @@ import { ConfigModule } from '@nestjs/config';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { MailModule } from './mail/mail.module';
 import { AuthModule } from './auth/auth.module';
-import { CategoryModule } from './category/category.module';
 import { FetchModule } from './fetch/fetch.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { NoticeModule } from './notice/notice.module';
-import { ProviderModule } from './provider/provider.module';
 import { ChannelModule } from './channel/channel.module';
 import { UsersModule } from './users/users.module';
 import { ScrapModule } from './scrap/scrap.module';
@@ -43,10 +41,8 @@ import { SubscribeModule } from './subscribe/subscribe.module';
     ScheduleModule.forRoot(),
     MailModule,
     AuthModule,
-    CategoryModule,
     FetchModule,
     NoticeModule,
-    ProviderModule,
     ChannelModule,
     UsersModule,
     ScrapModule,

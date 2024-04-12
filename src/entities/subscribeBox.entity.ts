@@ -5,12 +5,13 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  RelationId,
 } from 'typeorm';
 import { KudogUser } from 'src/entities';
 import { CategoryPerSubscribeBoxEntity } from './categoryPerSubscribes.entity';
 
-@Entity()
-export class SubscribeBox {
+@Entity('subscribe_box')
+export class SubscribeBoxEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -19,6 +20,9 @@ export class SubscribeBox {
   })
   @JoinColumn({ name: 'user_id' })
   user: KudogUser;
+
+  @RelationId((subscribeBox: SubscribeBoxEntity) => subscribeBox.user)
+  userId: number;
 
   @OneToMany(
     () => CategoryPerSubscribeBoxEntity,
@@ -31,4 +35,7 @@ export class SubscribeBox {
 
   @Column()
   mail: string;
+
+  @Column({ default: '18:00' })
+  sendTime: string;
 }

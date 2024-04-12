@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Notifications } from 'src/entities';
+import { NotificationEntity } from 'src/entities';
 
 export class NotificationInfoResponseDto {
   @ApiProperty({
@@ -23,7 +23,7 @@ export class NotificationInfoResponseDto {
   @ApiProperty({ description: '새로운 알림인지 여부', example: true })
   isNew: boolean;
 
-  constructor(entity: Notifications) {
+  constructor(entity: NotificationEntity) {
     this.title = entity.title;
     this.body = entity.body;
     this.date = entity.createdAt.toISOString();

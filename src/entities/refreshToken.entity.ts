@@ -7,24 +7,19 @@ import {
   RelationId,
 } from 'typeorm';
 
-@Entity('notification_token')
-export class NotificationTokenEntity {
+@Entity('refresh_token')
+export class RefreshTokenEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => KudogUser, (user) => user.notificationTokens, {
+  @ManyToOne(() => KudogUser, (user) => user.refreshTokens, {
     onDelete: 'CASCADE',
   })
   user: KudogUser;
 
-  @RelationId(
-    (notificationToken: NotificationTokenEntity) => notificationToken.user,
-  )
+  @RelationId((refreshToken: RefreshTokenEntity) => refreshToken.user)
   userId: number;
 
   @Column()
   token: string;
-
-  @Column({ default: true })
-  isActive: boolean;
 }

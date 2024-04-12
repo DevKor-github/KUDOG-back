@@ -1,12 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  Category,
-  CategoryPerSubscribeBoxEntity,
-  Provider,
-  ScrapBox,
-  SubscribeBox,
-} from 'src/entities';
-import { SubscribeBoxRequestDto } from './subscribeBoxRequest.dto';
+import { SubscribeBoxEntity } from 'src/entities';
 
 export class SubscribeBoxResponseDto {
   @ApiProperty({
@@ -36,15 +29,20 @@ export class SubscribeBoxResponseDto {
   })
   categories: string[];
 
-  static entityToDto(entity: SubscribeBox): SubscribeBoxResponseDto {
-    return {
-      id: entity.id,
-      name: entity.name,
-      email: entity.mail,
-      provider: entity.categories[0].category.provider.name,
-      categories: entity.categories.map((category) => {
-        return category.category.name;
-      }),
-    };
+  @ApiProperty({
+    description: '이메일 전송 시간 HH:MM ',
+    example: '18:00',
+  })
+  sendTime: string;
+
+  constructor(entity: SubscribeBoxEntity) {
+    this.id = entity.id;
+    this.name = entity.name;
+    this.email = entity.mail;
+    this.provider = entity.categories[0].category.provider.name;
+    this.categories = entity.categories.map(
+      (category) => category.category.name,
+    );
+    this.sendTime = entity.sendTime;
   }
 }

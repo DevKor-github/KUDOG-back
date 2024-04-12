@@ -4,32 +4,38 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Notice, Scrap, ScrapBox } from 'src/entities';
+import { Notice, ScrapEntity, ScrapBoxEntity } from 'src/entities';
 import { Repository } from 'typeorm';
-import {
-  NoticeListResponseDto,
-  PagedNoticeListDto,
-} from './dtos/NoticeListResponse.dto';
+import { NoticeListResponseDto } from './dtos/NoticeListResponse.dto';
 import { NoticeInfoResponseDto } from './dtos/NoticeInfoResponse.dto';
 import { NoticeFilterRequestDto } from './dtos/NoticeFilterRequest.dto';
+import { PageResponse } from 'src/interfaces/pageResponse';
+import { PageQuery } from 'src/interfaces/pageQuery';
+import { ChannelService } from 'src/channel/channel.service';
+import { AddRequestRequestDto } from './dtos/AddRequestRequest.dto';
 
 @Injectable()
 export class NoticeService {
   constructor(
     @InjectRepository(Notice)
     private readonly noticeRepository: Repository<Notice>,
-    @InjectRepository(Scrap)
-    private readonly scrapRepository: Repository<Scrap>,
-    @InjectRepository(ScrapBox)
-    private readonly scrapBoxRepository: Repository<ScrapBox>,
+    @InjectRepository(ScrapEntity)
+    private readonly scrapRepository: Repository<ScrapEntity>,
+    @InjectRepository(ScrapBoxEntity)
+    private readonly scrapBoxRepository: Repository<ScrapBoxEntity>,
+    private readonly channelService: ChannelService,
   ) {}
+
+  async addNoticeRequest(body: AddRequestRequestDto): Promise<void> {
+    await this.channelService.sendMessageToKudog(body.message);
+  }
 
   async getNoticeList(
     userId: number,
+    pageQuery: PageQuery,
     filter: NoticeFilterRequestDto,
-    page: number = 1,
     keyword?: string,
-  ): Promise<PagedNoticeListDto> {
+  ): Promise<PageResponse<NoticeListResponseDto>> {
     const {
       categories,
       providers,
@@ -78,19 +84,14 @@ export class NoticeService {
 
     const [notices, total] = await queryBuilder
       .orderBy('notice.date', 'DESC')
-      .skip((page - 1) * 10)
-      .take(10)
+      .skip((pageQuery.page - 1) * pageQuery.pageSize)
+      .take(pageQuery.pageSize)
       .getManyAndCount();
 
-    const dtos: NoticeListResponseDto[] = notices.map((notice) => {
-      return NoticeListResponseDto.entityToDto(notice, scrapBoxes);
-    });
-    return {
-      notices: dtos,
-      page: page,
-      totalNotice: total,
-      totalPage: Math.ceil(total / 10),
-    };
+    const dtos: NoticeListResponseDto[] = notices.map(
+      (notice) => new NoticeListResponseDto(notice, scrapBoxes),
+    );
+    return new PageResponse<NoticeListResponseDto>(dtos, total, pageQuery);
   }
 
   async getNoticeInfoById(
@@ -108,7 +109,7 @@ export class NoticeService {
       relations: ['scraps'],
     });
 
-    return NoticeInfoResponseDto.entityToDto(notice, scrapBoxes);
+    return new NoticeInfoResponseDto(notice, scrapBoxes);
   }
 
   async scrapNotice(

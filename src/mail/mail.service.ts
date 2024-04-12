@@ -10,11 +10,12 @@ import {
   EmailAuthenticationEntity,
   KudogUser,
   Notice,
-  SubscribeBox,
+  SubscribeBoxEntity,
 } from 'src/entities';
-import { In, Repository } from 'typeorm';
+import { Between, In, Repository } from 'typeorm';
 import { MailerService } from '@nestjs-modules/mailer';
 import { Cron, CronExpression } from '@nestjs/schedule';
+import { getHHMMdate, yesterdayTimeStamp } from 'src/utils/date';
 
 @Injectable()
 export class MailService {
@@ -24,13 +25,13 @@ export class MailService {
     private readonly emailAuthenticationRepository: Repository<EmailAuthenticationEntity>,
     @InjectRepository(KudogUser)
     private readonly kudogUserRepository: Repository<KudogUser>,
-    @InjectRepository(SubscribeBox)
-    private readonly subscribeBoxRepository: Repository<SubscribeBox>,
+    @InjectRepository(SubscribeBoxEntity)
+    private readonly subscribeBoxRepository: Repository<SubscribeBoxEntity>,
     @InjectRepository(Notice)
     private readonly noticeRepository: Repository<Notice>,
   ) {}
 
-  async sendMail(to: string, subject: string, html: string) {
+  async sendMail(to: string, subject: string, html: string): Promise<void> {
     await this.mailerService.sendMail({
       from: process.env.MAIL_USER,
       to: to,
@@ -39,7 +40,7 @@ export class MailService {
     });
   }
 
-  async sendVerificationCode(to: string) {
+  async sendVerificationCode(to: string): Promise<void> {
     const existingUser = await this.kudogUserRepository.findOne({
       where: { email: to },
     });
@@ -81,7 +82,7 @@ export class MailService {
     await this.emailAuthenticationRepository.save(entity);
   }
 
-  async checkVerificationCode(email: string, code: string) {
+  async checkVerificationCode(email: string, code: string): Promise<void> {
     const existingUser = await this.kudogUserRepository.findOne({
       where: { email: email },
     });
@@ -106,24 +107,29 @@ export class MailService {
     }
     throw new BadRequestException('인증 코드가 일치하지 않습니다.');
   }
-  @Cron(CronExpression.EVERY_DAY_AT_6PM, { timeZone: 'Asia/Seoul' })
-  async sendMailBySubBox() {
+  @Cron(CronExpression.EVERY_5_MINUTES, { timeZone: 'Asia/Seoul' })
+  async sendMailBySubBox(): Promise<void> {
+    const dateFormat = getHHMMdate();
+
     const subscribeBoxes = await this.subscribeBoxRepository.find({
+      where: {
+        sendTime: dateFormat,
+      },
       relations: ['categories'],
     });
-
+    if (subscribeBoxes.length === 0) return;
     await Promise.all(
       subscribeBoxes.map(async (box) => {
         const notices = await this.noticeRepository.find({
           where: {
             category: {
-              id: In(box.categories.map((category) => category.category_id)),
+              id: In(box.categories.map((category) => category.categoryId)),
             },
-            date: new Date().toISOString().slice(0, 10),
+            createdAt: Between(yesterdayTimeStamp(), Date.now()),
           },
           relations: ['category'],
         });
-
+        if (notices.length === 0) return;
         let html = '';
         const today = new Date().toISOString().slice(0, 10);
         html = html.concat(`<html><head></head><body>`);
