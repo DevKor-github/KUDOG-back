@@ -15,12 +15,11 @@ export class ScrapBoxResponseDto extends ScrapBoxRequestDto {
   })
   noticeCount: number;
 
-  static entityToDto(entity: ScrapBox): ScrapBoxResponseDto {
-    return {
-      noticeCount: entity.scraps ? entity.scraps.length : 0,
-      id: entity.id,
-      name: entity.name,
-      description: entity.description,
-    };
+  constructor(entity: ScrapBox) {
+    super();
+    this.noticeCount = entity.scraps ? entity.scraps.length : 0;
+    this.id = entity.id;
+    this.name = entity.name;
+    this.description = entity.description;
   }
 }

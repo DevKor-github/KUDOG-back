@@ -9,16 +9,10 @@ export class SubscribeBoxResponseDtoWithNotices extends SubscribeBoxResponseDto 
   })
   notices: NoticeListResponseDto[];
 
-  static toDto(
-    entity: SubscribeBox,
-    notices: Notice[],
-    scrapBoxes: ScrapBox[],
-  ): SubscribeBoxResponseDtoWithNotices {
-    return {
-      ...super.entityToDto(entity),
-      notices: notices.map((notice) => {
-        return NoticeListResponseDto.entityToDto(notice, scrapBoxes);
-      }),
-    };
+  constructor(entity: SubscribeBox, notices: Notice[], scrapBoxes: ScrapBox[]) {
+    super(entity);
+    this.notices = notices.map(
+      (notice) => new NoticeListResponseDto(notice, scrapBoxes),
+    );
   }
 }

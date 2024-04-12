@@ -17,6 +17,9 @@ import { JwtPayload } from 'src/interfaces/auth';
 import { ScrapBoxResponseDto } from './dtos/scrapBoxResponse.dto';
 import { Docs } from 'src/decorators/docs/scrap.decorator';
 import { ScrapBoxResponseWithNotices } from './dtos/scrapBoxResponseWithNotices.dto';
+import { UsePagination } from 'src/decorators/usePagination.decorator';
+import { PageQuery } from 'src/interfaces/pageQuery';
+import { PageResponse } from 'src/interfaces/pageResponse';
 @ApiTags('Scrap')
 @Controller('scrap')
 export class ScrapController {
@@ -47,8 +50,9 @@ export class ScrapController {
   @Docs('getScrapBoxes')
   async getScrapBoxes(
     @User() user: JwtPayload,
-  ): Promise<ScrapBoxResponseDto[]> {
-    return await this.scrapService.getScrapBoxes(user.id);
+    @UsePagination() pageQuery: PageQuery,
+  ): Promise<PageResponse<ScrapBoxResponseDto>> {
+    return await this.scrapService.getScrapBoxes(user.id, pageQuery);
   }
 
   @UseGuards(AuthGuard('jwt-access'))

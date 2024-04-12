@@ -18,6 +18,9 @@ import { User } from 'src/decorators';
 import { SubscribeBoxResponseDtoWithNotices } from './dtos/subscribeBoxResponseWithNotices.dto';
 import { SubscribeBoxResponseDto } from './dtos/subscribeBoxResponse.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { PageResponse } from 'src/interfaces/pageResponse';
+import { UsePagination } from 'src/decorators/usePagination.decorator';
+import { PageQuery } from 'src/interfaces/pageQuery';
 
 @ApiTags('Subscribe')
 @Controller('subscribe')
@@ -54,8 +57,9 @@ export class SubscribeController {
   @Docs('getSubscribeBoxes')
   async getSubscribees(
     @User() user: JwtPayload,
-  ): Promise<SubscribeBoxResponseDto[]> {
-    return await this.subscribeService.getSubscribeBoxes(user.id);
+    @UsePagination() pageQuery: PageQuery,
+  ): Promise<PageResponse<SubscribeBoxResponseDto>> {
+    return await this.subscribeService.getSubscribeBoxes(user.id, pageQuery);
   }
 
   @UseGuards(AuthGuard('jwt-access'))

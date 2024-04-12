@@ -31,4 +31,7 @@ export class SubscribeBox {
 
   @Column()
   mail: string;
+
+  @Column({ default: '18:00' })
+  sendTime: string;
 }

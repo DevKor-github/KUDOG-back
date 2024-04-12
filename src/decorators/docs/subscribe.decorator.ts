@@ -14,6 +14,7 @@ import { DocumentedException } from 'src/interfaces/docsException';
 import { SubscribeBoxRequestDto } from 'src/subscribe/dtos/subscribeBoxRequest.dto';
 import { SubscribeBoxResponseDto } from 'src/subscribe/dtos/subscribeBoxResponse.dto';
 import { SubscribeBoxResponseDtoWithNotices } from 'src/subscribe/dtos/subscribeBoxResponseWithNotices.dto';
+import { ApiPagination } from './common.decorator';
 
 type SubscribeEndPoint =
   | 'createSubscribeBox'
@@ -90,6 +91,7 @@ export function Docs(endPoint: SubscribeEndPoint) {
           description:
             '사용자의 구독함 목록을 조회합니다. Authorization 헤더에 Bearer ${accessToken} 을 넣어주세요.',
         }),
+        ApiPagination,
         ApiOkResponse({
           description: '사용자의 구독함 목록',
           type: [SubscribeBoxResponseDto],

@@ -10,6 +10,8 @@ import { Repository } from 'typeorm';
 import { ScrapBoxResponseDto } from './dtos/scrapBoxResponse.dto';
 import { ScrapBoxRequestDto } from './dtos/scrapBoxRequest.dto';
 import { ScrapBoxResponseWithNotices } from './dtos/scrapBoxResponseWithNotices.dto';
+import { PageResponse } from 'src/interfaces/pageResponse';
+import { PageQuery } from 'src/interfaces/pageQuery';
 
 @Injectable()
 export class ScrapService {
@@ -28,7 +30,7 @@ export class ScrapService {
         description: dto.description,
         user: { id: userId },
       });
-      return ScrapBoxResponseDto.entityToDto(scrapBox.raw[0]);
+      return new ScrapBoxResponseDto(scrapBox.raw[0]);
     } catch (err) {
       throw new UnauthorizedException('token 만료 또는 잘못된 token');
     }
@@ -50,16 +52,20 @@ export class ScrapService {
       throw new NotFoundException('해당 ScrapBox가 존재하지 않습니다');
     if (scrapBox.userId !== userId)
       throw new ForbiddenException('권한이 없습니다');
-    return ScrapBoxResponseWithNotices.toDto(scrapBox, scrapBoxes);
+    return new ScrapBoxResponseWithNotices(scrapBox, scrapBoxes);
   }
 
-  async getScrapBoxes(userId: number): Promise<ScrapBoxResponseDto[]> {
-    const scrapBoxes = await this.scrapBoxRepository.find({
+  async getScrapBoxes(
+    userId: number,
+    pageQuery: PageQuery,
+  ): Promise<PageResponse<ScrapBoxResponseDto>> {
+    const [records, total] = await this.scrapBoxRepository.findAndCount({
       where: { user: { id: userId } },
+      take: pageQuery.pageSize,
+      skip: (pageQuery.page - 1) * pageQuery.pageSize,
     });
-    return scrapBoxes.map((scrapBox) => {
-      return ScrapBoxResponseDto.entityToDto(scrapBox);
-    });
+    const dtos = records.map((scrapBox) => new ScrapBoxResponseDto(scrapBox));
+    return new PageResponse<ScrapBoxResponseDto>(dtos, total, pageQuery);
   }
 
   async updateScrapBox(
@@ -79,7 +85,7 @@ export class ScrapService {
     scrapBox.name = dto.name;
 
     const saved = await this.scrapBoxRepository.save(scrapBox);
-    return ScrapBoxResponseDto.entityToDto(saved);
+    return new ScrapBoxResponseDto(saved);
   }
 
   async deleteScrapBox(scrapBoxId: number, userId: number): Promise<void> {

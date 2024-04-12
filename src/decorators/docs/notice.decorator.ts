@@ -11,8 +11,8 @@ import {
 } from '@nestjs/swagger';
 import { DocumentedException } from 'src/interfaces/docsException';
 import { NoticeInfoResponseDto } from 'src/notice/dtos/NoticeInfoResponse.dto';
-import { PagedNoticeListDto } from 'src/notice/dtos/NoticeListResponse.dto';
 import { ApiPagination } from './common.decorator';
+import { NoticeListResponseDto } from 'src/notice/dtos/NoticeListResponse.dto';
 
 type NoticeEndpoints = 'getNoticeList' | 'getNoticeInfoById' | 'scrapNotice';
 
@@ -27,7 +27,7 @@ export function Docs(endPoint: NoticeEndpoints) {
         }),
         ApiOkResponse({
           description: 'well done',
-          type: PagedNoticeListDto,
+          type: NoticeListResponseDto,
         }),
         ApiInternalServerErrorResponse({
           description: 'internal server error',

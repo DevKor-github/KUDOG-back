@@ -15,6 +15,8 @@ import {
   SubscribeBox,
 } from 'src/entities';
 import { SubscribeBoxResponseDtoWithNotices } from './dtos/subscribeBoxResponseWithNotices.dto';
+import { PageResponse } from 'src/interfaces/pageResponse';
+import { PageQuery } from 'src/interfaces/pageQuery';
 
 @Injectable()
 export class SubscribeService {
@@ -35,48 +37,52 @@ export class SubscribeService {
     userId: number,
     dto: SubscribeBoxRequestDto,
   ): Promise<SubscribeBoxResponseDto> {
-    try {
-      const subscribeBox = await this.subscribeBoxRepository.insert({
-        name: dto.name,
-        mail: dto.email,
-        user: { id: userId },
-      });
+    const subscribeBox = await this.subscribeBoxRepository.insert({
+      name: dto.name,
+      mail: dto.email,
+      user: { id: userId },
+    });
 
-      const categories = await this.categoryRepository.find({
-        where: { name: In(dto.categories), provider: { name: dto.provider } },
-      });
+    const categories = await this.categoryRepository.find({
+      where: { name: In(dto.categories), provider: { name: dto.provider } },
+    });
 
-      await this.categoryPerSubscribeBoxRepository.save(
-        categories.map((category) => ({
-          subscribeBox: subscribeBox.raw[0],
-          category: category,
-        })),
-      );
+    await this.categoryPerSubscribeBoxRepository.save(
+      categories.map((category) => ({
+        subscribeBox: subscribeBox.raw[0],
+        category: category,
+      })),
+    );
 
-      const box = await this.subscribeBoxRepository.findOne({
-        where: { id: subscribeBox.raw[0].id },
-        relations: [
-          'categories',
-          'categories.category',
-          'categories.category.provider',
-        ],
-      });
-      return SubscribeBoxResponseDto.entityToDto(box);
-    } catch (err) {}
-  }
-
-  async getSubscribeBoxes(userId: number): Promise<SubscribeBoxResponseDto[]> {
-    const subscribeBoxes = await this.subscribeBoxRepository.find({
-      where: { user: { id: userId } },
+    const box = await this.subscribeBoxRepository.findOne({
+      where: { id: subscribeBox.raw[0].id },
       relations: [
         'categories',
         'categories.category',
         'categories.category.provider',
       ],
     });
-    return subscribeBoxes.map((subscribeBox) =>
-      SubscribeBoxResponseDto.entityToDto(subscribeBox),
+    return new SubscribeBoxResponseDto(box);
+  }
+
+  async getSubscribeBoxes(
+    userId: number,
+    pageQuery: PageQuery,
+  ): Promise<PageResponse<SubscribeBoxResponseDto>> {
+    const [records, total] = await this.subscribeBoxRepository.findAndCount({
+      where: { user: { id: userId } },
+      relations: [
+        'categories',
+        'categories.category',
+        'categories.category.provider',
+      ],
+      skip: (pageQuery.page - 1) * pageQuery.pageSize,
+      take: pageQuery.pageSize,
+    });
+    const dtos = records.map(
+      (subscribeBox) => new SubscribeBoxResponseDto(subscribeBox),
     );
+    return new PageResponse<SubscribeBoxResponseDto>(dtos, total, pageQuery);
   }
 
   async getSubscribeBoxInfo(
@@ -117,7 +123,7 @@ export class SubscribeService {
     if (subscribeBox.user.id !== userId)
       throw new ForbiddenException('권한이 없습니다');
 
-    return SubscribeBoxResponseDtoWithNotices.toDto(
+    return new SubscribeBoxResponseDtoWithNotices(
       subscribeBox,
       notices,
       scrapBoxes,
@@ -141,6 +147,7 @@ export class SubscribeService {
     //구독함 정보 수정
     subscribeBox.mail = dto.email;
     subscribeBox.name = dto.name;
+    subscribeBox.sendTime = dto.sendTime;
     await this.subscribeBoxRepository.save(subscribeBox);
 
     //구독한 카테고리 수정
@@ -184,7 +191,7 @@ export class SubscribeService {
       ],
     });
 
-    return SubscribeBoxResponseDto.entityToDto(box);
+    return new SubscribeBoxResponseDto(box);
   }
 
   async deleteSubscribeBox(

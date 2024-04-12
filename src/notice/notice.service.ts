@@ -77,7 +77,7 @@ export class NoticeService {
 
     const [notices, total] = await queryBuilder
       .orderBy('notice.date', 'DESC')
-      .skip((pageQuery.page - 1) * 10)
+      .skip((pageQuery.page - 1) * pageQuery.pageSize)
       .take(pageQuery.pageSize)
       .getManyAndCount();
 
