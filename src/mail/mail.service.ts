@@ -12,9 +12,10 @@ import {
   Notice,
   SubscribeBoxEntity,
 } from 'src/entities';
-import { In, Repository } from 'typeorm';
+import { Between, In, Repository } from 'typeorm';
 import { MailerService } from '@nestjs-modules/mailer';
 import { Cron, CronExpression } from '@nestjs/schedule';
+import { getHHMMdate, yesterdayTimeStamp } from 'src/utils/date';
 
 @Injectable()
 export class MailService {
@@ -106,12 +107,17 @@ export class MailService {
     }
     throw new BadRequestException('인증 코드가 일치하지 않습니다.');
   }
-  @Cron(CronExpression.EVERY_DAY_AT_6PM, { timeZone: 'Asia/Seoul' })
+  @Cron(CronExpression.EVERY_5_MINUTES, { timeZone: 'Asia/Seoul' })
   async sendMailBySubBox(): Promise<void> {
+    const dateFormat = getHHMMdate();
+
     const subscribeBoxes = await this.subscribeBoxRepository.find({
+      where: {
+        sendTime: dateFormat,
+      },
       relations: ['categories'],
     });
-
+    if (subscribeBoxes.length === 0) return;
     await Promise.all(
       subscribeBoxes.map(async (box) => {
         const notices = await this.noticeRepository.find({
@@ -119,11 +125,11 @@ export class MailService {
             category: {
               id: In(box.categories.map((category) => category.categoryId)),
             },
-            date: new Date().toISOString().slice(0, 10),
+            createdAt: Between(yesterdayTimeStamp(), Date.now()),
           },
           relations: ['category'],
         });
-
+        if (notices.length === 0) return;
         let html = '';
         const today = new Date().toISOString().slice(0, 10);
         html = html.concat(`<html><head></head><body>`);

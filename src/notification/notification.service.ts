@@ -47,10 +47,15 @@ export class NotificationService {
           where: { categoryId: noticeInfo.categoryId },
           relations: ['subscribeBox'],
         });
-        const userIds = entities.map((entity) => entity.subscribeBox.user.id);
-        noticeInfo.notices.map(async (notice) => {
-          const messageTitle = `${noticeInfo.category}에 새로운 공지사항이 등록되었습니다.`;
-          this.sendNotification(userIds, messageTitle, notice.title);
+        entities.map((entity) => {
+          noticeInfo.notices.map(async (notice) => {
+            const messageTitle = `구독함 ${entity.subscribeBox.name} ${noticeInfo.category}에 새로운 공지사항이 등록되었습니다.`;
+            this.sendNotification(
+              [entity.subscribeBox.userId],
+              messageTitle,
+              notice.title,
+            );
+          });
         });
       }),
     );

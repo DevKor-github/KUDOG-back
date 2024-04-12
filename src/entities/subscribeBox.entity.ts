@@ -5,6 +5,7 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  RelationId,
 } from 'typeorm';
 import { KudogUser } from 'src/entities';
 import { CategoryPerSubscribeBoxEntity } from './categoryPerSubscribes.entity';
@@ -19,6 +20,9 @@ export class SubscribeBoxEntity {
   })
   @JoinColumn({ name: 'user_id' })
   user: KudogUser;
+
+  @RelationId((subscribeBox: SubscribeBoxEntity) => subscribeBox.user)
+  userId: number;
 
   @OneToMany(
     () => CategoryPerSubscribeBoxEntity,
