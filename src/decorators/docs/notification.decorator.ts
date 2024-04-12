@@ -5,14 +5,12 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiQuery,
-  ApiResponse,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { DocumentedException } from 'src/interfaces/docsException';
-import { PageResponse } from 'src/interfaces/pageResponse';
 import { NotificationInfoResponseDto } from 'src/notification/dtos/noticiationInfoResponse.dto';
 import { TokenRequestDto } from 'src/notification/dtos/tokenRequest.dto';
-import { ApiPagiation } from './common.decorator';
+import { ApiPagination } from './common.decorator';
 
 type NotificationEndPoints =
   | 'getNotifications'
@@ -30,15 +28,11 @@ export function Docs(endPoint: NotificationEndPoints) {
           description:
             '유저에게 지금까지 전송된 알림 내역을 제공합니다. Authorization : Bearer ${JWT}, 페이지네이션 가능합니다.',
         }),
-        ApiPagiation(),
+        ApiPagination(),
         ApiOkResponse({
-          type: PageResponse<NotificationInfoResponseDto>,
+          type: NotificationInfoResponseDto,
         }),
-        ApiResponse({
-          description:
-            '위의 200 response.records에 이 데이터 type이 Array로 들어갑니다.',
-          type: [NotificationInfoResponseDto],
-        }),
+
         ApiUnauthorizedResponse({
           description: 'token 만료 또는 잘못된 token',
           type: DocumentedException,
@@ -51,14 +45,9 @@ export function Docs(endPoint: NotificationEndPoints) {
           description:
             '유저에게 새롭게 전송된 알림 내역을 제공합니다. 메인화면에 구독함 새로 올라갔어요! 알림에 쓰면 될듯해요 Authorization : Bearer ${JWT}, 페이지네이션 가능합니다.',
         }),
-        ApiPagiation(),
+        ApiPagination(),
         ApiOkResponse({
-          type: PageResponse<NotificationInfoResponseDto>,
-        }),
-        ApiResponse({
-          description:
-            '위의 200 response.records에 이 데이터 type이 Array로 들어갑니다.',
-          type: [NotificationInfoResponseDto],
+          type: NotificationInfoResponseDto,
         }),
         ApiUnauthorizedResponse({
           description: 'token 만료 또는 잘못된 token',

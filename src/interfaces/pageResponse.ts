@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 export class PageResponse<T> {
-  @ApiProperty({ description: '데이터 목록', type: Array<T> })
+  @ApiProperty({ description: '데이터 목록', type: [Object] })
   records: T[];
   @ApiProperty({ description: '현재 페이지', example: 1 })
   page: number;

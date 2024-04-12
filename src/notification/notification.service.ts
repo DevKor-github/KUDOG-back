@@ -140,7 +140,7 @@ export class NotificationService {
   async registerToken(userId: number, token: string): Promise<void> {
     await this.notificationTokenRepository.insert({
       userId: userId,
-       token,
+      token,
     });
   }
 
