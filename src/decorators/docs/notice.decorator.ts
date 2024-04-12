@@ -12,6 +12,7 @@ import {
 import { DocumentedException } from 'src/interfaces/docsException';
 import { NoticeInfoResponseDto } from 'src/notice/dtos/NoticeInfoResponse.dto';
 import { PagedNoticeListDto } from 'src/notice/dtos/NoticeListResponse.dto';
+import { ApiPagination } from './common.decorator';
 
 type NoticeEndpoints = 'getNoticeList' | 'getNoticeInfoById' | 'scrapNotice';
 
@@ -35,13 +36,7 @@ export function Docs(endPoint: NoticeEndpoints) {
           description: 'token 만료 또는 잘못된 token',
           type: DocumentedException,
         }),
-        ApiQuery({
-          name: 'page',
-          type: Number,
-          required: false,
-          example: 1,
-          description: '1 for default',
-        }),
+        ApiPagination(),
         ApiQuery({
           name: 'keyword',
           type: String,

@@ -1,13 +1,16 @@
 import { Controller, Get, Param, Put, Query, UseGuards } from '@nestjs/common';
 import { NoticeService } from './notice.service';
 import { ApiTags } from '@nestjs/swagger';
-import { PagedNoticeListDto } from './dtos/NoticeListResponse.dto';
+import { NoticeListResponseDto } from './dtos/NoticeListResponse.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { NoticeFilterRequestDto } from './dtos/NoticeFilterRequest.dto';
 import { Docs } from 'src/decorators/docs/notice.decorator';
 import { User } from 'src/decorators';
 import { JwtPayload } from 'src/interfaces/auth';
 import { NoticeInfoResponseDto } from './dtos/NoticeInfoResponse.dto';
+import { UsePagination } from 'src/decorators/usePagination.decorator';
+import { PageQuery } from 'src/interfaces/pageQuery';
+import { PageResponse } from 'src/interfaces/pageResponse';
 
 @Controller('notice')
 @ApiTags('notice')
@@ -18,15 +21,15 @@ export class NoticeController {
   @Get('/list')
   @Docs('getNoticeList')
   async getNoticeList(
-    @Query() filter: NoticeFilterRequestDto,
-    @Query('page') page: number,
     @User() user: JwtPayload,
+    @UsePagination() pageQuery: PageQuery,
+    @Query() filter: NoticeFilterRequestDto,
     @Query('keyword') keyword?: string,
-  ): Promise<PagedNoticeListDto> {
+  ): Promise<PageResponse<NoticeListResponseDto>> {
     return await this.noticeService.getNoticeList(
       user.id,
+      pageQuery,
       filter,
-      page,
       keyword,
     );
   }

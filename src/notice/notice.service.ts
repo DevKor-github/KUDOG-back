@@ -6,12 +6,11 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Notice, Scrap, ScrapBox } from 'src/entities';
 import { Repository } from 'typeorm';
-import {
-  NoticeListResponseDto,
-  PagedNoticeListDto,
-} from './dtos/NoticeListResponse.dto';
+import { NoticeListResponseDto } from './dtos/NoticeListResponse.dto';
 import { NoticeInfoResponseDto } from './dtos/NoticeInfoResponse.dto';
 import { NoticeFilterRequestDto } from './dtos/NoticeFilterRequest.dto';
+import { PageResponse } from 'src/interfaces/pageResponse';
+import { PageQuery } from 'src/interfaces/pageQuery';
 
 @Injectable()
 export class NoticeService {
@@ -26,10 +25,10 @@ export class NoticeService {
 
   async getNoticeList(
     userId: number,
+    pageQuery: PageQuery,
     filter: NoticeFilterRequestDto,
-    page: number = 1,
     keyword?: string,
-  ): Promise<PagedNoticeListDto> {
+  ): Promise<PageResponse<NoticeListResponseDto>> {
     const {
       categories,
       providers,
@@ -78,19 +77,14 @@ export class NoticeService {
 
     const [notices, total] = await queryBuilder
       .orderBy('notice.date', 'DESC')
-      .skip((page - 1) * 10)
-      .take(10)
+      .skip((pageQuery.page - 1) * 10)
+      .take(pageQuery.pageSize)
       .getManyAndCount();
 
-    const dtos: NoticeListResponseDto[] = notices.map((notice) => {
-      return NoticeListResponseDto.entityToDto(notice, scrapBoxes);
-    });
-    return {
-      notices: dtos,
-      page: page,
-      totalNotice: total,
-      totalPage: Math.ceil(total / 10),
-    };
+    const dtos: NoticeListResponseDto[] = notices.map(
+      (notice) => new NoticeListResponseDto(notice, scrapBoxes),
+    );
+    return new PageResponse<NoticeListResponseDto>(dtos, total, pageQuery);
   }
 
   async getNoticeInfoById(
@@ -108,7 +102,7 @@ export class NoticeService {
       relations: ['scraps'],
     });
 
-    return NoticeInfoResponseDto.entityToDto(notice, scrapBoxes);
+    return new NoticeInfoResponseDto(notice, scrapBoxes);
   }
 
   async scrapNotice(

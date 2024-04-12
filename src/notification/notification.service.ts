@@ -53,8 +53,7 @@ export class NotificationService {
     return new PageResponse<NotificationInfoResponseDto>(
       dtos,
       total,
-      pageQuery.page,
-      pageQuery.pageSize,
+      pageQuery,
     );
   }
   async getNewNotifications(
@@ -83,8 +82,7 @@ export class NotificationService {
     return new PageResponse<NotificationInfoResponseDto>(
       dtos,
       total,
-      pageQuery.page,
-      pageQuery.pageSize,
+      pageQuery,
     );
   }
 

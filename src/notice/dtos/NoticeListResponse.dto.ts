@@ -32,42 +32,19 @@ export class NoticeListResponseDto {
   })
   scrapBoxId: number[];
 
-  static entityToDto(
-    entity: Notice,
-    scrapBoxes: ScrapBox[],
-  ): NoticeListResponseDto {
+  constructor(entity: Notice, scrapBoxes: ScrapBox[] = []) {
     const scrapBoxIds = scrapBoxes
-      ? scrapBoxes
-          .filter((scrapBox) =>
-            scrapBox.scraps.some((scrap) => scrap.noticeId === entity.id),
-          )
-          .map((scrapBox) => scrapBox.id)
-      : [];
-    return {
-      id: entity.id,
-      title: entity.title,
-      scrapped: scrapBoxIds.length > 0,
-      date: entity.date,
-      provider: entity.category.provider.name,
-      mappedCategory: entity.category.mappedCategory,
-      scrapBoxId: scrapBoxIds,
-    };
+      .filter((scrapBox) =>
+        scrapBox.scraps.some((scrap) => scrap.noticeId === entity.id),
+      )
+      .map((scrapBox) => scrapBox.id);
+
+    this.id = entity.id;
+    this.title = entity.title;
+    this.scrapped = scrapBoxIds.length > 0;
+    this.date = entity.date;
+    this.provider = entity.category.provider.name;
+    this.mappedCategory = entity.category.mappedCategory;
+    this.scrapBoxId = scrapBoxIds;
   }
-}
-
-export class PagedNoticeListDto {
-  @ApiProperty({
-    description: '공지사항 리스트',
-    type: [NoticeListResponseDto],
-  })
-  notices: NoticeListResponseDto[];
-
-  @ApiProperty({ description: '현재 페이지' })
-  page: number;
-
-  @ApiProperty({ description: '총 페이지 수' })
-  totalPage: number;
-
-  @ApiProperty({ description: '총 공지사항 수' })
-  totalNotice: number;
 }

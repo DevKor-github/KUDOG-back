@@ -125,31 +125,25 @@ export class NoticeInfoResponseDto {
   })
   mappedCategory: string;
 
-  static entityToDto(
-    entity: Notice,
-    scrapBoxes?: ScrapBox[],
-  ): NoticeInfoResponseDto {
+  constructor(entity: Notice, scrapBoxes: ScrapBox[] = []) {
     const scrapBoxIds = scrapBoxes
-      ? scrapBoxes
-          .filter((scrapBox) =>
-            scrapBox.scraps.some((scrap) => scrap.noticeId === entity.id),
-          )
-          .map((scrapBox) => scrapBox.id)
-      : [];
-    return {
-      id: entity.id,
-      title: entity.title,
-      content: entity.content,
-      writer: entity.writer,
-      date: entity.date,
-      view: entity.view,
-      url: entity.url,
-      scrapped: scrapBoxIds.length > 0,
-      scrapCount: entity.scraps.length,
-      provider: entity.category.provider.name,
-      category: entity.category.name,
-      mappedCategory: entity.category.mappedCategory,
-      scrapBoxId: scrapBoxIds,
-    };
+      .filter((scrapBox) =>
+        scrapBox.scraps.some((scrap) => scrap.noticeId === entity.id),
+      )
+      .map((scrapBox) => scrapBox.id);
+
+    this.id = entity.id;
+    this.title = entity.title;
+    this.content = entity.content;
+    this.writer = entity.writer;
+    this.date = entity.date;
+    this.view = entity.view;
+    this.url = entity.url;
+    this.scrapped = scrapBoxIds.length > 0;
+    this.scrapCount = entity.scraps.length;
+    this.provider = entity.category.provider.name;
+    this.category = entity.category.name;
+    this.mappedCategory = entity.category.mappedCategory;
+    this.scrapBoxId = scrapBoxIds;
   }
 }
