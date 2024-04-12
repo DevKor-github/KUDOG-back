@@ -17,7 +17,7 @@ import { JwtPayload } from 'src/interfaces/auth';
 import { ScrapBoxResponseDto } from './dtos/scrapBoxResponse.dto';
 import { Docs } from 'src/decorators/docs/scrap.decorator';
 import { ScrapBoxResponseWithNotices } from './dtos/scrapBoxResponseWithNotices.dto';
-import { UsePagination } from 'src/decorators/usePagination.decorator';
+import { UsePagination } from 'src/decorators';
 import { PageQuery } from 'src/interfaces/pageQuery';
 import { PageResponse } from 'src/interfaces/pageResponse';
 @ApiTags('Scrap')

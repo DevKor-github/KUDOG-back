@@ -8,7 +8,7 @@ import { Docs } from 'src/decorators/docs/notice.decorator';
 import { User } from 'src/decorators';
 import { JwtPayload } from 'src/interfaces/auth';
 import { NoticeInfoResponseDto } from './dtos/NoticeInfoResponse.dto';
-import { UsePagination } from 'src/decorators/usePagination.decorator';
+import { UsePagination } from 'src/decorators';
 import { PageQuery } from 'src/interfaces/pageQuery';
 import { PageResponse } from 'src/interfaces/pageResponse';
 

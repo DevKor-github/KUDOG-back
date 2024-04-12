@@ -17,7 +17,7 @@ import { NotificationInfoResponseDto } from './dtos/noticiationInfoResponse.dto'
 import { PageResponse } from 'src/interfaces/pageResponse';
 import { TokenRequestDto } from './dtos/tokenRequest.dto';
 import { PageQuery } from 'src/interfaces/pageQuery';
-import { UsePagination } from 'src/decorators/usePagination.decorator';
+import { UsePagination } from 'src/decorators';
 
 @Controller('notifications')
 @ApiTags('notifications')

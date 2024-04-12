@@ -19,7 +19,7 @@ import { SubscribeBoxResponseDtoWithNotices } from './dtos/subscribeBoxResponseW
 import { SubscribeBoxResponseDto } from './dtos/subscribeBoxResponse.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { PageResponse } from 'src/interfaces/pageResponse';
-import { UsePagination } from 'src/decorators/usePagination.decorator';
+import { UsePagination } from 'src/decorators';
 import { PageQuery } from 'src/interfaces/pageQuery';
 
 @ApiTags('Subscribe')
