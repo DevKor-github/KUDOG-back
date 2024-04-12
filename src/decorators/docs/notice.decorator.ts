@@ -132,11 +132,8 @@ export function Docs(endPoint: NoticeEndpoints) {
           type: DocumentedException,
         }),
         ApiNotFoundResponse({
-          description: '해당 id의 scrapBox가 존재하지 않습니다.',
-          type: DocumentedException,
-        }),
-        ApiNotFoundResponse({
-          description: '해당 id의 notice가 존재하지 않습니다.',
+          description:
+            '해당 id의 scrapBox가 존재하지 않습니다. | 해당 id의 notice가 존재하지 않습니다.',
           type: DocumentedException,
         }),
       );

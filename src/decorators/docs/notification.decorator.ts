@@ -32,7 +32,6 @@ export function Docs(endPoint: NotificationEndPoints) {
         ApiOkResponse({
           type: NotificationInfoResponseDto,
         }),
-
         ApiUnauthorizedResponse({
           description: 'token 만료 또는 잘못된 token',
           type: DocumentedException,
