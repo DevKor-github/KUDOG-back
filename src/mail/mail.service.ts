@@ -117,6 +117,7 @@ export class MailService {
       },
       relations: ['categories'],
     });
+    const DateWhereClause = Between(yesterdayTimeStamp(), Date.now());
     if (subscribeBoxes.length === 0) return;
     await Promise.all(
       subscribeBoxes.map(async (box) => {
@@ -125,7 +126,7 @@ export class MailService {
             category: {
               id: In(box.categories.map((category) => category.categoryId)),
             },
-            createdAt: Between(yesterdayTimeStamp(), Date.now()),
+            createdAt: DateWhereClause,
           },
           relations: ['category'],
         });
