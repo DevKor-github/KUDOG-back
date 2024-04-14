@@ -126,7 +126,8 @@ export class AuthService {
 
   async signup(signupInfo: SignupRequestDto): Promise<number> {
     const { password, name, email } = signupInfo;
-
+    if (!email || !password || !name)
+      throw new BadRequestException('필수 정보를 입력해주세요.');
     if (!email.endsWith('@korea.ac.kr'))
       throw new BadRequestException('korea.ac.kr 이메일이 아닙니다.');
     if (!/^[a-z0-9]{6,16}$/.test(password))
