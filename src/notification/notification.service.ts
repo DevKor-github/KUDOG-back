@@ -8,9 +8,12 @@ import {
   CategoryPerSubscribeBoxEntity,
   NotificationTokenEntity,
   NotificationEntity,
+  Notice,
 } from 'src/entities';
 import { PageQuery } from 'src/interfaces/pageQuery';
 import { NotiByCategory } from 'src/channel/dtos/notification.dto';
+import { NotificationFromCrawlerRequestDto } from './dtos/notificationFromCrawlerRequest.dto';
+import { ChannelService } from 'src/channel/channel.service';
 
 @Injectable()
 export class NotificationService {
@@ -21,6 +24,9 @@ export class NotificationService {
     private readonly notificationsRepository: Repository<NotificationEntity>,
     @InjectRepository(CategoryPerSubscribeBoxEntity)
     private readonly categoryMNRepository: Repository<CategoryPerSubscribeBoxEntity>,
+    @InjectRepository(Notice)
+    private readonly noticeRepository: Repository<Notice>,
+    private readonly channelService: ChannelService,
   ) {
     const firebaseKey = {
       type: process.env.FCM_TYPE,
@@ -190,5 +196,61 @@ export class NotificationService {
       where: { userId, token: token, isActive: true },
     });
     return !!tokenInfo;
+  }
+
+  async sendNotificationFromCrawler(
+    dto: NotificationFromCrawlerRequestDto,
+  ): Promise<void> {
+    const { ids } = dto;
+    const entities = await this.noticeRepository.find({
+      where: {
+        id: In(ids),
+      },
+      relations: ['category'],
+    });
+    const data: NotiByCategory[] = [
+      {
+        categoryId: 23,
+        category: 'KUPID 일반공지',
+        notices: entities
+          .filter((entity) => entity.category.id === 23)
+          .map((entity) => ({
+            title: entity.title,
+            url: entity.url,
+          })),
+      },
+      {
+        categoryId: 23,
+        category: 'KUPID 장학금공지',
+        notices: entities
+          .filter((entity) => entity.category.id === 24)
+          .map((entity) => ({
+            title: entity.title,
+            url: entity.url,
+          })),
+      },
+      {
+        categoryId: 23,
+        category: 'KUPID 학사일정',
+        notices: entities
+          .filter((entity) => entity.category.id === 25)
+          .map((entity) => ({
+            title: entity.title,
+            url: entity.url,
+          })),
+      },
+    ];
+
+    const message =
+      this.channelService.createMessageFromNoticesWithOutURL(data);
+    await this.channelService.sendMessageToAll(message);
+    await this.channelService.sendMessageToKudog(message);
+
+    try {
+      await this.sendPushOnNewNotices(data);
+    } catch (err) {
+      await this.channelService.sendMessageToKudog(err);
+      throw new InternalServerErrorException(err);
+    }
   }
 }

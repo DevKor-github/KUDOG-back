@@ -7,7 +7,7 @@ import {
   Delete,
   Query,
 } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiExcludeEndpoint, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { InjectAccessUser } from 'src/decorators';
 import { JwtPayload } from 'src/interfaces/auth';
@@ -18,6 +18,8 @@ import { PageResponse } from 'src/interfaces/pageResponse';
 import { TokenRequestDto } from './dtos/tokenRequest.dto';
 import { PageQuery } from 'src/interfaces/pageQuery';
 import { UsePagination } from 'src/decorators';
+import { CrawlerGuard } from 'src/guards/crawler.guard';
+import { NotificationFromCrawlerRequestDto } from './dtos/notificationFromCrawlerRequest.dto';
 
 @Controller('notifications')
 @ApiTags('notifications')
@@ -90,5 +92,14 @@ export class NotificationController {
       'test',
       'test',
     );
+  }
+
+  @UseGuards(CrawlerGuard)
+  @Post('/kupid-crawler-notification')
+  @ApiExcludeEndpoint()
+  async sendNotificationFromCrawler(
+    @Body() body: NotificationFromCrawlerRequestDto,
+  ): Promise<void> {
+    return await this.notificationService.sendNotificationFromCrawler(body);
   }
 }

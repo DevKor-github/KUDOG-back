@@ -59,6 +59,7 @@ export class FetchService {
     try {
       await this.notificationService.sendPushOnNewNotices(data);
     } catch (err) {
+      await this.channelService.sendMessageToKudog(err);
       throw new InternalServerErrorException(err);
     }
   }

@@ -6,18 +6,21 @@ import {
   CategoryPerSubscribeBoxEntity,
   NotificationTokenEntity,
   NotificationEntity,
+  Notice,
 } from 'src/entities';
+import { ChannelService } from 'src/channel/channel.service';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
+      Notice,
       NotificationEntity,
       NotificationTokenEntity,
       CategoryPerSubscribeBoxEntity,
     ]),
   ],
   controllers: [NotificationController],
-  providers: [NotificationService],
+  providers: [NotificationService, ChannelService],
   exports: [NotificationService],
 })
 export class NotificationModule {}

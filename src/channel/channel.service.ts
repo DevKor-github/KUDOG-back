@@ -54,4 +54,18 @@ export class ChannelService {
     });
     return messages.join('\n');
   }
+
+  createMessageFromNoticesWithOutURL(noticeInfos: NotiByCategory[]): string {
+    const messages = [];
+    noticeInfos
+      .filter((info) => info.notices.length > 0)
+      .forEach((info) => {
+        messages.push(`${info.category}에 새로운 공지사항이 올라왔습니다.`);
+        info.notices.forEach((notice) => {
+          messages.push(`- ${notice.title}`);
+        });
+      });
+    messages.push('KUPID 공지사항은 앱에서 확인해주세요!');
+    return messages.join('\n');
+  }
 }
