@@ -120,9 +120,10 @@ export class NotificationService {
     body: string,
   ): Promise<void> {
     const tokens = await this.notificationTokenRepository.find({
-      where: { userId: In(userIds), isActive: true },
+      where: { user: { id: In(userIds) }, isActive: true },
     });
     const tokenList = tokens.map((token) => token.token);
+    if (tokenList.length === 0) return;
     const newEntities = userIds.map((userId) =>
       this.notificationsRepository.create({
         userId,
