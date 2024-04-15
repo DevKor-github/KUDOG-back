@@ -6,7 +6,7 @@ import {
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CategoryEntity, Notice } from 'src/entities';
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 import noticeFetcher from './fetch';
 import { ChannelService } from 'src/channel/channel.service';
 import { NotificationService } from 'src/notification/notification.service';
@@ -26,6 +26,7 @@ export class FetchService {
   @Cron(CronExpression.EVERY_10_MINUTES, { timeZone: 'Asia/Seoul' })
   async fetchNotices() {
     const categories = await this.categoryRepository.find({
+      where: { provider: { id: Not(6) } },
       relations: ['provider'],
     });
 
