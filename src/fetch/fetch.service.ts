@@ -1,4 +1,8 @@
-import { Injectable, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CategoryEntity, Notice } from 'src/entities';
@@ -46,10 +50,16 @@ export class FetchService {
       )
     ).filter((d) => d !== undefined && d.notices.length > 0);
     if (data.length === 0) return;
-    this.notificationService.sendPushOnNewNotices(data);
+
     const message = this.channelService.createMessageFromNotices(data);
     await this.channelService.sendMessageToAll(message);
     await this.channelService.sendMessageToKudog(message);
+
+    try {
+      await this.notificationService.sendPushOnNewNotices(data);
+    } catch (err) {
+      throw new InternalServerErrorException(err);
+    }
   }
 
   async fetchNotice(category: CategoryEntity) {
