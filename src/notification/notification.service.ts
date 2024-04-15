@@ -202,6 +202,7 @@ export class NotificationService {
     dto: NotificationFromCrawlerRequestDto,
   ): Promise<void> {
     const { ids } = dto;
+    if (ids.length === 0) return;
     const entities = await this.noticeRepository.find({
       where: {
         id: In(ids),
