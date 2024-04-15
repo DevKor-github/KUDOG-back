@@ -44,7 +44,7 @@ export class NotificationService {
     Promise.all(
       noticeInfos.map(async (noticeInfo) => {
         const entities = await this.categoryMNRepository.find({
-          where: { categoryId: noticeInfo.categoryId },
+          where: { category: { id: noticeInfo.categoryId } },
           relations: ['subscribeBox'],
         });
         entities.map((entity) => {
