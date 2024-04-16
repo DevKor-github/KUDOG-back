@@ -121,48 +121,58 @@ export class MailService {
     if (subscribeBoxes.length === 0) return;
     await Promise.all(
       subscribeBoxes.map(async (box) => {
-        const notices = await this.noticeRepository.find({
-          where: {
-            category: {
-              id: In(box.categories.map((category) => category.categoryId)),
+        try {
+          const notices = await this.noticeRepository.find({
+            where: {
+              category: {
+                id: In(box.categories.map((category) => category.categoryId)),
+              },
+              createdAt: DateWhereClause,
             },
-            createdAt: DateWhereClause,
-          },
-          relations: ['category'],
-        });
-        if (notices.length === 0) return;
-        let html = '';
-        const today = new Date().toISOString().slice(0, 10);
-        html = html.concat(`<html><head></head><body>`);
-        html =
-          html.concat(`	<h2 style="width: 100%; margin: 0 auto; text-align: center;">구독함: ${box.name}의 공지사항</h2>
+            relations: ['category'],
+          });
+          if (notices.length === 0) return;
+          let html = '';
+          const today = new Date().toISOString().slice(0, 10);
+          html = html.concat(`<html><head></head><body>`);
+          html =
+            html.concat(`	<h2 style="width: 100%; margin: 0 auto; text-align: center;">구독함: ${box.name}의 공지사항</h2>
         	<div style="width: 95%; text-align: right; margin: 0 auto;">${today}</div>
 	        <div style="width: 95%; margin: 0 auto;">`);
 
-        const noticeByCategory = new Map<string, Array<Notice>>();
-        notices.forEach((notice) => {
-          const category = notice.category.name;
-          if (!noticeByCategory.has(category))
-            noticeByCategory.set(category, []);
-          noticeByCategory.get(category).push(notice);
-        });
-        for (const category of noticeByCategory.keys()) {
-          html = html.concat(`<h4 style="text-align: left;">${category}</h4>`);
-          html = html.concat(
-            noticeByCategory
-              .get(category)
-              .map((notice) => {
-                return `<p>${notice.content}</p>`;
-              })
-              .join('<hr style="height: 2px; width: 100%;">'),
+          const noticeByCategory = new Map<string, Array<Notice>>();
+          notices.forEach((notice) => {
+            const category = notice.category.name;
+            if (!noticeByCategory.has(category))
+              noticeByCategory.set(category, []);
+            noticeByCategory.get(category).push(notice);
+          });
+          for (const category of noticeByCategory.keys()) {
+            html = html.concat(
+              `<h4 style="text-align: left;">${category}</h4>`,
+            );
+            html = html.concat(
+              noticeByCategory
+                .get(category)
+                .map((notice) => {
+                  return `<p>${notice.content}</p>`;
+                })
+                .join('<hr style="height: 2px; width: 100%;">'),
+            );
+          }
+
+          await this.sendMail(
+            box.mail,
+            `[KUDOG] 구독함 ${box.name}의 공지사항 ${today}`,
+            html,
+          );
+        } catch (err) {
+          this.sendMail(
+            'njhnjh02@naver.com',
+            'error',
+            [err, err.stack, err.message].join('\n'),
           );
         }
-
-        await this.sendMail(
-          box.mail,
-          `[KUDOG] 구독함 ${box.name}의 공지사항 ${today}`,
-          html,
-        );
       }),
     );
   }
