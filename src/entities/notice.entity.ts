@@ -37,6 +37,6 @@ export class Notice {
   @Column({ default: 0 })
   view: number;
 
-  @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @CreateDateColumn({ type: 'bigint', default: Date.now() })
   createdAt: number;
 }
