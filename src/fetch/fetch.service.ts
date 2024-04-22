@@ -89,6 +89,7 @@ export class FetchService {
           writer: data.writer,
           date: data.writtenDate,
           url: data.page.url,
+          createdAt: Date.now(),
           category,
         });
 

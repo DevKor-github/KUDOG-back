@@ -1,6 +1,5 @@
 import {
   Column,
-  CreateDateColumn,
   Entity,
   ManyToOne,
   OneToMany,
@@ -37,6 +36,6 @@ export class Notice {
   @Column({ default: 0 })
   view: number;
 
-  @CreateDateColumn({ type: 'bigint', default: Date.now() })
+  @Column({ type: 'bigint' })
   createdAt: number;
 }
