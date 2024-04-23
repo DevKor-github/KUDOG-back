@@ -107,7 +107,7 @@ export class MailService {
     }
     throw new BadRequestException('인증 코드가 일치하지 않습니다.');
   }
-  @Cron(CronExpression.EVERY_5_MINUTES, { timeZone: 'Asia/Seoul' })
+  @Cron(CronExpression.EVERY_MINUTE, { timeZone: 'Asia/Seoul' })
   async sendMailBySubBox(): Promise<void> {
     const dateFormat = getHHMMdate();
 
@@ -131,6 +131,7 @@ export class MailService {
             },
             relations: ['category'],
           });
+          console.log(notices);
           if (notices.length === 0) return;
           let html = '';
           const today = new Date().toISOString().slice(0, 10);
