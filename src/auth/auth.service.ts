@@ -13,14 +13,20 @@ import {
   KudogUser,
   ChangePwdAuthenticationEntity,
   EmailAuthenticationEntity,
+  RefreshTokenEntity,
 } from 'src/entities';
 import { Repository } from 'typeorm';
 import { SignupRequestDto } from './dtos/signupRequest.dto';
 import { JwtService } from '@nestjs/jwt';
-import { JwtPayload } from 'src/interfaces/auth';
+import { JwtPayload, RefreshTokenPayload } from 'src/interfaces/auth';
 import { TokenResponseDto } from './dtos/tokenResponse.dto';
 import { MailerService } from '@nestjs-modules/mailer';
 import { ChannelService } from 'src/channel/channel.service';
+import {
+  ChangePasswordDto,
+  ChangePasswordRequestDto,
+  VerifyChangePasswordRequestDto,
+} from './dtos/changePwdRequest.dto';
 @Injectable()
 export class AuthService {
   constructor(
@@ -30,13 +36,15 @@ export class AuthService {
     private readonly changePwdAuthRepository: Repository<ChangePwdAuthenticationEntity>,
     @InjectRepository(EmailAuthenticationEntity)
     private readonly emailAuthenticationRepository: Repository<EmailAuthenticationEntity>,
+    @InjectRepository(RefreshTokenEntity)
+    private readonly refreshTokenRepository: Repository<RefreshTokenEntity>,
     private jwtService: JwtService,
     private readonly mailerService: MailerService,
     private readonly channelService: ChannelService,
   ) {}
   saltOrRounds = 10;
 
-  async deleteUser(id: number) {
+  async deleteUser(id: number): Promise<void> {
     const user = await this.userRepository.findOne({
       where: { id },
     });
@@ -45,7 +53,7 @@ export class AuthService {
     await this.userRepository.remove(user);
   }
 
-  async validateUser(email: string, password: string) {
+  async validateUser(email: string, password: string): Promise<number> {
     const user = await this.userRepository.findOne({
       where: { email },
     });
@@ -64,30 +72,30 @@ export class AuthService {
     return user.id;
   }
 
-  async refreshJWT(id: number, refreshToken: string) {
-    const user = await this.userRepository.findOne({ where: { id } });
-    if (!user) throw new UnauthorizedException('존재하지 않는 유저입니다.');
+  async refreshJWT(payload: RefreshTokenPayload): Promise<TokenResponseDto> {
+    const refreshToken = await this.refreshTokenRepository.findOne({
+      where: { token: payload.refreshToken, userId: payload.id },
+    });
+    if (!refreshToken)
+      throw new UnauthorizedException('존재하지 않는 유저입니다.');
 
-    if (user.refreshToken !== refreshToken)
-      throw new UnauthorizedException('invalid refresh token');
-
-    const payload: JwtPayload = {
-      id,
-      name: user.name,
+    const newPayload: JwtPayload = {
+      id: payload.id,
+      name: payload.name,
       signedAt: Date.now().toString(),
     };
-    const accessToken = this.jwtService.sign(payload, {
+    const accessToken = this.jwtService.sign(newPayload, {
       expiresIn: '1h',
       secret: process.env.JWT_SECRET_KEY,
     });
 
-    const newRefreshToken = this.jwtService.sign(payload, {
+    const newRefreshToken = this.jwtService.sign(newPayload, {
       expiresIn: '30d',
       secret: process.env.JWT_REFRESH_SECRET_KEY,
     });
-    user.refreshToken = newRefreshToken;
-    await this.userRepository.save(user);
-    return { accessToken, refreshToken: newRefreshToken };
+    refreshToken.token = newRefreshToken;
+    await this.refreshTokenRepository.save(refreshToken);
+    return new TokenResponseDto(accessToken, newRefreshToken);
   }
 
   async getToken(id: number): Promise<TokenResponseDto> {
@@ -108,14 +116,18 @@ export class AuthService {
       expiresIn: '30d',
       secret: process.env.JWT_REFRESH_SECRET_KEY,
     });
-    user.refreshToken = refreshToken;
-    await this.userRepository.save(user);
-    return { accessToken, refreshToken };
+    await this.refreshTokenRepository.insert({
+      token: refreshToken,
+      userId: id,
+    });
+
+    return new TokenResponseDto(accessToken, refreshToken);
   }
 
-  async signup(signupInfo: SignupRequestDto) {
+  async signup(signupInfo: SignupRequestDto): Promise<number> {
     const { password, name, email } = signupInfo;
-
+    if (!email || !password || !name)
+      throw new BadRequestException('필수 정보를 입력해주세요.');
     if (!email.endsWith('@korea.ac.kr'))
       throw new BadRequestException('korea.ac.kr 이메일이 아닙니다.');
     if (!/^[a-z0-9]{6,16}$/.test(password))
@@ -140,10 +152,7 @@ export class AuthService {
     );
     if (!mailAuthentication || mailAuthentication.authenticated !== true)
       throw new BadRequestException('인증되지 않은 이메일입니다.');
-    if (
-      mailAuthentication.createdAt.getTime() + 1000 * 60 * 10 <
-      new Date().getTime()
-    )
+    if (mailAuthentication.createdAt.getTime() + 1000 * 60 * 10 < Date.now())
       throw new RequestTimeoutException(
         '인증 후 너무 오랜 시간이 지났습니다. 다시 인증해주세요.',
       );
@@ -159,7 +168,8 @@ export class AuthService {
     return user.id;
   }
 
-  async changePwdRequest(email: string) {
+  async changePwdRequest(dto: ChangePasswordRequestDto): Promise<void> {
+    const { email } = dto;
     if (!email || !email.endsWith('@korea.ac.kr'))
       throw new BadRequestException('korea.ac.kr 이메일을 입력하세요.');
 
@@ -207,14 +217,19 @@ export class AuthService {
     await this.changePwdAuthRepository.save(entity);
   }
 
-  async logout(id: number) {
-    const user = await this.userRepository.findOne({ where: { id } });
-    if (!user) throw new NotFoundException('존재하지 않는 유저입니다.');
-    user.refreshToken = null;
-    await this.userRepository.save(user);
+  async logout(payload: RefreshTokenPayload): Promise<void> {
+    const token = await this.refreshTokenRepository.findOne({
+      where: { id: payload.id, token: payload.refreshToken },
+    });
+    if (!token) throw new NotFoundException('존재하지 않는 유저입니다.');
+
+    await this.refreshTokenRepository.remove(token);
   }
 
-  async verifyChangePwdCode(code: string) {
+  async verifyChangePwdCode(
+    dto: VerifyChangePasswordRequestDto,
+  ): Promise<void> {
+    const { code } = dto;
     const entity = await this.changePwdAuthRepository.findOne({
       where: { code },
       order: { createdAt: 'DESC' },
@@ -234,7 +249,8 @@ export class AuthService {
     await this.changePwdAuthRepository.save(entity);
   }
 
-  async changePassword(email: string, password: string) {
+  async changePassword(dto: ChangePasswordDto): Promise<void> {
+    const { email, password } = dto;
     const user = await this.userRepository.findOne({
       where: { email },
     });

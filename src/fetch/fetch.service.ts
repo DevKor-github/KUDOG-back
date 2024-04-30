@@ -1,25 +1,32 @@
-import { Injectable, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Category, Notice } from 'src/entities';
-import { Repository } from 'typeorm';
+import { CategoryEntity, Notice } from 'src/entities';
+import { Not, Repository } from 'typeorm';
 import noticeFetcher from './fetch';
 import { ChannelService } from 'src/channel/channel.service';
+import { NotificationService } from 'src/notification/notification.service';
 
 @Injectable()
 export class FetchService {
   constructor(
     @InjectRepository(Notice)
     private readonly noticeRepository: Repository<Notice>,
-    @InjectRepository(Category)
-    private readonly categoryRepository: Repository<Category>,
-    private channelService: ChannelService,
+    @InjectRepository(CategoryEntity)
+    private readonly categoryRepository: Repository<CategoryEntity>,
+    private readonly channelService: ChannelService,
+    private readonly notificationService: NotificationService,
   ) {}
   private readonly logger = new Logger(FetchService.name);
 
   @Cron(CronExpression.EVERY_10_MINUTES, { timeZone: 'Asia/Seoul' })
   async fetchNotices() {
     const categories = await this.categoryRepository.find({
+      where: { provider: { id: Not(6) } },
       relations: ['provider'],
     });
 
@@ -44,12 +51,20 @@ export class FetchService {
       )
     ).filter((d) => d !== undefined && d.notices.length > 0);
     if (data.length === 0) return;
+
     const message = this.channelService.createMessageFromNotices(data);
     await this.channelService.sendMessageToAll(message);
     await this.channelService.sendMessageToKudog(message);
+
+    try {
+      await this.notificationService.sendPushOnNewNotices(data);
+    } catch (err) {
+      await this.channelService.sendMessageToKudog(err);
+      throw new InternalServerErrorException(err);
+    }
   }
 
-  async fetchNotice(category: Category) {
+  async fetchNotice(category: CategoryEntity) {
     const dto = {
       provider: category.provider.name,
       url: category.url,
@@ -74,6 +89,7 @@ export class FetchService {
           writer: data.writer,
           date: data.writtenDate,
           url: data.page.url,
+          createdAt: Date.now(),
           category,
         });
 

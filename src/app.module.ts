@@ -6,15 +6,14 @@ import { ConfigModule } from '@nestjs/config';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { MailModule } from './mail/mail.module';
 import { AuthModule } from './auth/auth.module';
-import { CategoryModule } from './category/category.module';
 import { FetchModule } from './fetch/fetch.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { NoticeModule } from './notice/notice.module';
-import { ProviderModule } from './provider/provider.module';
 import { ChannelModule } from './channel/channel.module';
 import { UsersModule } from './users/users.module';
 import { ScrapModule } from './scrap/scrap.module';
-import { PushModule } from './push/push.module';
+import { NotificationModule } from './notification/notification.module';
+import { SubscribeModule } from './subscribe/subscribe.module';
 
 @Module({
   imports: [
@@ -27,6 +26,7 @@ import { PushModule } from './push/push.module';
       password: process.env.DB_PASSWORD || '5334',
       database: process.env.DB_DATABASE,
       autoLoadEntities: true,
+      logging: true,
     }),
     MailerModule.forRoot({
       transport: {
@@ -41,14 +41,13 @@ import { PushModule } from './push/push.module';
     ScheduleModule.forRoot(),
     MailModule,
     AuthModule,
-    CategoryModule,
     FetchModule,
     NoticeModule,
-    ProviderModule,
     ChannelModule,
     UsersModule,
     ScrapModule,
-    PushModule,
+    NotificationModule,
+    SubscribeModule,
   ],
   controllers: [AppController],
   providers: [AppService],

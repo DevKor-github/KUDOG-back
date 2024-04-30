@@ -1,5 +1,7 @@
 import { applyDecorators } from '@nestjs/common';
 import {
+  ApiBody,
+  ApiCreatedResponse,
   ApiForbiddenResponse,
   ApiInternalServerErrorResponse,
   ApiNotFoundResponse,
@@ -11,9 +13,15 @@ import {
 } from '@nestjs/swagger';
 import { DocumentedException } from 'src/interfaces/docsException';
 import { NoticeInfoResponseDto } from 'src/notice/dtos/NoticeInfoResponse.dto';
-import { PagedNoticeListDto } from 'src/notice/dtos/NoticeListResponse.dto';
+import { ApiPagination } from './common.decorator';
+import { NoticeListResponseDto } from 'src/notice/dtos/NoticeListResponse.dto';
+import { AddRequestRequestDto } from 'src/notice/dtos/AddRequestRequest.dto';
 
-type NoticeEndpoints = 'getNoticeList' | 'getNoticeInfoById' | 'scrapNotice';
+type NoticeEndpoints =
+  | 'getNoticeList'
+  | 'getNoticeInfoById'
+  | 'scrapNotice'
+  | 'addNoticeRequest';
 
 export function Docs(endPoint: NoticeEndpoints) {
   switch (endPoint) {
@@ -26,7 +34,7 @@ export function Docs(endPoint: NoticeEndpoints) {
         }),
         ApiOkResponse({
           description: 'well done',
-          type: PagedNoticeListDto,
+          type: NoticeListResponseDto,
         }),
         ApiInternalServerErrorResponse({
           description: 'internal server error',
@@ -35,13 +43,7 @@ export function Docs(endPoint: NoticeEndpoints) {
           description: 'token 만료 또는 잘못된 token',
           type: DocumentedException,
         }),
-        ApiQuery({
-          name: 'page',
-          type: Number,
-          required: false,
-          example: 1,
-          description: '1 for default',
-        }),
+        ApiPagination(),
         ApiQuery({
           name: 'keyword',
           type: String,
@@ -137,13 +139,21 @@ export function Docs(endPoint: NoticeEndpoints) {
           type: DocumentedException,
         }),
         ApiNotFoundResponse({
-          description: '해당 id의 scrapBox가 존재하지 않습니다.',
+          description:
+            '해당 id의 scrapBox가 존재하지 않습니다. | 해당 id의 notice가 존재하지 않습니다.',
           type: DocumentedException,
         }),
-        ApiNotFoundResponse({
-          description: '해당 id의 notice가 존재하지 않습니다.',
-          type: DocumentedException,
+      );
+    case 'addNoticeRequest':
+      return applyDecorators(
+        ApiOperation({
+          description: '공지사항 추가 요청, access token 보내주세요',
+          summary: '공지사항 추가 요청',
         }),
+        ApiBody({
+          type: AddRequestRequestDto,
+        }),
+        ApiCreatedResponse({ description: 'OK' }),
       );
   }
 }

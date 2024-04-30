@@ -50,8 +50,23 @@ jobs:
           echo "JWT_REFRESH_SECRET_KEY=${{ secrets.JWT_REFRESH_SECRET_KEY }}" >> .env
           echo "CHANNEL_API_KEY=${{ secrets.CHANNEL_API_KEY }}" >> .env
           echo "CHANNEL_API_SECRET=${{ secrets.CHANNEL_API_SECRET }}" >> .env
-           echo "DISCORD_TOKEN=${{secrets.DISCORD_TOKEN}}" >> .env
-
+          echo "DISCORD_TOKEN=${{secrets.DISCORD_TOKEN}}" >> .env
+          echo "PINPOINT_COLLECTOR_IP=${{secrets.PINPOINT_COLLECTOR_IP}}" >> .env
+          echo "PINPOINT_SAMPLING_RATE=${{secrets.PINPOINT_SAMPLING_RATE}}" >> .env
+          echo "PINPOINT_APPLICATION_NAME=${{secrets.PINPOINT_APPLICATION_NAME}}" >> .env
+          echo "PINPOINT_AGENT_ID=${{secrets.PINPOINT_AGENT_ID}}" >> .env
+          echo "FCM_TYPE=${{ secrets.FCM_TYPE }}" >> .env
+          echo "FCM_PROJECT_ID=${{ secrets.FCM_PROJECT_ID }}" >> .env
+          echo "FCM_PRIVATE_KEY_ID=${{ secrets.FCM_PRIVATE_KEY_ID }}" >> .env
+          echo "FCM_PRIVATE_KEY=${{ secrets.FCM_PRIVATE_KEY }}" >> .env
+          echo "FCM_CLIENT_EMAIL=${{ secrets.FCM_CLIENT_EMAIL }}" >> .env
+          echo "FCM_CLIENT_ID=${{ secrets.FCM_CLIENT_ID }}" >> .env
+          echo "FCM_AUTH_URI=${{ secrets.FCM_AUTH_URI }}" >> .env
+          echo "FCM_TOKEN_URI=${{ secrets.FCM_TOKEN_URI }}" >> .env
+          echo "FCM_AUTH_CERT_URL=${{ secrets.FCM_AUTH_CERT_URL }}" >> .env
+          echo "FCM_CLIENT_CERT_URL=${{ secrets.FCM_CLIENT_CERT_URL }}" >> .env
+          echo "FCM_UNIVERSE_DOMAIN=${{ secrets.FCM_UNIVERSE_DOMAIN }}" >> .env
+          echo "PY_TOKEN=${{ secrets.PY_TOKEN }}" >> .env
           cat .env
       - name: Run Docker
         run: |

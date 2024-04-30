@@ -1,7 +1,7 @@
 import { NoticeListResponseDto } from 'src/notice/dtos/NoticeListResponse.dto';
 import { ScrapBoxResponseDto } from './scrapBoxResponse.dto';
 import { ApiProperty } from '@nestjs/swagger';
-import { ScrapBox } from 'src/entities';
+import { ScrapBoxEntity } from 'src/entities';
 
 export class ScrapBoxResponseWithNotices extends ScrapBoxResponseDto {
   @ApiProperty({
@@ -9,15 +9,10 @@ export class ScrapBoxResponseWithNotices extends ScrapBoxResponseDto {
   })
   notices: NoticeListResponseDto[];
 
-  static toDto(
-    entity: ScrapBox,
-    others: ScrapBox[],
-  ): ScrapBoxResponseWithNotices {
-    return {
-      ...super.entityToDto(entity),
-      notices: entity.scraps.map((scrap) =>
-        NoticeListResponseDto.entityToDto(scrap.notice, others),
-      ),
-    };
+  constructor(entity: ScrapBoxEntity, others: ScrapBoxEntity[]) {
+    super(entity);
+    this.notices = entity.scraps.map(
+      (scrap) => new NoticeListResponseDto(scrap.notice, others),
+    );
   }
 }

@@ -1,15 +1,11 @@
-import { Body, Controller, Get, Put, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Put, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { AuthGuard } from '@nestjs/passport';
-import {
-  ApiNotFoundResponse,
-  ApiOkResponse,
-  ApiOperation,
-  ApiTags,
-  ApiUnauthorizedResponse,
-} from '@nestjs/swagger';
-import { modifyInfoRequestDto, userInfoResponseDto } from './dtos/userInfo.dto';
-import { DocumentedException } from 'src/interfaces/docsException';
+import { ApiTags } from '@nestjs/swagger';
+import { ModifyInfoRequestDto, UserInfoResponseDto } from './dtos/userInfo.dto';
+import { Docs } from 'src/decorators/docs/user.decorator';
+import { InjectAccessUser } from 'src/decorators';
+import { JwtPayload } from 'src/interfaces/auth';
 
 @Controller('users')
 @ApiTags('user')
@@ -18,41 +14,20 @@ export class UsersController {
 
   @UseGuards(AuthGuard('jwt-access'))
   @Get('/info')
-  @ApiOperation({
-    summary: 'GET user info',
-    description:
-      'access token을 이용하여 내 정보를 가져옵니다. Authorization 헤더에 Bearer ${accessToken} 을 넣어주세요.',
-  })
-  @ApiOkResponse({ description: '내 정보 get', type: userInfoResponseDto })
-  @ApiUnauthorizedResponse({
-    description: 'token 만료 또는 잘못된 token',
-    type: DocumentedException,
-  })
-  @ApiNotFoundResponse({
-    description: '존재하지 않는 유저입니다.',
-    type: DocumentedException,
-  })
-  async getUserInfo(@Req() req: any) {
-    return await this.userService.getUserInfo(req.user.id);
+  @Docs('getUserInfo')
+  async getUserInfo(
+    @InjectAccessUser() user: JwtPayload,
+  ): Promise<UserInfoResponseDto> {
+    return await this.userService.getUserInfo(user.id);
   }
 
   @UseGuards(AuthGuard('jwt-access'))
   @Put('/info')
-  @ApiOperation({
-    summary: 'modify user info',
-    description:
-      '내 정보를 수정합니다. Authorization 헤더에 Bearer ${accessToken} 을 넣어주세요. 수정할 정보만 보내도 괜찮습니다.',
-  })
-  @ApiOkResponse({ description: '정보 수정 성공' })
-  @ApiUnauthorizedResponse({
-    description: 'token 만료 또는 잘못된 token',
-    type: DocumentedException,
-  })
-  @ApiNotFoundResponse({
-    description: '존재하지 않는 유저입니다.',
-    type: DocumentedException,
-  })
-  async modifyUserInfo(@Req() req: any, @Body() body: modifyInfoRequestDto) {
-    return await this.userService.modifyUserInfo(req.user.id, body);
+  @Docs('modifyUserInfo')
+  async modifyUserInfo(
+    @InjectAccessUser() user: JwtPayload,
+    @Body() body: ModifyInfoRequestDto,
+  ): Promise<void> {
+    return await this.userService.modifyUserInfo(user.id, body);
   }
 }
