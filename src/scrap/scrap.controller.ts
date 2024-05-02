@@ -20,6 +20,7 @@ import { ScrapBoxResponseWithNotices } from './dtos/scrapBoxResponseWithNotices.
 import { UsePagination } from 'src/decorators';
 import { PageQuery } from 'src/interfaces/pageQuery';
 import { PageResponse } from 'src/interfaces/pageResponse';
+import { IntValidationPipe } from 'src/pipes/intValidation.pipe';
 @ApiTags('Scrap')
 @Controller('scrap')
 export class ScrapController {
@@ -39,7 +40,7 @@ export class ScrapController {
   @Get('/box/:scrapBoxId')
   @Docs('getScrapBoxInfo')
   async getScrapBoxInfo(
-    @Param('scrapBoxId') scrapBoxId: number,
+    @Param('scrapBoxId', IntValidationPipe) scrapBoxId: number,
     @InjectAccessUser() user: JwtPayload,
   ): Promise<ScrapBoxResponseWithNotices> {
     return await this.scrapService.getScrapBoxInfo(user.id, scrapBoxId);
@@ -59,7 +60,7 @@ export class ScrapController {
   @Put('/box/:scrapBoxId')
   @Docs('updateScrapBox')
   async updateScrapBox(
-    @Param('scrapBoxId') scrapBoxId: number,
+    @Param('scrapBoxId', IntValidationPipe) scrapBoxId: number,
     @InjectAccessUser() user: JwtPayload,
     @Body() body: ScrapBoxRequestDto,
   ): Promise<ScrapBoxResponseDto> {
@@ -70,7 +71,7 @@ export class ScrapController {
   @Delete('/box/:scrapBoxId')
   @Docs('deleteScrapBox')
   async deleteScrapBox(
-    @Param('scrapBoxId') scrapBoxId: number,
+    @Param('scrapBoxId', IntValidationPipe) scrapBoxId: number,
     @InjectAccessUser() user: JwtPayload,
   ): Promise<void> {
     return await this.scrapService.deleteScrapBox(scrapBoxId, user.id);

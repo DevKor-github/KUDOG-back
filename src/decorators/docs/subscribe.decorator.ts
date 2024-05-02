@@ -3,6 +3,7 @@ import {
   ApiBody,
   ApiCreatedResponse,
   ApiForbiddenResponse,
+  ApiNotAcceptableResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
@@ -45,6 +46,10 @@ export function Docs(endPoint: SubscribeEndPoint) {
           description: 'token 만료 또는 잘못된 token',
           type: DocumentedException,
         }),
+        ApiNotAcceptableResponse({
+          description: '입력값이 유효하지 않습니다 - <변수명> 상세 정보',
+          type: DocumentedException,
+        }),
       );
     case 'getSubscribeBoxInfo':
       return applyDecorators(
@@ -81,6 +86,10 @@ export function Docs(endPoint: SubscribeEndPoint) {
         }),
         ApiNotFoundResponse({
           description: '구독함 Id에 해당하는 구독함이 없습니다.',
+          type: DocumentedException,
+        }),
+        ApiNotAcceptableResponse({
+          description: '입력값이 유효하지 않습니다 - <변수명> 상세 정보',
           type: DocumentedException,
         }),
       );
@@ -135,6 +144,10 @@ export function Docs(endPoint: SubscribeEndPoint) {
           description: '구독함 Id에 해당하는 구독함이 없습니다.',
           type: DocumentedException,
         }),
+        ApiNotAcceptableResponse({
+          description: '입력값이 유효하지 않습니다 - <변수명> 상세 정보',
+          type: DocumentedException,
+        }),
       );
     case 'deleteSubscribeBox':
       return applyDecorators(
@@ -163,6 +176,10 @@ export function Docs(endPoint: SubscribeEndPoint) {
         }),
         ApiNotFoundResponse({
           description: '구독함 Id에 해당하는 구독함이 없습니다.',
+          type: DocumentedException,
+        }),
+        ApiNotAcceptableResponse({
+          description: '입력값이 유효하지 않습니다 - <변수명> 상세 정보',
           type: DocumentedException,
         }),
       );

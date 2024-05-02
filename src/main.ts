@@ -4,7 +4,11 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { HttpExceptionFilter } from './filters/httpException.filter';
 import { ChannelService } from './channel/channel.service';
 import { InternalErrorFilter } from './filters/internalError.filter';
-import { ExceptionFilter } from '@nestjs/common';
+import {
+  ExceptionFilter,
+  NotAcceptableException,
+  ValidationPipe,
+} from '@nestjs/common';
 
 import 'pinpoint-node-agent';
 
@@ -29,6 +33,22 @@ async function bootstrap() {
 
   app.useGlobalFilters(...filters);
 
+  app.useGlobalPipes(
+    new ValidationPipe({
+      exceptionFactory: (errors) => {
+        const messages = errors
+          .map((error) => {
+            return `<${error.property}> ${Object.values(error.constraints).join(
+              ' ',
+            )}`;
+          })
+          .join(' ');
+        return new NotAcceptableException(
+          `입력값이 유효하지 않습니다 - ${messages}`,
+        );
+      },
+    }),
+  );
   await app.listen(3050);
 }
 bootstrap();
