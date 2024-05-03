@@ -39,7 +39,10 @@ export class SubscribeBoxResponseDto {
     this.id = entity.id;
     this.name = entity.name;
     this.email = entity.mail;
-    this.provider = entity.categories[0].category.provider.name;
+    this.provider =
+      entity.categories.length > 0
+        ? entity.categories[0].category.provider.name
+        : '구독하는 공지사항이 없습니다.';
     this.categories = entity.categories.map(
       (category) => category.category.name,
     );
