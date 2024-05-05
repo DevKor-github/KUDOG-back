@@ -38,4 +38,14 @@ export class UsersService {
     }
     await this.userRepository.save(user);
   }
+  async modifyTimeInfo(id:number,sendTime: string):Promise<void>{
+    const user =await this.userRepository.findOne({
+      where:{id},
+      relations:['subscribeBoxes']
+    });
+    if(!user) throw new NotFoundException('존재하지 않는 유저입니다.');
+    user.subscribeBoxes.forEach(box=>{box.sendTime=sendTime;
+    });
+    await this.userRepository.save(user);
+  }
 }

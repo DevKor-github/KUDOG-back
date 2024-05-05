@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Put, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiTags } from '@nestjs/swagger';
@@ -29,5 +29,14 @@ export class UsersController {
     @Body() body: ModifyInfoRequestDto,
   ): Promise<void> {
     return await this.userService.modifyUserInfo(user.id, body);
+  }
+  @UseGuards(AuthGuard('jwt-access'))
+  @Put('/info/:sendTime')
+  @Docs('modifyTimeInfo')
+  async modifyTimeInfo(
+    @InjectAccessUser() user:JwtPayload,
+    @Param('sendTime') sendTime: string,
+  ):Promise<void>{
+    return await this.userService.modifyTimeInfo(user.id,sendTime);
   }
 }

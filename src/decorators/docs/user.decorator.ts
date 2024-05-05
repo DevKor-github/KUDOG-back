@@ -8,7 +8,7 @@ import {
 import { DocumentedException } from 'src/interfaces/docsException';
 import { UserInfoResponseDto } from 'src/users/dtos/userInfo.dto';
 
-type UserEndpoints = 'getUserInfo' | 'modifyUserInfo';
+type UserEndpoints = 'getUserInfo' | 'modifyUserInfo'|'modifyTimeInfo';
 
 export function Docs(endPoint: UserEndpoints) {
   switch (endPoint) {
@@ -46,6 +46,23 @@ export function Docs(endPoint: UserEndpoints) {
         }),
         ApiNotFoundResponse({
           description: '존재하지 않는 유저입니다.',
+          type: DocumentedException,
+        }),
+      );
+      case 'modifyTimeInfo':
+      return applyDecorators(
+        ApiOperation({
+          summary: 'modify sendTime info',
+          description:
+            '알림을 전송받을 시간을 수정합니다.Authorization 헤더에 Bearer ${accessToken} 을 넣어주세요. 수정할 시간만 보내주세요',
+        }),
+        ApiOkResponse({description:'시간 수정 성공'}),
+        ApiUnauthorizedResponse({
+          description:'token 만료 또는 잘못된 token',
+          type: DocumentedException,
+        }),
+        ApiNotFoundResponse({
+          description:'존재하지 않은 유저입니다.',
           type: DocumentedException,
         }),
       );
