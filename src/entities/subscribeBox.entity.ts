@@ -22,7 +22,7 @@ export class SubscribeBox {
 
   @OneToMany(
     () => CategoryPerSubscribeBoxEntity,
-    (category) => category.subsribeBox,
+    (category) => category.subscribeBox,
   )
   categories: CategoryPerSubscribeBoxEntity[];
 

@@ -3,11 +3,10 @@ import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { KudogUser } from 'src/entities';
-import { NotificationModule } from 'src/notification/notification.module';
 
 @Module({
   controllers: [UsersController],
   providers: [UsersService],
-  imports: [TypeOrmModule.forFeature([KudogUser]), NotificationModule],
+  imports: [TypeOrmModule.forFeature([KudogUser])],
 })
 export class UsersModule {}
