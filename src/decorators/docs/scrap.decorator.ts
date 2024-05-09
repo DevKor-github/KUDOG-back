@@ -3,6 +3,7 @@ import {
   ApiBody,
   ApiCreatedResponse,
   ApiForbiddenResponse,
+  ApiNotAcceptableResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
@@ -44,6 +45,10 @@ export function Docs(endPoint: ScrapEndPoints) {
           description: 'token 만료 또는 잘못된 token',
           type: DocumentedException,
         }),
+        ApiNotAcceptableResponse({
+          description: '입력값이 유효하지 않습니다 - <변수명> 상세 정보',
+          type: DocumentedException,
+        }),
       );
     case 'getScrapBoxInfo':
       return applyDecorators(
@@ -74,6 +79,10 @@ export function Docs(endPoint: ScrapEndPoints) {
         }),
         ApiNotFoundResponse({
           description: 'scrapBox Id에 해당하는 박스가 없습니다.',
+          type: DocumentedException,
+        }),
+        ApiNotAcceptableResponse({
+          description: '입력값이 유효하지 않습니다 - <변수명> 상세 정보',
           type: DocumentedException,
         }),
       );
@@ -128,6 +137,10 @@ export function Docs(endPoint: ScrapEndPoints) {
           description: 'scrapBox Id에 해당하는 박스가 없습니다.',
           type: DocumentedException,
         }),
+        ApiNotAcceptableResponse({
+          description: '입력값이 유효하지 않습니다 - <변수명> 상세 정보',
+          type: DocumentedException,
+        }),
       );
     case 'deleteScrapBox':
       return applyDecorators(
@@ -156,6 +169,10 @@ export function Docs(endPoint: ScrapEndPoints) {
         }),
         ApiNotFoundResponse({
           description: 'scrapBox Id에 해당하는 박스가 없습니다.',
+          type: DocumentedException,
+        }),
+        ApiNotAcceptableResponse({
+          description: '입력값이 유효하지 않습니다 - <변수명> 상세 정보',
           type: DocumentedException,
         }),
       );

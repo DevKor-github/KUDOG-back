@@ -21,6 +21,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { PageResponse } from 'src/interfaces/pageResponse';
 import { UsePagination } from 'src/decorators';
 import { PageQuery } from 'src/interfaces/pageQuery';
+import { IntValidationPipe } from 'src/pipes/intValidation.pipe';
 
 @ApiTags('Subscribe')
 @Controller('subscribe')
@@ -41,7 +42,7 @@ export class SubscribeController {
   @Get('/box/:subscribeBoxId')
   @Docs('getSubscribeBoxInfo')
   async getSubscribeInfo(
-    @Param('subscribeBoxId') subscribeBoxId: number,
+    @Param('subscribeBoxId', IntValidationPipe) subscribeBoxId: number,
     @InjectAccessUser() user: JwtPayload,
     @Query('date') date: string,
   ): Promise<SubscribeBoxResponseDtoWithNotices> {
@@ -66,7 +67,7 @@ export class SubscribeController {
   @Put('/box/:subscribeBoxId')
   @Docs('updateSubscribeBox')
   async updateSubscribe(
-    @Param('subscribeBoxId') subscribeBoxId: number,
+    @Param('subscribeBoxId', IntValidationPipe) subscribeBoxId: number,
     @InjectAccessUser() user: JwtPayload,
     @Body() body: SubscribeBoxRequestDto,
   ): Promise<SubscribeBoxResponseDto> {
@@ -81,7 +82,7 @@ export class SubscribeController {
   @Delete('/box/:subscribeBoxId')
   @Docs('deleteSubscribeBox')
   async deleteSubscribe(
-    @Param('subscribeBoxId') subscribeBoxId: number,
+    @Param('subscribeBoxId', IntValidationPipe) subscribeBoxId: number,
     @InjectAccessUser() user: JwtPayload,
   ): Promise<void> {
     return await this.subscribeService.deleteSubscribeBox(
