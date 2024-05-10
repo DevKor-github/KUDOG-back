@@ -4,6 +4,7 @@ import {
   ApiCreatedResponse,
   ApiForbiddenResponse,
   ApiInternalServerErrorResponse,
+  ApiNotAcceptableResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
@@ -41,6 +42,10 @@ export function Docs(endPoint: NoticeEndpoints) {
         }),
         ApiUnauthorizedResponse({
           description: 'token 만료 또는 잘못된 token',
+          type: DocumentedException,
+        }),
+        ApiNotAcceptableResponse({
+          description: '입력값이 유효하지 않습니다 - <변수명> 상세 정보',
           type: DocumentedException,
         }),
         ApiPagination(),
@@ -100,6 +105,10 @@ export function Docs(endPoint: NoticeEndpoints) {
           description: 'token 만료 또는 잘못된 token',
           type: DocumentedException,
         }),
+        ApiNotAcceptableResponse({
+          description: '입력값이 유효하지 않습니다 - <변수명> 상세 정보',
+          type: DocumentedException,
+        }),
         ApiParam({
           name: 'id',
           type: Number,
@@ -143,6 +152,10 @@ export function Docs(endPoint: NoticeEndpoints) {
             '해당 id의 scrapBox가 존재하지 않습니다. | 해당 id의 notice가 존재하지 않습니다.',
           type: DocumentedException,
         }),
+        ApiNotAcceptableResponse({
+          description: '입력값이 유효하지 않습니다 - <변수명> 상세 정보',
+          type: DocumentedException,
+        }),
       );
     case 'addNoticeRequest':
       return applyDecorators(
@@ -154,6 +167,10 @@ export function Docs(endPoint: NoticeEndpoints) {
           type: AddRequestRequestDto,
         }),
         ApiCreatedResponse({ description: 'OK' }),
+        ApiNotAcceptableResponse({
+          description: '입력값이 유효하지 않습니다 - <변수명> 상세 정보',
+          type: DocumentedException,
+        }),
       );
   }
 }

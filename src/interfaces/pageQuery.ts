@@ -3,7 +3,7 @@ import { IsNumber } from 'class-validator';
 
 export class PageQuery {
   @ApiProperty({ description: '페이지 번호', default: 1, example: 1 })
-  @IsNumber()
+  @IsNumber({}, { message: 'page는 숫자여야 합니다.' })
   page: number;
 
   @ApiProperty({
@@ -11,6 +11,6 @@ export class PageQuery {
     example: 10,
     default: 10,
   })
-  @IsNumber()
+  @IsNumber({}, { message: 'page는 숫자여야 합니다.' })
   pageSize: number;
 }

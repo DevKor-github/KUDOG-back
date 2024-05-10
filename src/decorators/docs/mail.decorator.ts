@@ -3,6 +3,7 @@ import {
   ApiBadRequestResponse,
   ApiConflictResponse,
   ApiCreatedResponse,
+  ApiNotAcceptableResponse,
   ApiNotFoundResponse,
   ApiOperation,
   ApiRequestTimeoutResponse,
@@ -34,6 +35,10 @@ export function Docs(endPoint: MailEndpoints) {
           description: 'korea.ac.kr 메일이 아님',
           type: DocumentedException,
         }),
+        ApiNotAcceptableResponse({
+          description: '입력값이 유효하지 않습니다 - <변수명> 상세 정보',
+          type: DocumentedException,
+        }),
       );
     case 'checkVerifyCode':
       return applyDecorators(
@@ -59,6 +64,10 @@ export function Docs(endPoint: MailEndpoints) {
         }),
         ApiRequestTimeoutResponse({
           description: '요청한지 3분 경과',
+          type: DocumentedException,
+        }),
+        ApiNotAcceptableResponse({
+          description: '입력값이 유효하지 않습니다 - <변수명> 상세 정보',
           type: DocumentedException,
         }),
       );

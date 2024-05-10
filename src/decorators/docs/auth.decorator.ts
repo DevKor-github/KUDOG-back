@@ -4,6 +4,7 @@ import {
   ApiBody,
   ApiCreatedResponse,
   ApiHeader,
+  ApiNotAcceptableResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
@@ -61,6 +62,10 @@ export function Docs(endPoint: AuthEndpoints) {
         ApiBadRequestResponse({
           description:
             'message : 인증 후 너무 오랜 시간이 지났습니다. 다시 인증해주세요. |인증되지 않은 이메일입니다. | 사용중인 이메일입니다.| korea.ac.kr 이메일이 아닙니다. | 비밀번호는 6~16자의 영문 소문자와 숫자로만 입력해주세요.',
+          type: DocumentedException,
+        }),
+        ApiNotAcceptableResponse({
+          description: '입력값이 유효하지 않습니다 - <변수명> 상세 정보',
           type: DocumentedException,
         }),
       );
@@ -153,6 +158,10 @@ export function Docs(endPoint: AuthEndpoints) {
             '알 수 없는 이유로 메일 전송에 실패했습니다. 잠시 후에 다시 시도해주세요.',
           type: DocumentedException,
         }),
+        ApiNotAcceptableResponse({
+          description: '입력값이 유효하지 않습니다 - <변수명> 상세 정보',
+          type: DocumentedException,
+        }),
       );
     case 'verifyChangePwdCode':
       return applyDecorators(
@@ -171,6 +180,10 @@ export function Docs(endPoint: AuthEndpoints) {
         ApiRequestTimeoutResponse({
           description:
             '인증 요청 이후 3분이 지났습니다. 다시 메일 전송을 해주세요.',
+          type: DocumentedException,
+        }),
+        ApiNotAcceptableResponse({
+          description: '입력값이 유효하지 않습니다 - <변수명> 상세 정보',
           type: DocumentedException,
         }),
       );
@@ -193,6 +206,10 @@ export function Docs(endPoint: AuthEndpoints) {
         ApiRequestTimeoutResponse({
           description:
             '인증 이후 10분이 지났습니다. 다시 메일 전송을 해주세요.',
+          type: DocumentedException,
+        }),
+        ApiNotAcceptableResponse({
+          description: '입력값이 유효하지 않습니다 - <변수명> 상세 정보',
           type: DocumentedException,
         }),
       );
