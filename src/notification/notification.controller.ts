@@ -20,6 +20,7 @@ import { PageQuery } from 'src/interfaces/pageQuery';
 import { UsePagination } from 'src/decorators';
 import { CrawlerGuard } from 'src/guards/crawler.guard';
 import { NotificationFromCrawlerRequestDto } from './dtos/notificationFromCrawlerRequest.dto';
+import { StringValidationPipe } from 'src/pipes/stringValidation.pipe';
 
 @Controller('notifications')
 @ApiTags('notifications')

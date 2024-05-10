@@ -21,6 +21,8 @@ import { UsePagination } from 'src/decorators';
 import { PageQuery } from 'src/interfaces/pageQuery';
 import { PageResponse } from 'src/interfaces/pageResponse';
 import { AddRequestRequestDto } from './dtos/AddRequestRequest.dto';
+import { IntValidationPipe } from 'src/pipes/intValidation.pipe';
+import { StringValidationPipe } from 'src/pipes/stringValidation.pipe';
 
 @Controller('notice')
 @ApiTags('notice')
@@ -34,7 +36,7 @@ export class NoticeController {
     @InjectAccessUser() user: JwtPayload,
     @UsePagination() pageQuery: PageQuery,
     @Query() filter: NoticeFilterRequestDto,
-    @Query('keyword') keyword?: string,
+    @Query('keyword', StringValidationPipe) keyword?: string,
   ): Promise<PageResponse<NoticeListResponseDto>> {
     return await this.noticeService.getNoticeList(
       user.id,
@@ -49,8 +51,8 @@ export class NoticeController {
   @Docs('scrapNotice')
   async scrapNotice(
     @InjectAccessUser() user: JwtPayload,
-    @Param('noticeId') noticeId: number,
-    @Param('scrapBoxId') scrapBoxId: number,
+    @Param('noticeId', IntValidationPipe) noticeId: number,
+    @Param('scrapBoxId', IntValidationPipe) scrapBoxId: number,
   ): Promise<boolean> {
     return await this.noticeService.scrapNotice(user.id, noticeId, scrapBoxId);
   }
@@ -59,7 +61,7 @@ export class NoticeController {
   @Get('/info/:id')
   @Docs('getNoticeInfoById')
   async getNoticeInfoById(
-    @Param('id') id: number,
+    @Param('id', IntValidationPipe) id: number,
     @InjectAccessUser() user: JwtPayload,
   ): Promise<NoticeInfoResponseDto> {
     return await this.noticeService.getNoticeInfoById(id, user.id);

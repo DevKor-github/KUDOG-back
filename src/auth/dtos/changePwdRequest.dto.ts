@@ -7,7 +7,7 @@ export class ChangePasswordRequestDto extends PickType(SignupRequestDto, [
 ] as const) {}
 
 export class VerifyChangePasswordRequestDto {
-  @IsString()
+  @IsString({ message: 'code는 숫자로 이루어진 문자열이어야 합니다.' })
   @ApiProperty({ example: '102345', description: '인증코드' })
   code: string;
 }

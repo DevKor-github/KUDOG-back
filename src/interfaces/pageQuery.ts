@@ -1,7 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { IsNumber } from 'class-validator';
 
 export class PageQuery {
   @ApiProperty({ description: '페이지 번호', default: 1, example: 1 })
+  @IsNumber()
   page: number;
 
   @ApiProperty({
@@ -9,5 +11,6 @@ export class PageQuery {
     example: 10,
     default: 10,
   })
+  @IsNumber()
   pageSize: number;
 }
