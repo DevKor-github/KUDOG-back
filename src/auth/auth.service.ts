@@ -94,6 +94,7 @@ export class AuthService {
       secret: process.env.JWT_REFRESH_SECRET_KEY,
     });
     refreshToken.token = newRefreshToken;
+
     await this.refreshTokenRepository.save(refreshToken);
     return new TokenResponseDto(accessToken, newRefreshToken);
   }
@@ -219,7 +220,7 @@ export class AuthService {
 
   async logout(payload: RefreshTokenPayload): Promise<void> {
     const token = await this.refreshTokenRepository.findOne({
-      where: { id: payload.id, token: payload.refreshToken },
+      where: { userId: payload.id, token: payload.refreshToken },
     });
     if (!token) throw new NotFoundException('존재하지 않는 유저입니다.');
 
