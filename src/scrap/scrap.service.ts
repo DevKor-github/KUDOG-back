@@ -42,7 +42,12 @@ export class ScrapService {
   ): Promise<ScrapBoxResponseWithNotices> {
     const scrapBox = await this.scrapBoxRepository.findOne({
       where: { id: scrapBoxId },
-      relations: ['scraps', 'scraps.notice'],
+      relations: [
+        'scraps',
+        'scraps.notice',
+        'scraps.notice.category',
+        'scraps.notice.category.provider',
+      ],
     });
     const scrapBoxes = await this.scrapBoxRepository.find({
       where: { user: { id: userId } },
@@ -75,7 +80,12 @@ export class ScrapService {
   ): Promise<ScrapBoxResponseDto> {
     const scrapBox = await this.scrapBoxRepository.findOne({
       where: { id: scrapBoxId },
-      relations: ['scraps', 'scraps.notice'],
+      relations: [
+        'scraps',
+        'scraps.notice',
+        'scraps.notice.category',
+        'scraps.notice.category.provider',
+      ],
     });
     if (!scrapBox)
       throw new NotFoundException('해당 ScrapBox가 존재하지 않습니다');
