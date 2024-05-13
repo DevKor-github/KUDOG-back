@@ -68,6 +68,7 @@ export class ScrapService {
       where: { user: { id: userId } },
       take: pageQuery.pageSize,
       skip: (pageQuery.page - 1) * pageQuery.pageSize,
+      relations: ['scraps'],
     });
     const dtos = records.map((scrapBox) => new ScrapBoxResponseDto(scrapBox));
     return new PageResponse<ScrapBoxResponseDto>(dtos, total, pageQuery);
