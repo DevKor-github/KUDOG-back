@@ -5,6 +5,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   RelationId,
+  JoinColumn,
 } from 'typeorm';
 
 @Entity('refresh_token')
@@ -15,6 +16,7 @@ export class RefreshTokenEntity {
   @ManyToOne(() => KudogUser, (user) => user.refreshTokens, {
     onDelete: 'CASCADE',
   })
+  @JoinColumn({ name: 'userId' })
   user: KudogUser;
 
   @RelationId((refreshToken: RefreshTokenEntity) => refreshToken.user)

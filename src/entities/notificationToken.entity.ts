@@ -5,6 +5,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   RelationId,
+  JoinColumn,
 } from 'typeorm';
 
 @Entity('notification_token')
@@ -15,6 +16,7 @@ export class NotificationTokenEntity {
   @ManyToOne(() => KudogUser, (user) => user.notificationTokens, {
     onDelete: 'CASCADE',
   })
+  @JoinColumn({ name: 'userId' })
   user: KudogUser;
 
   @RelationId(
