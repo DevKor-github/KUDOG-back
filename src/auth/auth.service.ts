@@ -74,7 +74,7 @@ export class AuthService {
 
   async refreshJWT(payload: RefreshTokenPayload): Promise<TokenResponseDto> {
     const refreshToken = await this.refreshTokenRepository.findOne({
-      where: { token: payload.refreshToken, userId: payload.id },
+      where: { token: payload.refreshToken, user: { id: payload.id } },
     });
     if (!refreshToken)
       throw new UnauthorizedException('존재하지 않는 유저입니다.');
@@ -119,7 +119,7 @@ export class AuthService {
     });
     await this.refreshTokenRepository.insert({
       token: refreshToken,
-      userId: id,
+      user,
     });
 
     return new TokenResponseDto(accessToken, refreshToken);
@@ -220,7 +220,7 @@ export class AuthService {
 
   async logout(payload: RefreshTokenPayload): Promise<void> {
     const token = await this.refreshTokenRepository.findOne({
-      where: { userId: payload.id, token: payload.refreshToken },
+      where: { user: { id: payload.id }, token: payload.refreshToken },
     });
     if (!token) throw new NotFoundException('존재하지 않는 유저입니다.');
 

@@ -179,21 +179,21 @@ export class NotificationService {
 
   async registerToken(userId: number, token: string): Promise<void> {
     await this.notificationTokenRepository.insert({
-      userId: userId,
+      user: { id: userId },
       token,
     });
   }
 
   async deleteToken(userId: number, token: string): Promise<void> {
     await this.notificationTokenRepository.update(
-      { userId: userId, token: token },
+      { user: { id: userId }, token: token },
       { isActive: false },
     );
   }
 
   async getTokenStatus(userId: number, token: string): Promise<boolean> {
     const tokenInfo = await this.notificationTokenRepository.findOne({
-      where: { userId, token: token, isActive: true },
+      where: { user: { id: userId }, token: token, isActive: true },
     });
     return !!tokenInfo;
   }
