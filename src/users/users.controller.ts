@@ -55,4 +55,14 @@ export class UsersController {
   async modifyUserInfo(@Req() req: any, @Body() body: modifyInfoRequestDto) {
     return await this.userService.modifyUserInfo(req.user.id, body);
   }
+
+  @UseGuards(AuthGuard('jwt-access'))
+  @Get('/favorite-info')
+  @ApiOperation({
+    summary: 'favorite major info',
+    description: '즐겨찾기하는 전공',
+  })
+  async getFavoriteMajorInfo(@Req() req: any) {
+    // 해당 메소드에 대한 로직을 추가하세요.
+  }
 }
