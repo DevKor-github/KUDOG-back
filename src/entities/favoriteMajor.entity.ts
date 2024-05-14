@@ -1,8 +1,6 @@
 import {
   Column,
   Entity,
-  JoinColumn,
-  OneToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
   RelationId,
@@ -10,7 +8,7 @@ import {
 import { KudogUser } from 'src/entities';
 
 @Entity('favoriteMajor')
-export class favoriteMajorEntity {
+export class favoriteMajor {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -18,7 +16,6 @@ export class favoriteMajorEntity {
   name: string;
 
   @ManyToOne(() => KudogUser, (user) => user.favorites)
-  @JoinColumn({ name: 'favorite_id' })
   user: KudogUser;
 
   /* @ManyToOne(() => KudogUser, { lazy: true })
