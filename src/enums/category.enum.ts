@@ -1,4 +1,4 @@
-export enum Category {
+export enum category {
   '공지사항' = '공지사항',
   '행사 소식' = '행사 소식',
   '진로 정보' = '진로 정보',
