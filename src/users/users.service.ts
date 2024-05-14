@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { KudogUser } from 'src/entities';
+import { favoriteMajor } from 'src/entities/favoriteMajor.entity';
 import { Repository } from 'typeorm';
 import { modifyInfoRequestDto } from './dtos/userInfo.dto';
 import { hash } from 'bcrypt';
@@ -10,6 +11,8 @@ export class UsersService {
   constructor(
     @InjectRepository(KudogUser)
     private readonly userRepository: Repository<KudogUser>,
+    @InjectRepository(favoriteMajor)
+    private readonly favoriteRepository: Repository<favoriteMajor>,
   ) {}
   saltOrRounds = 10;
 
@@ -41,4 +44,44 @@ export class UsersService {
     }
     await this.userRepository.save(user);
   }
-}
+
+  //즐겨찾기 기능
+  async addFavoriteMajor(id: number, favoriteName: string): Promise<KudogUser> {
+      const user = await this.userRepository.findOne({ where : {id}, relations: ['favorites']});
+      if (!user) {
+        throw new Error('User not found');
+      }
+  
+      const favorite = new favoriteMajor();
+      favorite.name = favoriteName;
+      favorite.user = user;
+  
+      await this.favoriteRepository.save(favorite);
+      return this.userRepository.findOne({ where : {id}, relations: ['favorites']});
+    }
+  
+    async getUserFavorites(id: number): Promise<favoriteMajor[]> {
+      const user = await this.userRepository.findOne({ where : {id}, relations: ['favorites']});
+      if (!user) {
+        throw new Error('User not found');
+      }
+  
+      return user.favorites;
+    }
+  
+    async removeFavoriteMajor(id: number, favoriteId: number): Promise<KudogUser> {
+      const user = await this.userRepository.findOne({ where : {id}, relations: ['favorites']});
+      if (!user) {
+        throw new Error('User not found');
+      }
+  
+      const index = user.favorites.findIndex((favorite) => favorite.id === favoriteId);
+      if (index === -1) {
+        throw new Error('Favorite not found');
+      }
+  
+      user.favorites.splice(index, 1);
+      await this.userRepository.save(user);
+      return user;
+    }
+  }
