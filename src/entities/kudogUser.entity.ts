@@ -5,6 +5,7 @@ import {
   Notifications,
   NotificationToken,
 } from 'src/entities';
+import { favoriteMajor } from 'src/entities/favoriteMajor.entity';
 
 @Entity()
 export class KudogUser {
@@ -37,4 +38,7 @@ export class KudogUser {
 
   @Column()
   name: string;
+
+  @OneToMany(() => favoriteMajor, (favorite) => favorite.user)
+  favorites: favoriteMajor[];
 }
