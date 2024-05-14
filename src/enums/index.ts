@@ -1,1 +1,1 @@
-export * from './categoryMap.enum';
+export * from 'src/enums/category.enum';
