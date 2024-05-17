@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Put, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiTags } from '@nestjs/swagger';
@@ -6,6 +6,7 @@ import { ModifyInfoRequestDto, UserInfoResponseDto } from './dtos/userInfo.dto';
 import { Docs } from 'src/decorators/docs/user.decorator';
 import { InjectAccessUser } from 'src/decorators';
 import { JwtPayload } from 'src/interfaces/auth';
+import { SendTimeFilterRequestDto } from './dtos/sendTimeFilterRequest.dto';
 
 @Controller('users')
 @ApiTags('user')
@@ -31,12 +32,12 @@ export class UsersController {
     return await this.userService.modifyUserInfo(user.id, body);
   }
   @UseGuards(AuthGuard('jwt-access'))
-  @Put('/info/:sendTime')
+  @Put('/info/send-Time')
   @Docs('modifyTimeInfo')
   async modifyTimeInfo(
-    @InjectAccessUser() user:JwtPayload,
-    @Param('sendTime') sendTime: string,
-  ):Promise<void>{
-    return await this.userService.modifyTimeInfo(user.id,sendTime);
+    @InjectAccessUser() user: JwtPayload,
+    @Body() body: SendTimeFilterRequestDto,
+  ): Promise<void> {
+    return await this.userService.modifyTimeInfo(user.id, body);
   }
 }
