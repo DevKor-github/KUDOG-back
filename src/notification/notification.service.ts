@@ -96,7 +96,7 @@ export class NotificationService {
   ): Promise<PageResponse<NotificationInfoResponseDto>> {
     const [records, total] = await this.notificationsRepository.findAndCount({
       where: {
-        userId,
+        user: { id: userId },
         isRead: false,
       },
       order: {
