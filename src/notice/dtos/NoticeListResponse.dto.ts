@@ -18,10 +18,10 @@ export class NoticeListResponseDto {
   date: string;
 
   @ApiProperty({
-    description: '전처리된 카테고리 정보',
+    description: '카테고리 정보',
     example: '학사일정',
   })
-  mappedCategory: string;
+  category: string;
 
   @ApiProperty({ description: '학과 정보', example: '컴퓨터학과' })
   provider: string;
@@ -44,7 +44,7 @@ export class NoticeListResponseDto {
     this.scrapped = scrapBoxIds.length > 0;
     this.date = entity.date;
     this.provider = entity.category.provider.name;
-    this.mappedCategory = entity.category.mappedCategory;
+    this.category = entity.category.name;
     this.scrapBoxId = scrapBoxIds;
   }
 }
