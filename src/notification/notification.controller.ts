@@ -73,9 +73,9 @@ export class NotificationController {
   @Docs('getTokenStatus')
   async getTokenStatus(
     @InjectAccessUser() user: JwtPayload,
-    @Query('token', StringValidationPipe) token: string,
+    @Body() body: TokenRequestDto,
   ): Promise<boolean> {
-    return await this.notificationService.getTokenStatus(user.id, token);
+    return await this.notificationService.getTokenStatus(user.id, body.token);
   }
 
   @UseGuards(AuthGuard('jwt-access'))
