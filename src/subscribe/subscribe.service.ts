@@ -145,7 +145,6 @@ export class SubscribeService {
     //구독함 정보 수정
     subscribeBox.mail = dto.email;
     subscribeBox.name = dto.name;
-    subscribeBox.sendTime = dto.sendTime;
     await this.subscribeBoxRepository.save(subscribeBox);
 
     //구독한 카테고리 수정

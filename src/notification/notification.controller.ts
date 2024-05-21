@@ -1,12 +1,4 @@
-import {
-  Controller,
-  Get,
-  Body,
-  UseGuards,
-  Post,
-  Delete,
-  Query,
-} from '@nestjs/common';
+import { Controller, Get, Body, UseGuards, Post, Delete } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { InjectAccessUser } from 'src/decorators';
@@ -18,7 +10,6 @@ import { PageResponse } from 'src/interfaces/pageResponse';
 import { TokenRequestDto } from './dtos/tokenRequest.dto';
 import { PageQuery } from 'src/interfaces/pageQuery';
 import { UsePagination } from 'src/decorators';
-import { StringValidationPipe } from 'src/pipes/stringValidation.pipe';
 
 @Controller('notifications')
 @ApiTags('notifications')

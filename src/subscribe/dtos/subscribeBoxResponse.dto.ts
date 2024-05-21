@@ -29,12 +29,6 @@ export class SubscribeBoxResponseDto {
   })
   categories: string[];
 
-  @ApiProperty({
-    description: '이메일 전송 시간 HH:MM ',
-    example: '18:00',
-  })
-  sendTime: string;
-
   constructor(entity: SubscribeBoxEntity) {
     this.id = entity.id;
     this.name = entity.name;
@@ -46,6 +40,5 @@ export class SubscribeBoxResponseDto {
     this.categories = entity.categories.map(
       (category) => category.category.name,
     );
-    this.sendTime = entity.sendTime;
   }
 }

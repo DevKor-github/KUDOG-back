@@ -36,6 +36,7 @@ export class UsersService {
       const passwordHash = await hash(dto.password, this.saltOrRounds);
       user.passwordHash = passwordHash;
     }
+    if (dto.sendTime) user.sendTime = dto.sendTime;
     await this.userRepository.save(user);
   }
 }
