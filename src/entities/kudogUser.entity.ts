@@ -38,4 +38,7 @@ export class KudogUser {
 
   @OneToMany(() => RefreshTokenEntity, (refreshToken) => refreshToken.user)
   refreshTokens: RefreshTokenEntity[];
+
+  @Column({ default: '18:00' })
+  sendTime: string;
 }

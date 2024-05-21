@@ -113,7 +113,7 @@ export class MailService {
 
     const subscribeBoxes = await this.subscribeBoxRepository.find({
       where: {
-        sendTime: dateFormat,
+        user: { sendTime: dateFormat },
       },
       relations: ['categories'],
     });
