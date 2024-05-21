@@ -1,5 +1,6 @@
 import { applyDecorators } from '@nestjs/common';
 import {
+  ApiNotAcceptableResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
@@ -46,6 +47,10 @@ export function Docs(endPoint: UserEndpoints) {
         }),
         ApiNotFoundResponse({
           description: '존재하지 않는 유저입니다.',
+          type: DocumentedException,
+        }),
+        ApiNotAcceptableResponse({
+          description: '입력값이 유효하지 않습니다 - <변수명> 상세 정보',
           type: DocumentedException,
         }),
       );

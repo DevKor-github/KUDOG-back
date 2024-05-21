@@ -2,6 +2,7 @@ import { applyDecorators } from '@nestjs/common';
 import {
   ApiBody,
   ApiCreatedResponse,
+  ApiNotAcceptableResponse,
   ApiOkResponse,
   ApiOperation,
   ApiQuery,
@@ -36,6 +37,10 @@ export function Docs(endPoint: NotificationEndPoints) {
           description: 'token 만료 또는 잘못된 token',
           type: DocumentedException,
         }),
+        ApiNotAcceptableResponse({
+          description: '입력값이 유효하지 않습니다 - <변수명> 상세 정보',
+          type: DocumentedException,
+        }),
       );
     case 'getNewNotifications':
       return applyDecorators(
@@ -50,6 +55,10 @@ export function Docs(endPoint: NotificationEndPoints) {
         }),
         ApiUnauthorizedResponse({
           description: 'token 만료 또는 잘못된 token',
+          type: DocumentedException,
+        }),
+        ApiNotAcceptableResponse({
+          description: '입력값이 유효하지 않습니다 - <변수명> 상세 정보',
           type: DocumentedException,
         }),
       );
@@ -70,6 +79,10 @@ export function Docs(endPoint: NotificationEndPoints) {
           description: 'token 만료 또는 잘못된 token',
           type: DocumentedException,
         }),
+        ApiNotAcceptableResponse({
+          description: '입력값이 유효하지 않습니다 - <변수명> 상세 정보',
+          type: DocumentedException,
+        }),
       );
     case 'deleteToken':
       return applyDecorators(
@@ -85,6 +98,10 @@ export function Docs(endPoint: NotificationEndPoints) {
         }),
         ApiUnauthorizedResponse({
           description: 'token 만료 또는 잘못된 token',
+          type: DocumentedException,
+        }),
+        ApiNotAcceptableResponse({
+          description: '입력값이 유효하지 않습니다 - <변수명> 상세 정보',
           type: DocumentedException,
         }),
       );
@@ -103,6 +120,10 @@ export function Docs(endPoint: NotificationEndPoints) {
         ApiOkResponse({
           type: Boolean,
           description: '비활성화시 false, 등록 시 true',
+        }),
+        ApiNotAcceptableResponse({
+          description: '입력값이 유효하지 않습니다 - <변수명> 상세 정보',
+          type: DocumentedException,
         }),
       );
   }
