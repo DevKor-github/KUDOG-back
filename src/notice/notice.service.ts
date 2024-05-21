@@ -63,7 +63,7 @@ export class NoticeService {
       });
 
     if (categoryList.length > 0) {
-      queryBuilder.andWhere('category.mappedCategory IN (:...categoryList)', {
+      queryBuilder.andWhere('category.name IN (:...categoryList)', {
         categoryList,
       });
     }
