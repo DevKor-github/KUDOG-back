@@ -36,7 +36,7 @@ export class NoticeController {
     @InjectAccessUser() user: JwtPayload,
     @UsePagination() pageQuery: PageQuery,
     @Query() filter: NoticeFilterRequestDto,
-    @Query('keyword', StringValidationPipe) keyword?: string,
+    @Query('keyword') keyword?: string,
   ): Promise<PageResponse<NoticeListResponseDto>> {
     return await this.noticeService.getNoticeList(
       user.id,
