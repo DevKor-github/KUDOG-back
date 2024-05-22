@@ -4,16 +4,17 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { MailerModule } from '@nestjs-modules/mailer';
-import { MailModule } from './mail/mail.module';
-import { AuthModule } from './auth/auth.module';
+import { MailModule } from './domain/mail/mail.module';
+import { AuthModule } from './domain/auth/auth.module';
 import { FetchModule } from './fetch/fetch.module';
 import { ScheduleModule } from '@nestjs/schedule';
-import { NoticeModule } from './notice/notice.module';
+import { NoticeModule } from './domain/notice/notice.module';
 import { ChannelModule } from './channel/channel.module';
-import { UsersModule } from './users/users.module';
-import { ScrapModule } from './scrap/scrap.module';
-import { NotificationModule } from './notification/notification.module';
-import { SubscribeModule } from './subscribe/subscribe.module';
+import { UsersModule } from './domain/users/users.module';
+import { ScrapModule } from './domain/scrap/scrap.module';
+import { NotificationModule } from './domain/notification/notification.module';
+import { SubscribeModule } from './domain/subscribe/subscribe.module';
+import { CategoryModule } from './domain/category/category.module';
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import { SubscribeModule } from './subscribe/subscribe.module';
     ScrapModule,
     NotificationModule,
     SubscribeModule,
+    CategoryModule,
   ],
   controllers: [AppController],
   providers: [AppService],

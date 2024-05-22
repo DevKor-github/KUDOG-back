@@ -9,7 +9,7 @@ import { CategoryEntity, Notice } from 'src/entities';
 import { Not, Repository } from 'typeorm';
 import noticeFetcher from './fetch';
 import { ChannelService } from 'src/channel/channel.service';
-import { NotificationService } from 'src/notification/notification.service';
+import { NotificationService } from 'src/domain/notification/notification.service';
 
 @Injectable()
 export class FetchService {

@@ -13,10 +13,10 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { DocumentedException } from 'src/interfaces/docsException';
-import { NoticeInfoResponseDto } from 'src/notice/dtos/NoticeInfoResponse.dto';
+import { NoticeInfoResponseDto } from 'src/domain/notice/dtos/NoticeInfoResponse.dto';
 import { ApiPagination } from './common.decorator';
-import { NoticeListResponseDto } from 'src/notice/dtos/NoticeListResponse.dto';
-import { AddRequestRequestDto } from 'src/notice/dtos/AddRequestRequest.dto';
+import { NoticeListResponseDto } from 'src/domain/notice/dtos/NoticeListResponse.dto';
+import { AddRequestRequestDto } from 'src/domain/notice/dtos/AddRequestRequest.dto';
 
 type NoticeEndpoints =
   | 'getNoticeList'

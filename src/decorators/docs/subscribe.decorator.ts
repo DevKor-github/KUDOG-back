@@ -12,9 +12,9 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { DocumentedException } from 'src/interfaces/docsException';
-import { SubscribeBoxRequestDto } from 'src/subscribe/dtos/subscribeBoxRequest.dto';
-import { SubscribeBoxResponseDto } from 'src/subscribe/dtos/subscribeBoxResponse.dto';
-import { SubscribeBoxResponseDtoWithNotices } from 'src/subscribe/dtos/subscribeBoxResponseWithNotices.dto';
+import { SubscribeBoxRequestDto } from 'src/domain/subscribe/dtos/subscribeBoxRequest.dto';
+import { SubscribeBoxResponseDto } from 'src/domain/subscribe/dtos/subscribeBoxResponse.dto';
+import { SubscribeBoxResponseDtoWithNotices } from 'src/domain/subscribe/dtos/subscribeBoxResponseWithNotices.dto';
 import { ApiPagination } from './common.decorator';
 
 type SubscribeEndPoint =

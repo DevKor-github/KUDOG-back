@@ -22,7 +22,6 @@ import { PageQuery } from 'src/interfaces/pageQuery';
 import { PageResponse } from 'src/interfaces/pageResponse';
 import { AddRequestRequestDto } from './dtos/AddRequestRequest.dto';
 import { IntValidationPipe } from 'src/pipes/intValidation.pipe';
-import { StringValidationPipe } from 'src/pipes/stringValidation.pipe';
 
 @Controller('notice')
 @ApiTags('notice')
