@@ -6,7 +6,7 @@ import {
   NotificationTokenEntity,
   RefreshTokenEntity,
 } from 'src/entities';
-import { ProviderBookmark } from './providerBookMark.entity';
+import { ProviderBookmark } from './providerBookmark.entity';
 
 @Entity('kudog_user')
 export class KudogUser {
