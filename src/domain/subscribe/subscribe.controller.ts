@@ -22,6 +22,7 @@ import { PageResponse } from 'src/interfaces/pageResponse';
 import { UsePagination } from 'src/decorators';
 import { PageQuery } from 'src/interfaces/pageQuery';
 import { IntValidationPipe } from 'src/pipes/intValidation.pipe';
+import { NoticeListResponseDto } from '../notice/dtos/NoticeListResponse.dto';
 
 @ApiTags('Subscribe')
 @Controller('subscribe')
@@ -86,6 +87,21 @@ export class SubscribeController {
     @InjectAccessUser() user: JwtPayload,
   ): Promise<void> {
     return await this.subscribeService.deleteSubscribeBox(
+      subscribeBoxId,
+      user.id,
+    );
+  }
+
+  @UseGuards(AuthGuard('jwt-access'))
+  @Get('/box/:subscribeBoxId/notices')
+  @Docs('getNoticesByBoxWithDate')
+  async getNoticesByBoxWithDate(
+    @Param('subscribeBoxId', IntValidationPipe) subscribeBoxId: number,
+    @InjectAccessUser() user: JwtPayload,
+    @Query('date') date: string,
+  ): Promise<NoticeListResponseDto[]> {
+    return await this.subscribeService.getNoticesByBoxWithDate(
+      date,
       subscribeBoxId,
       user.id,
     );

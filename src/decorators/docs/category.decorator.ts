@@ -1,5 +1,6 @@
 import { applyDecorators } from '@nestjs/common';
 import {
+  ApiNotAcceptableResponse,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
@@ -45,6 +46,10 @@ export function Docs(endPoint: CategoryEndpoints) {
           type: Number,
           required: true,
           example: 1,
+        }),
+        ApiNotAcceptableResponse({
+          description: '입력값이 유효하지 않습니다 - <변수명> 상세 정보',
+          type: DocumentedException,
         }),
         ApiOkResponse({
           description: '스크랩학부 소속 카테고리들',

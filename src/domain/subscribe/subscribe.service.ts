@@ -6,7 +6,7 @@ import {
 import { SubscribeBoxRequestDto } from './dtos/subscribeBoxRequest.dto';
 import { SubscribeBoxResponseDto } from './dtos/subscribeBoxResponse.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { Between, In, Repository } from 'typeorm';
 import {
   CategoryEntity,
   CategoryPerSubscribeBoxEntity,
@@ -17,6 +17,7 @@ import {
 import { SubscribeBoxResponseDtoWithNotices } from './dtos/subscribeBoxResponseWithNotices.dto';
 import { PageResponse } from 'src/interfaces/pageResponse';
 import { PageQuery } from 'src/interfaces/pageQuery';
+import { NoticeListResponseDto } from '../notice/dtos/NoticeListResponse.dto';
 
 @Injectable()
 export class SubscribeService {
@@ -204,5 +205,38 @@ export class SubscribeService {
     if (subscribeBox.user.id !== userId)
       throw new ForbiddenException('권한이 없습니다');
     await this.subscribeBoxRepository.delete(subscribeBoxId);
+  }
+
+  async getNoticesByBoxWithDate(
+    dateString: string,
+    subBoxId: number,
+    userId: number,
+  ): Promise<NoticeListResponseDto[]> {
+    const subscribeBox = await this.subscribeBoxRepository.findOne({
+      where: { id: subBoxId },
+      relations: ['categories', 'user'],
+    });
+    if (!subscribeBox)
+      throw new NotFoundException('해당 구독함이 존재하지 않습니다');
+
+    if (subscribeBox.user.id !== userId)
+      throw new ForbiddenException('권한이 없습니다');
+    const [hours, mins] = subscribeBox.user.sendTime.split(':').map(parseInt);
+    const sendTimeInMs = hours * 60 * 60 * 1000 + mins * 60 * 1000;
+
+    const to = new Date(dateString).getTime() + sendTimeInMs;
+    const from = to - 24 * 60 * 60 * 1000;
+    const DateWhereClause = Between(from, to);
+
+    const notices = await this.noticeRepository.find({
+      where: {
+        category: In(
+          subscribeBox.categories.map((category) => category.categoryId),
+        ),
+        createdAt: DateWhereClause,
+      },
+      relations: ['category', 'category.provider', 'scraps'],
+    });
+    return notices.map((notice) => new NoticeListResponseDto(notice));
   }
 }
