@@ -11,4 +11,4 @@ export * from './categoryPerSubscribes.entity';
 export * from './notificationToken.entity';
 export * from './notification.entity';
 export * from './refreshToken.entity';
-export * from './providerBookMark.entity';
+export * from './providerBookmark.entity';
