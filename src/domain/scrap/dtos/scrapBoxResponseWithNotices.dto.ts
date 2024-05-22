@@ -1,4 +1,4 @@
-import { NoticeListResponseDto } from 'src/notice/dtos/NoticeListResponse.dto';
+import { NoticeListResponseDto } from 'src/domain/notice/dtos/NoticeListResponse.dto';
 import { ScrapBoxResponseDto } from './scrapBoxResponse.dto';
 import { ApiProperty } from '@nestjs/swagger';
 import { ScrapBoxEntity } from 'src/entities';

@@ -11,9 +11,9 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { DocumentedException } from 'src/interfaces/docsException';
-import { ScrapBoxRequestDto } from 'src/scrap/dtos/scrapBoxRequest.dto';
-import { ScrapBoxResponseDto } from 'src/scrap/dtos/scrapBoxResponse.dto';
-import { ScrapBoxResponseWithNotices } from 'src/scrap/dtos/scrapBoxResponseWithNotices.dto';
+import { ScrapBoxRequestDto } from 'src/domain/scrap/dtos/scrapBoxRequest.dto';
+import { ScrapBoxResponseDto } from 'src/domain/scrap/dtos/scrapBoxResponse.dto';
+import { ScrapBoxResponseWithNotices } from 'src/domain/scrap/dtos/scrapBoxResponseWithNotices.dto';
 import { ApiPagination } from './common.decorator';
 
 type ScrapEndPoints =

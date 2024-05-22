@@ -12,17 +12,19 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { DocumentedException } from 'src/interfaces/docsException';
-import { SubscribeBoxRequestDto } from 'src/subscribe/dtos/subscribeBoxRequest.dto';
-import { SubscribeBoxResponseDto } from 'src/subscribe/dtos/subscribeBoxResponse.dto';
-import { SubscribeBoxResponseDtoWithNotices } from 'src/subscribe/dtos/subscribeBoxResponseWithNotices.dto';
+import { SubscribeBoxRequestDto } from 'src/domain/subscribe/dtos/subscribeBoxRequest.dto';
+import { SubscribeBoxResponseDto } from 'src/domain/subscribe/dtos/subscribeBoxResponse.dto';
+import { SubscribeBoxResponseDtoWithNotices } from 'src/domain/subscribe/dtos/subscribeBoxResponseWithNotices.dto';
 import { ApiPagination } from './common.decorator';
+import { NoticeListResponseDto } from 'src/domain/notice/dtos/NoticeListResponse.dto';
 
 type SubscribeEndPoint =
   | 'createSubscribeBox'
   | 'getSubscribeBoxInfo'
   | 'getSubscribeBoxes'
   | 'updateSubscribeBox'
-  | 'deleteSubscribeBox';
+  | 'deleteSubscribeBox'
+  | 'getNoticesByBoxWithDate';
 
 export function Docs(endPoint: SubscribeEndPoint) {
   switch (endPoint) {
@@ -165,6 +167,47 @@ export function Docs(endPoint: SubscribeEndPoint) {
         }),
         ApiOkResponse({
           description: '구독함 삭제 성공',
+        }),
+        ApiUnauthorizedResponse({
+          description: 'token 만료 또는 잘못된 token',
+          type: DocumentedException,
+        }),
+        ApiForbiddenResponse({
+          description: 'userId와 구독함 소유자의 id가 다릅니다.',
+          type: DocumentedException,
+        }),
+        ApiNotFoundResponse({
+          description: '구독함 Id에 해당하는 구독함이 없습니다.',
+          type: DocumentedException,
+        }),
+        ApiNotAcceptableResponse({
+          description: '입력값이 유효하지 않습니다 - <변수명> 상세 정보',
+          type: DocumentedException,
+        }),
+      );
+    case 'getNoticesByBoxWithDate':
+      return applyDecorators(
+        ApiOperation({
+          summary: '구독함 날짜별 공지사항 조회',
+          description:
+            '구독함에 포함된 해당 날짜의 공지사항들을 반환합니다. Authorization 헤더에 Bearer ${accessToken} 을 넣어주세요.',
+        }),
+        ApiParam({
+          name: 'subscribeBoxId',
+          description: '조회할 구독함의 id',
+          type: Number,
+          required: true,
+          example: 1,
+        }),
+        ApiQuery({
+          name: 'date',
+          description: '조회할 날짜',
+          type: String,
+          required: true,
+          example: '2024. 04. 08',
+        }),
+        ApiOkResponse({
+          type: [NoticeListResponseDto],
         }),
         ApiUnauthorizedResponse({
           description: 'token 만료 또는 잘못된 token',

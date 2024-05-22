@@ -13,8 +13,8 @@ import {
   ApiTooManyRequestsResponse,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { LoginRequestDto } from 'src/auth/dtos/loginRequestDto';
-import { TokenResponseDto } from 'src/auth/dtos/tokenResponse.dto';
+import { LoginRequestDto } from 'src/domain/auth/dtos/loginRequestDto';
+import { TokenResponseDto } from 'src/domain/auth/dtos/tokenResponse.dto';
 import { DocumentedException } from 'src/interfaces/docsException';
 
 type AuthEndpoints =

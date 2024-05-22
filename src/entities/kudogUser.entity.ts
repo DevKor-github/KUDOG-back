@@ -6,6 +6,7 @@ import {
   NotificationTokenEntity,
   RefreshTokenEntity,
 } from 'src/entities';
+import { ProviderBookmark } from './providerBookMark.entity';
 
 @Entity('kudog_user')
 export class KudogUser {
@@ -38,6 +39,12 @@ export class KudogUser {
 
   @OneToMany(() => RefreshTokenEntity, (refreshToken) => refreshToken.user)
   refreshTokens: RefreshTokenEntity[];
+
+  @OneToMany(
+    () => ProviderBookmark,
+    (providerBookmark) => providerBookmark.user,
+  )
+  providerBookmarks: ProviderBookmark[];
 
   @Column({ default: '18:00' })
   sendTime: string;

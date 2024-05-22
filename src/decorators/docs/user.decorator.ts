@@ -7,7 +7,7 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { DocumentedException } from 'src/interfaces/docsException';
-import { UserInfoResponseDto } from 'src/users/dtos/userInfo.dto';
+import { UserInfoResponseDto } from 'src/domain/users/dtos/userInfo.dto';
 
 type UserEndpoints = 'getUserInfo' | 'modifyUserInfo';
 

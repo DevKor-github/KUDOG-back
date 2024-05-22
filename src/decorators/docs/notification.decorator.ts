@@ -9,8 +9,8 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { DocumentedException } from 'src/interfaces/docsException';
-import { NotificationInfoResponseDto } from 'src/notification/dtos/noticiationInfoResponse.dto';
-import { TokenRequestDto } from 'src/notification/dtos/tokenRequest.dto';
+import { NotificationInfoResponseDto } from 'src/domain/notification/dtos/noticiationInfoResponse.dto';
+import { TokenRequestDto } from 'src/domain/notification/dtos/tokenRequest.dto';
 import { ApiPagination } from './common.decorator';
 
 type NotificationEndPoints =

@@ -8,8 +8,8 @@ import {
   ProviderEntity,
 } from 'src/entities';
 import { ChannelService } from 'src/channel/channel.service';
-import { MailModule } from 'src/mail/mail.module';
-import { NotificationModule } from 'src/notification/notification.module';
+import { MailModule } from 'src/domain/mail/mail.module';
+import { NotificationModule } from 'src/domain/notification/notification.module';
 
 @Module({
   providers: [FetchService, ChannelService],
