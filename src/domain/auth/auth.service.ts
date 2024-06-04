@@ -197,7 +197,9 @@ export class AuthService {
     if (existingEntity)
       await this.changePwdAuthRepository.remove(existingEntity);
 
-    const code = Math.floor(Math.random() * 1000000).toString();
+    const code = Math.floor(Math.random() * 1000000)
+      .toString()
+      .padStart(6, '0');
     try {
       await this.mailerService.sendMail({
         from: process.env.MAIL_USER,
