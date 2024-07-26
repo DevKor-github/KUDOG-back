@@ -1,20 +1,24 @@
+import { randomUUID } from 'node:crypto';
+import { MailerModule } from '@nestjs-modules/mailer';
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { ScheduleModule } from '@nestjs/schedule';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { LoggerModule } from 'nestjs-pino';
+import pino from 'pino';
+import { FileLogger } from 'typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule } from '@nestjs/config';
-import { MailerModule } from '@nestjs-modules/mailer';
-import { MailModule } from './domain/mail/mail.module';
-import { AuthModule } from './domain/auth/auth.module';
-import { FetchModule } from './fetch/fetch.module';
-import { ScheduleModule } from '@nestjs/schedule';
-import { NoticeModule } from './domain/notice/notice.module';
 import { ChannelModule } from './channel/channel.module';
-import { UsersModule } from './domain/users/users.module';
-import { ScrapModule } from './domain/scrap/scrap.module';
-import { NotificationModule } from './domain/notification/notification.module';
-import { SubscribeModule } from './domain/subscribe/subscribe.module';
+import { AuthModule } from './domain/auth/auth.module';
 import { CategoryModule } from './domain/category/category.module';
+import { MailModule } from './domain/mail/mail.module';
+import { NoticeModule } from './domain/notice/notice.module';
+import { NotificationModule } from './domain/notification/notification.module';
+import { ScrapModule } from './domain/scrap/scrap.module';
+import { SubscribeModule } from './domain/subscribe/subscribe.module';
+import { UsersModule } from './domain/users/users.module';
+import { FetchModule } from './fetch/fetch.module';
 
 @Module({
   imports: [
@@ -28,6 +32,7 @@ import { CategoryModule } from './domain/category/category.module';
       database: process.env.DB_DATABASE,
       autoLoadEntities: true,
       logging: true,
+      logger: new FileLogger('all', { logPath: './logs/orm.log' }),
     }),
     MailerModule.forRoot({
       transport: {
@@ -40,6 +45,28 @@ import { CategoryModule } from './domain/category/category.module';
       },
     }),
     ScheduleModule.forRoot(),
+    LoggerModule.forRoot({
+      pinoHttp: [
+        {
+          genReqId: (req, res) => {
+            const existingID = req.id ?? req.headers['x-request-id'];
+            if (existingID) return existingID;
+            const id = randomUUID();
+            res.setHeader('x-request-id', id);
+            return id;
+          },
+          transport: { target: 'pino-pretty' },
+          customLogLevel: (req, res, err) => {
+            if (res.statusCode >= 500 || err) return 'error';
+            if (res.statusCode >= 400) return 'warn';
+            if (res.statusCode >= 300) return 'silent';
+
+            return 'info';
+          },
+        },
+        pino(pino.destination('./logs/app.log')),
+      ],
+    }),
     MailModule,
     AuthModule,
     FetchModule,
