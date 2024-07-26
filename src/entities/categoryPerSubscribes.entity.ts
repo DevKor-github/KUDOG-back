@@ -14,9 +14,13 @@ export class CategoryPerSubscribeBoxEntity {
   @PrimaryColumn({ name: 'box_id', type: 'integer' })
   boxId: number;
 
-  @ManyToOne(() => CategoryEntity, (category) => category.categoryPerUsers, {
-    onDelete: 'CASCADE',
-  })
+  @ManyToOne(
+    () => CategoryEntity,
+    (category) => category.categoryPerUsers,
+    {
+      onDelete: 'CASCADE',
+    },
+  )
   @JoinColumn({ name: 'category_id' })
   category: CategoryEntity;
   @PrimaryColumn({ name: 'category_id', type: 'integer' })

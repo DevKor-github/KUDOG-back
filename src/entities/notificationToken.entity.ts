@@ -13,9 +13,13 @@ export class NotificationTokenEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => KudogUser, (user) => user.notificationTokens, {
-    onDelete: 'CASCADE',
-  })
+  @ManyToOne(
+    () => KudogUser,
+    (user) => user.notificationTokens,
+    {
+      onDelete: 'CASCADE',
+    },
+  )
   @JoinColumn({ name: 'userId' })
   user: KudogUser;
 

@@ -15,9 +15,13 @@ export class SubscribeBoxEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => KudogUser, (user) => user.subscribeBoxes, {
-    onDelete: 'CASCADE',
-  })
+  @ManyToOne(
+    () => KudogUser,
+    (user) => user.subscribeBoxes,
+    {
+      onDelete: 'CASCADE',
+    },
+  )
   @JoinColumn({ name: 'user_id' })
   user: KudogUser;
 

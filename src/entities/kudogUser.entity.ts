@@ -22,13 +22,22 @@ export class KudogUser {
   @Column()
   name: string;
 
-  @OneToMany(() => ScrapBoxEntity, (scrapBox) => scrapBox.user)
+  @OneToMany(
+    () => ScrapBoxEntity,
+    (scrapBox) => scrapBox.user,
+  )
   scrapBoxes: ScrapBoxEntity[];
 
-  @OneToMany(() => SubscribeBoxEntity, (subscribeBox) => subscribeBox.user)
+  @OneToMany(
+    () => SubscribeBoxEntity,
+    (subscribeBox) => subscribeBox.user,
+  )
   subscribeBoxes: SubscribeBoxEntity[];
 
-  @OneToMany(() => NotificationEntity, (notification) => notification.user)
+  @OneToMany(
+    () => NotificationEntity,
+    (notification) => notification.user,
+  )
   notifications: Notification[];
 
   @OneToMany(
@@ -37,7 +46,10 @@ export class KudogUser {
   )
   notificationTokens: NotificationTokenEntity[];
 
-  @OneToMany(() => RefreshTokenEntity, (refreshToken) => refreshToken.user)
+  @OneToMany(
+    () => RefreshTokenEntity,
+    (refreshToken) => refreshToken.user,
+  )
   refreshTokens: RefreshTokenEntity[];
 
   @OneToMany(

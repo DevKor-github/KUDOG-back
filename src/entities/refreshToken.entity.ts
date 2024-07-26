@@ -13,9 +13,13 @@ export class RefreshTokenEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => KudogUser, (user) => user.refreshTokens, {
-    onDelete: 'CASCADE',
-  })
+  @ManyToOne(
+    () => KudogUser,
+    (user) => user.refreshTokens,
+    {
+      onDelete: 'CASCADE',
+    },
+  )
   @JoinColumn({ name: 'userId' })
   user: KudogUser;
 
