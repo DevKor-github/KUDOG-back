@@ -1,13 +1,21 @@
-FROM node:20-alpine
+FROM node:18-slim
 
 WORKDIR /app
 
-ADD . /app/
+COPY package.json . 
+COPY yarn.lock .
 
-RUN npm install
+RUN corepack enable
+RUN yarn set version 4.3.1
 
-RUN npm run build
+COPY . .
+
+RUN yarn
+
+RUN yarn build
 
 EXPOSE 3050
 
-ENTRYPOINT npm run start:prod
+VOLUME [ "~/kudog-backend/" ]
+
+CMD ["yarn", "prod"]
