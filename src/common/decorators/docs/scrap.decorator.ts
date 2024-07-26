@@ -1,4 +1,7 @@
 import type { MethodNames } from '@/common/types/method';
+import { ScrapBoxRequestDto } from '@/domain/scrap/dtos/scrapBoxRequest.dto';
+import { ScrapBoxResponseDto } from '@/domain/scrap/dtos/scrapBoxResponse.dto';
+import { ScrapBoxResponseWithNotices } from '@/domain/scrap/dtos/scrapBoxResponseWithNotices.dto';
 import type { ScrapController } from '@/domain/scrap/scrap.controller';
 import {
   ApiBody,
@@ -7,9 +10,6 @@ import {
   ApiOperation,
   ApiParam,
 } from '@nestjs/swagger';
-import { ScrapBoxRequestDto } from 'src/domain/scrap/dtos/scrapBoxRequest.dto';
-import { ScrapBoxResponseDto } from 'src/domain/scrap/dtos/scrapBoxResponse.dto';
-import { ScrapBoxResponseWithNotices } from 'src/domain/scrap/dtos/scrapBoxResponseWithNotices.dto';
 import { ApiPagination } from './common.decorator';
 
 type ScrapEndPoints = MethodNames<ScrapController>;

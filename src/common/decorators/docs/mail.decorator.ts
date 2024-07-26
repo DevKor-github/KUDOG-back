@@ -1,8 +1,7 @@
+import { ApiKudogExceptionResponse } from '@/common/decorators';
 import type { MethodNames } from '@/common/types/method';
 import type { MailController } from '@/domain/mail/mail.controller';
 import { ApiCreatedResponse, ApiOperation } from '@nestjs/swagger';
-import { ApiKudogExceptionResponse } from '../apiKudogExceptionRespone.decorator';
-
 type MailEndpoints = MethodNames<MailController>;
 
 const MailDocsMap: Record<MailEndpoints, MethodDecorator[]> = {

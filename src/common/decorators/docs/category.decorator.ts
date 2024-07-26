@@ -1,10 +1,9 @@
+import { ApiKudogExceptionResponse } from '@/common/decorators';
 import type { MethodNames } from '@/common/types/method';
 import type { CategoryController } from '@/domain/category/category.controller';
+import { ProviderListResponseDto } from '@/domain/category/dtos/ProviderListResponse.dto';
+import { CategoryListResponseDto } from '@/domain/category/dtos/categoryListResponse.dto';
 import { ApiOkResponse, ApiOperation, ApiParam } from '@nestjs/swagger';
-import { ProviderListResponseDto } from 'src/domain/category/dtos/ProviderListResponse.dto';
-import { CategoryListResponseDto } from 'src/domain/category/dtos/categoryListResponse.dto';
-import { ApiKudogExceptionResponse } from '../apiKudogExceptionRespone.decorator';
-
 type CategoryEndpoints = MethodNames<CategoryController>;
 
 const CategoryDocsMap: Record<CategoryEndpoints, MethodDecorator[]> = {

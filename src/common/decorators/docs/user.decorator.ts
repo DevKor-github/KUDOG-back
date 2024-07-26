@@ -1,7 +1,7 @@
 import type { MethodNames } from '@/common/types/method';
+import { UserInfoResponseDto } from '@/domain/users/dtos/userInfo.dto';
 import type { UsersController } from '@/domain/users/users.controller';
 import { ApiOkResponse, ApiOperation } from '@nestjs/swagger';
-import { UserInfoResponseDto } from 'src/domain/users/dtos/userInfo.dto';
 
 type UserEndpoints = MethodNames<UsersController>;
 

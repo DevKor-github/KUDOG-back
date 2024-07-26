@@ -1,4 +1,8 @@
 import type { MethodNames } from '@/common/types/method';
+import { NoticeListResponseDto } from '@/domain/notice/dtos/NoticeListResponse.dto';
+import { SubscribeBoxRequestDto } from '@/domain/subscribe/dtos/subscribeBoxRequest.dto';
+import { SubscribeBoxResponseDto } from '@/domain/subscribe/dtos/subscribeBoxResponse.dto';
+import { SubscribeBoxResponseDtoWithNotices } from '@/domain/subscribe/dtos/subscribeBoxResponseWithNotices.dto';
 import type { SubscribeController } from '@/domain/subscribe/subscribe.controller';
 import {
   ApiBody,
@@ -8,10 +12,6 @@ import {
   ApiParam,
   ApiQuery,
 } from '@nestjs/swagger';
-import { NoticeListResponseDto } from 'src/domain/notice/dtos/NoticeListResponse.dto';
-import { SubscribeBoxRequestDto } from 'src/domain/subscribe/dtos/subscribeBoxRequest.dto';
-import { SubscribeBoxResponseDto } from 'src/domain/subscribe/dtos/subscribeBoxResponse.dto';
-import { SubscribeBoxResponseDtoWithNotices } from 'src/domain/subscribe/dtos/subscribeBoxResponseWithNotices.dto';
 import { ApiPagination } from './common.decorator';
 
 type SubscribeEndPoint = MethodNames<SubscribeController>;

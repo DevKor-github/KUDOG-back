@@ -1,4 +1,6 @@
 import type { MethodNames } from '@/common/types/method';
+import { NotificationInfoResponseDto } from '@/domain/notification/dtos/noticiationInfoResponse.dto';
+import { TokenRequestDto } from '@/domain/notification/dtos/tokenRequest.dto';
 import type { NotificationController } from '@/domain/notification/notification.controller';
 import {
   ApiBody,
@@ -7,8 +9,6 @@ import {
   ApiOperation,
   ApiQuery,
 } from '@nestjs/swagger';
-import { NotificationInfoResponseDto } from 'src/domain/notification/dtos/noticiationInfoResponse.dto';
-import { TokenRequestDto } from 'src/domain/notification/dtos/tokenRequest.dto';
 import { ApiPagination } from './common.decorator';
 
 type NotificationEndPoints = MethodNames<NotificationController>;

@@ -1,5 +1,7 @@
 import type { MethodNames } from '@/common/types/method';
 import type { AuthController } from '@/domain/auth/auth.controller';
+import { LoginRequestDto } from '@/domain/auth/dtos/loginRequestDto';
+import { TokenResponseDto } from '@/domain/auth/dtos/tokenResponse.dto';
 import {
   ApiBody,
   ApiCreatedResponse,
@@ -7,9 +9,7 @@ import {
   ApiOkResponse,
   ApiOperation,
 } from '@nestjs/swagger';
-import { LoginRequestDto } from 'src/domain/auth/dtos/loginRequestDto';
-import { TokenResponseDto } from 'src/domain/auth/dtos/tokenResponse.dto';
-import { ApiKudogExceptionResponse } from '../apiKudogExceptionRespone.decorator';
+import { ApiKudogExceptionResponse } from '@/common/decorators';
 
 type AuthEndpoints = MethodNames<AuthController>;
 

@@ -1,8 +1,7 @@
+import { ApiKudogExceptionResponse } from '@/common/decorators';
 import { PageResponse } from '@/common/dtos/pageResponse';
 import { applyDecorators } from '@nestjs/common';
 import { ApiDefaultResponse, ApiQuery } from '@nestjs/swagger';
-import { ApiKudogExceptionResponse } from '../apiKudogExceptionRespone.decorator';
-
 export function ApiPagination() {
   return applyDecorators(
     ApiQuery({

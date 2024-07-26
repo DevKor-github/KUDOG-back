@@ -8,9 +8,9 @@ import {
   ApiParam,
   ApiQuery,
 } from '@nestjs/swagger';
-import { AddRequestRequestDto } from 'src/domain/notice/dtos/AddRequestRequest.dto';
-import { NoticeInfoResponseDto } from 'src/domain/notice/dtos/NoticeInfoResponse.dto';
-import { NoticeListResponseDto } from 'src/domain/notice/dtos/NoticeListResponse.dto';
+import { AddRequestRequestDto } from '@/domain/notice/dtos/AddRequestRequest.dto';
+import { NoticeInfoResponseDto } from '@/domain/notice/dtos/NoticeInfoResponse.dto';
+import { NoticeListResponseDto } from '@/domain/notice/dtos/NoticeListResponse.dto';
 import { ApiPagination } from './common.decorator';
 
 type NoticeEndpoints = MethodNames<NoticeController>;
