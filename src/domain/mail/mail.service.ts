@@ -15,7 +15,7 @@ import {
 import { Between, In, Repository } from 'typeorm';
 import { MailerService } from '@nestjs-modules/mailer';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { getHHMMdate, yesterdayTimeStamp } from 'src/utils/date';
+import { getHHMMdate, yesterdayTimeStamp } from '@/common/utils/date';
 
 @Injectable()
 export class MailService {

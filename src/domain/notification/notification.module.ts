@@ -1,14 +1,14 @@
+import { ChannelService } from '@/domain/channel/channel.service';
 import { Module } from '@nestjs/common';
-import { NotificationService } from './notification.service';
-import { NotificationController } from './notification.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import {
   CategoryPerSubscribeBoxEntity,
-  NotificationTokenEntity,
-  NotificationEntity,
   Notice,
+  NotificationEntity,
+  NotificationTokenEntity,
 } from 'src/entities';
-import { ChannelService } from 'src/channel/channel.service';
+import { NotificationController } from './notification.controller';
+import { NotificationService } from './notification.service';
 
 @Module({
   imports: [

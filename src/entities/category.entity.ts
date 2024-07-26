@@ -1,3 +1,5 @@
+import { Notice } from 'src/entities';
+import { ProviderEntity } from 'src/entities';
 import {
   Column,
   Entity,
@@ -5,9 +7,6 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Notice } from 'src/entities';
-import { ProviderEntity } from 'src/entities';
-import { CategoryMap } from 'src/enums';
 import { CategoryPerSubscribeBoxEntity } from './categoryPerSubscribes.entity';
 
 @Entity('category')
@@ -20,9 +19,6 @@ export class CategoryEntity {
 
   @Column()
   url: string;
-
-  @Column({ type: 'enum', enum: CategoryMap, default: CategoryMap.공지사항 })
-  mappedCategory: CategoryMap;
 
   @ManyToOne(
     () => ProviderEntity,

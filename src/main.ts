@@ -2,7 +2,7 @@ import { ExceptionFilter, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
-import { ChannelService } from './channel/channel.service';
+import { ChannelService } from './domain/channel/channel.service';
 import { HttpExceptionFilter } from './filters/httpException.filter';
 import { InternalErrorFilter } from './filters/internalError.filter';
 
@@ -34,8 +34,8 @@ async function bootstrap() {
     filters.push(new InternalErrorFilter(channelService));
   }
   filters.push(new HttpExceptionFilter());
-
-  app.useLogger(app.get(Logger));
+  const logger = app.get(Logger);
+  app.useLogger(logger);
   app.useGlobalFilters(...filters);
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
 

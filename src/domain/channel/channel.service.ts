@@ -20,11 +20,9 @@ export class ChannelService {
       await this.client.post(this.allChannelPath, {
         content: content.slice(0, sliceIndex),
       });
-      await this.sendMessageToAll(content.slice(sliceIndex + 1));
-
-      return;
+      return this.sendMessageToAll(content.slice(sliceIndex + 1));
     }
-    await this.client.post(this.allChannelPath, { content });
+    this.client.post(this.allChannelPath, { content });
   }
 
   async sendMessageToKudog(content: string) {
@@ -34,37 +32,35 @@ export class ChannelService {
       await this.client.post(this.kudogChannelPath, {
         content: content.slice(0, sliceIndex),
       });
-      await this.sendMessageToKudog(content.slice(sliceIndex + 1));
-
-      return;
+      return this.sendMessageToKudog(content.slice(sliceIndex + 1));
     }
-    await this.client.post(this.kudogChannelPath, { content });
+    this.client.post(this.kudogChannelPath, { content });
   }
 
   createMessageFromNotices(noticeInfos: NotiByCategory[]): string {
     const messages = [];
-    noticeInfos.forEach((info) => {
+    for (const info of noticeInfos) {
+      if (info.notices.length === 0) continue;
       messages.push(`${info.category}에 새로운 공지사항이 올라왔습니다.`);
-      info.notices.forEach((notice) => {
+      for (const notice of info.notices) {
         const url = notice.url.endsWith('=')
           ? notice.url.slice(0, notice.url.lastIndexOf('&'))
           : notice.url;
         messages.push(`- [${notice.title}](${url})`);
-      });
-    });
+      }
+    }
     return messages.join('\n');
   }
 
   createMessageFromNoticesWithOutURL(noticeInfos: NotiByCategory[]): string {
     const messages = [];
-    noticeInfos
-      .filter((info) => info.notices.length > 0)
-      .forEach((info) => {
-        messages.push(`${info.category}에 새로운 공지사항이 올라왔습니다.`);
-        info.notices.forEach((notice) => {
-          messages.push(`- ${notice.title}`);
-        });
-      });
+    for (const info of noticeInfos) {
+      if (info.notices.length === 0) continue;
+      messages.push(`${info.category}에 새로운 공지사항이 올라왔습니다.`);
+      for (const notice of info.notices) {
+        messages.push(`- [${notice.title}]`);
+      }
+    }
     messages.push('KUPID 공지사항은 앱에서 확인해주세요!');
     return messages.join('\n');
   }

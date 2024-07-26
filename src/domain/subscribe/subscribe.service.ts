@@ -1,12 +1,11 @@
+import { PageQuery } from '@/common/dtos/pageQuery';
+import { PageResponse } from '@/common/dtos/pageResponse';
 import {
   ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { SubscribeBoxRequestDto } from './dtos/subscribeBoxRequest.dto';
-import { SubscribeBoxResponseDto } from './dtos/subscribeBoxResponse.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Between, In, Repository } from 'typeorm';
 import {
   CategoryEntity,
   CategoryPerSubscribeBoxEntity,
@@ -14,10 +13,11 @@ import {
   ScrapBoxEntity,
   SubscribeBoxEntity,
 } from 'src/entities';
-import { SubscribeBoxResponseDtoWithNotices } from './dtos/subscribeBoxResponseWithNotices.dto';
-import { PageResponse } from 'src/interfaces/pageResponse';
-import { PageQuery } from 'src/interfaces/pageQuery';
+import { Between, In, Repository } from 'typeorm';
 import { NoticeListResponseDto } from '../notice/dtos/NoticeListResponse.dto';
+import { SubscribeBoxRequestDto } from './dtos/subscribeBoxRequest.dto';
+import { SubscribeBoxResponseDto } from './dtos/subscribeBoxResponse.dto';
+import { SubscribeBoxResponseDtoWithNotices } from './dtos/subscribeBoxResponseWithNotices.dto';
 
 @Injectable()
 export class SubscribeService {
@@ -221,7 +221,9 @@ export class SubscribeService {
 
     if (subscribeBox.user.id !== userId)
       throw new ForbiddenException('권한이 없습니다');
-    const [hours, mins] = subscribeBox.user.sendTime.split(':').map(parseInt);
+    const [hours, mins] = subscribeBox.user.sendTime
+      .split(':')
+      .map(Number.parseInt);
     const sendTimeInMs = hours * 60 * 60 * 1000 + mins * 60 * 1000;
 
     const to = new Date(dateString).getTime() + sendTimeInMs;

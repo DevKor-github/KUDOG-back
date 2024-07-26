@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
-import { PassportStrategy } from '@nestjs/passport';
+import { JwtPayload, RefreshTokenPayload } from '@/common/types/auth';
+import { Injectable, UseGuards } from '@nestjs/common';
+import { AuthGuard, PassportStrategy } from '@nestjs/passport';
 import { Request } from 'express';
-import { Strategy, ExtractJwt } from 'passport-jwt';
-import { JwtPayload, RefreshTokenPayload } from 'src/interfaces/auth';
+import { ExtractJwt, Strategy } from 'passport-jwt';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
@@ -26,4 +26,8 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
       refreshToken,
     };
   }
+}
+
+export function JwtRefreshGuard() {
+  return UseGuards(AuthGuard('jwt-refresh'));
 }

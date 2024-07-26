@@ -1,11 +1,7 @@
+import { PageResponse } from '@/common/dtos/pageResponse';
 import { applyDecorators } from '@nestjs/common';
-import {
-  ApiDefaultResponse,
-  ApiNotAcceptableResponse,
-  ApiQuery,
-} from '@nestjs/swagger';
-import { DocumentedException } from 'src/interfaces/docsException';
-import { PageResponse } from 'src/interfaces/pageResponse';
+import { ApiDefaultResponse, ApiQuery } from '@nestjs/swagger';
+import { ApiKudogExceptionResponse } from '../apiKudogExceptionRespone.decorator';
 
 export function ApiPagination() {
   return applyDecorators(
@@ -28,9 +24,6 @@ export function ApiPagination() {
         '기본 page response. records에 data가 들어갑니다. 위의 type을 확인해주세요',
       type: PageResponse,
     }),
-    ApiNotAcceptableResponse({
-      description: 'Invalid page query',
-      type: DocumentedException,
-    }),
+    ApiKudogExceptionResponse(['INVALID_PAGE_QUERY']),
   );
 }

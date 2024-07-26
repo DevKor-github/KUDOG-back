@@ -6,7 +6,7 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { KudogUser } from './kudogUser.entity';
+import { KudogUser } from '../../../entities/kudogUser.entity';
 
 @Entity('change_pwd_authentication')
 export class ChangePwdAuthenticationEntity {

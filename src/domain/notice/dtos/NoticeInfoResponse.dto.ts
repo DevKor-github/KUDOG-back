@@ -119,12 +119,6 @@ export class NoticeInfoResponseDto {
   })
   scrapBoxId: number[];
 
-  @ApiProperty({
-    description: '전처리된 카테고리',
-    example: '장학정보',
-  })
-  mappedCategory: string;
-
   constructor(entity: Notice, scrapBoxes: ScrapBoxEntity[] = []) {
     const scrapBoxIds = scrapBoxes
       .filter((scrapBox) =>
@@ -143,7 +137,6 @@ export class NoticeInfoResponseDto {
     this.scrapCount = entity.scraps.length;
     this.provider = entity.category.provider.name;
     this.category = entity.category.name;
-    this.mappedCategory = entity.category.mappedCategory;
     this.scrapBoxId = scrapBoxIds;
   }
 }

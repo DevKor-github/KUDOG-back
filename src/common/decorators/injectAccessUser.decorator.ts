@@ -1,5 +1,5 @@
+import { JwtPayload } from '@/common/types/auth';
 import { ExecutionContext, createParamDecorator } from '@nestjs/common';
-import { JwtPayload } from 'src/interfaces/auth';
 
 export const InjectAccessUser = createParamDecorator(
   (_: unknown, cts: ExecutionContext): JwtPayload => {

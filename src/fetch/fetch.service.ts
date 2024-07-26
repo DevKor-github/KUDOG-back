@@ -1,3 +1,4 @@
+import { ChannelService } from '@/domain/channel/channel.service';
 import {
   Injectable,
   InternalServerErrorException,
@@ -5,11 +6,10 @@ import {
 } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
+import { NotificationService } from 'src/domain/notification/notification.service';
 import { CategoryEntity, Notice } from 'src/entities';
 import { Not, Repository } from 'typeorm';
 import noticeFetcher from './fetch';
-import { ChannelService } from 'src/channel/channel.service';
-import { NotificationService } from 'src/domain/notification/notification.service';
 
 @Injectable()
 export class FetchService {

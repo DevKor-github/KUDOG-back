@@ -1,9 +1,9 @@
-import { page, url } from 'src/interfaces/urls'; //6시에 올라온 공지를 가져오는 코드. notice에 저장
-import { dto } from 'src/interfaces/dto';
+import { dto } from '@/fetch/dto';
+import { url, page } from '@/fetch/urls'; //6시에 올라온 공지를 가져오는 코드. notice에 저장
 import { AnyNode } from 'domhandler';
 
-import { parseDocument, DomUtils } from 'htmlparser2';
 import axios from 'axios';
+import { DomUtils, parseDocument } from 'htmlparser2';
 
 const dateRegex = /\d{4}\.(0[1-9]|1[012])\.(0[1-9]|[12][0-9]|3[01])/;
 

@@ -1,3 +1,6 @@
+import { JwtPayload, RefreshTokenPayload } from '@/common/types/auth';
+import { ChannelService } from '@/domain/channel/channel.service';
+import { MailerService } from '@nestjs-modules/mailer';
 import {
   BadRequestException,
   HttpException,
@@ -7,26 +10,23 @@ import {
   RequestTimeoutException,
   UnauthorizedException,
 } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { compare, hash } from 'bcrypt';
 import {
-  KudogUser,
   ChangePwdAuthenticationEntity,
   EmailAuthenticationEntity,
+  KudogUser,
   RefreshTokenEntity,
 } from 'src/entities';
 import { Repository } from 'typeorm';
-import { SignupRequestDto } from './dtos/signupRequest.dto';
-import { JwtService } from '@nestjs/jwt';
-import { JwtPayload, RefreshTokenPayload } from 'src/interfaces/auth';
-import { TokenResponseDto } from './dtos/tokenResponse.dto';
-import { MailerService } from '@nestjs-modules/mailer';
-import { ChannelService } from 'src/channel/channel.service';
 import {
   ChangePasswordDto,
   ChangePasswordRequestDto,
   VerifyChangePasswordRequestDto,
 } from './dtos/changePwdRequest.dto';
+import { SignupRequestDto } from './dtos/signupRequest.dto';
+import { TokenResponseDto } from './dtos/tokenResponse.dto';
 @Injectable()
 export class AuthService {
   constructor(
