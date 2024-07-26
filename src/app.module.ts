@@ -5,7 +5,6 @@ import { ConfigModule } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { LoggerModule } from 'nestjs-pino';
-import pino from 'pino';
 import { FileLogger } from 'typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -46,26 +45,31 @@ import { FetchModule } from './fetch/fetch.module';
     }),
     ScheduleModule.forRoot(),
     LoggerModule.forRoot({
-      pinoHttp: [
-        {
-          genReqId: (req, res) => {
-            const existingID = req.id ?? req.headers['x-request-id'];
-            if (existingID) return existingID;
-            const id = randomUUID();
-            res.setHeader('x-request-id', id);
-            return id;
-          },
-          transport: { target: 'pino-pretty' },
-          customLogLevel: (req, res, err) => {
-            if (res.statusCode >= 500 || err) return 'error';
-            if (res.statusCode >= 400) return 'warn';
-            if (res.statusCode >= 300) return 'silent';
-
-            return 'info';
-          },
+      pinoHttp: {
+        genReqId: (req, res) => {
+          const existingID = req.id ?? req.headers['x-request-id'];
+          if (existingID) return existingID;
+          const id = randomUUID();
+          res.setHeader('x-request-id', id);
+          return id;
         },
-        pino(pino.destination('./logs/app.log')),
-      ],
+        transport: {
+          targets: [
+            {
+              target: 'pino/file',
+              options: { destination: './logs/app.log', mkdir: true },
+            },
+          ],
+        },
+        customLogLevel: (req, res, err) => {
+          if (res.statusCode >= 500 || err) return 'error';
+          if (res.statusCode >= 400) return 'warn';
+          if (res.statusCode >= 300) return 'silent';
+
+          return 'info';
+        },
+        redact: ['req.body.password', 'req.headers.authorization'],
+      },
     }),
     MailModule,
     AuthModule,
