@@ -1,58 +1,51 @@
-import {
-  InjectAccessUser,
-  InjectRefreshUser,
-  NamedController,
-  injectLocalUser,
-} from '@/common/decorators';
+import { InjectToken, InjectUser, NamedController } from '@/common/decorators';
 import { AuthDocs } from '@/common/decorators/docs';
-import { JwtPayload, RefreshTokenPayload } from '@/common/types/auth';
-import { Body, Delete, Post, Put } from '@nestjs/common';
+import { JwtPayload } from '@/common/types/auth';
+import { Body, Delete, Header, Post, Put } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import {
   ChangePasswordDto,
   ChangePasswordRequestDto,
   VerifyChangePasswordRequestDto,
 } from './dtos/changePwdRequest.dto';
+import type { LoginRequestDto } from './dtos/loginRequestDto';
 import { SignupRequestDto } from './dtos/signupRequest.dto';
 import { TokenResponseDto } from './dtos/tokenResponse.dto';
-import { JwtAccessGuard } from './passport/accessToken.strategy';
-import { LocalGuard } from './passport/local.strategy';
-import { JwtRefreshGuard } from './passport/refreshToken.strategy';
+import { UseJwtGuard } from './guards/jwt.guard';
 
 @AuthDocs
 @NamedController('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @LocalGuard()
   @Post('/login')
-  async login(@injectLocalUser() user: number): Promise<TokenResponseDto> {
-    return this.authService.getToken(user);
+  async login(@Body() body: LoginRequestDto): Promise<TokenResponseDto> {
+    return this.authService.login(body);
   }
 
   @Post('/signup')
   async signup(@Body() body: SignupRequestDto): Promise<TokenResponseDto> {
-    const id = await this.authService.signup(body);
-    return this.authService.getToken(id);
+    return this.authService.signup(body);
   }
 
-  @JwtRefreshGuard()
+  @UseJwtGuard()
   @Post('/refresh')
   async refresh(
-    @InjectRefreshUser() user: RefreshTokenPayload,
+    @InjectUser() user: JwtPayload,
+    @InjectToken() token: string,
   ): Promise<TokenResponseDto> {
-    return this.authService.refreshJWT(user);
+    return this.authService.refreshJWT(user, token);
   }
 
-  @JwtRefreshGuard()
+  @UseJwtGuard()
   @Delete('/logout')
-  async logout(@InjectRefreshUser() user: RefreshTokenPayload): Promise<void> {
-    return this.authService.logout(user);
+  async logout(@InjectToken() token: string): Promise<void> {
+    return this.authService.logout(token);
   }
 
-  @JwtAccessGuard()
+  @UseJwtGuard()
   @Delete('/user-info')
-  async deleteUser(@InjectAccessUser() user: JwtPayload): Promise<void> {
+  async deleteUser(@InjectUser() user: JwtPayload): Promise<void> {
     return this.authService.deleteUser(user.id);
   }
 

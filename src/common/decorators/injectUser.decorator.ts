@@ -1,23 +1,16 @@
-import { JwtPayload, type RefreshTokenPayload } from '@/common/types/auth';
+import { JwtPayload } from '@/common/types/auth';
 import { ExecutionContext, createParamDecorator } from '@nestjs/common';
 
-export const InjectAccessUser = createParamDecorator(
+export const InjectUser = createParamDecorator(
   (_: unknown, cts: ExecutionContext): JwtPayload => {
     const request = cts.switchToHttp().getRequest();
     return request.user;
   },
 );
 
-export const injectLocalUser = createParamDecorator(
-  (_: unknown, cts: ExecutionContext): number => {
+export const InjectToken = createParamDecorator(
+  (_: unknown, cts: ExecutionContext): JwtPayload => {
     const request = cts.switchToHttp().getRequest();
-    return request.user;
-  },
-);
-
-export const InjectRefreshUser = createParamDecorator(
-  (_: unknown, cts: ExecutionContext): RefreshTokenPayload => {
-    const request = cts.switchToHttp().getRequest();
-    return request.user;
+    return request.headers.authorization.split('Bearer ')[1];
   },
 );

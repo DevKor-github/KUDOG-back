@@ -1,115 +1,79 @@
-import { JwtPayload, RefreshTokenPayload } from '@/common/types/auth';
+import { JwtPayload } from '@/common/types/auth';
+import { throwKudogException } from '@/common/utils/exception';
 import { ChannelService } from '@/domain/channel/channel.service';
 import { MailerService } from '@nestjs-modules/mailer';
-import {
-  BadRequestException,
-  HttpException,
-  HttpStatus,
-  Injectable,
-  NotFoundException,
-  RequestTimeoutException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { InjectRepository } from '@nestjs/typeorm';
 import { compare, hash } from 'bcrypt';
-import {
-  ChangePwdAuthenticationEntity,
-  EmailAuthenticationEntity,
-  KudogUser,
-  RefreshTokenEntity,
-} from 'src/entities';
-import { Repository } from 'typeorm';
+import { UserRepository } from '../users/user.repository';
+import { AuthRepository } from './auth.repository';
 import {
   ChangePasswordDto,
   ChangePasswordRequestDto,
   VerifyChangePasswordRequestDto,
 } from './dtos/changePwdRequest.dto';
+import type { LoginRequestDto } from './dtos/loginRequestDto';
 import { SignupRequestDto } from './dtos/signupRequest.dto';
 import { TokenResponseDto } from './dtos/tokenResponse.dto';
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(KudogUser)
-    private readonly userRepository: Repository<KudogUser>,
-    @InjectRepository(ChangePwdAuthenticationEntity)
-    private readonly changePwdAuthRepository: Repository<ChangePwdAuthenticationEntity>,
-    @InjectRepository(EmailAuthenticationEntity)
-    private readonly emailAuthenticationRepository: Repository<EmailAuthenticationEntity>,
-    @InjectRepository(RefreshTokenEntity)
-    private readonly refreshTokenRepository: Repository<RefreshTokenEntity>,
     private jwtService: JwtService,
     private readonly mailerService: MailerService,
     private readonly channelService: ChannelService,
+    private readonly userRepository: UserRepository,
+    private readonly authRepository: AuthRepository,
   ) {}
   saltOrRounds = 10;
 
   async deleteUser(id: number): Promise<void> {
-    const user = await this.userRepository.findOne({
-      where: { id },
-    });
-    if (!user) throw new NotFoundException('존재하지 않는 유저입니다.');
+    const user = await this.userRepository.findById(id);
+
+    if (!user) throwKudogException('USER_NOT_FOUND');
 
     await this.userRepository.remove(user);
   }
 
-  async validateUser(email: string, password: string): Promise<number> {
-    const user = await this.userRepository.findOne({
-      where: { email },
-    });
+  private async validateUser(
+    email: string,
+    password: string,
+  ): Promise<JwtPayload> {
+    const user = await this.userRepository.findByEmail(email);
     if (!user) {
-      throw new UnauthorizedException(
-        '이메일 또는 비밀번호가 일치하지 않습니다.',
-      );
+      throwKudogException('LOGIN_FAILED');
     }
 
     const passwordMatch = await compare(password, user.passwordHash);
     if (!passwordMatch) {
-      throw new UnauthorizedException(
-        '이메일 또는 비밀번호가 일치하지 않습니다.',
-      );
+      throwKudogException('LOGIN_FAILED');
     }
-    return user.id;
+    return { id: user.id, name: user.name };
   }
 
-  async refreshJWT(payload: RefreshTokenPayload): Promise<TokenResponseDto> {
-    const refreshToken = await this.refreshTokenRepository.findOne({
-      where: { token: payload.refreshToken, user: { id: payload.id } },
-    });
-    if (!refreshToken)
-      throw new UnauthorizedException('존재하지 않는 유저입니다.');
-
-    const newPayload: JwtPayload = {
-      id: payload.id,
-      name: payload.name,
-      signedAt: Date.now().toString(),
-    };
-    const accessToken = this.jwtService.sign(newPayload, {
-      expiresIn: '1h',
-      secret: process.env.JWT_SECRET_KEY,
-    });
-
-    const newRefreshToken = this.jwtService.sign(newPayload, {
-      expiresIn: '30d',
-      secret: process.env.JWT_REFRESH_SECRET_KEY,
-    });
-    refreshToken.token = newRefreshToken;
-
-    await this.refreshTokenRepository.save(refreshToken);
-    return new TokenResponseDto(accessToken, newRefreshToken);
+  async refreshJWT(
+    payload: JwtPayload,
+    token: string,
+  ): Promise<TokenResponseDto> {
+    const refreshToken = await this.authRepository.findValidToken(
+      token,
+      payload.id,
+    );
+    if (!refreshToken) throwKudogException('LOGIN_REQUIRED');
+    await this.authRepository.removeToken(refreshToken);
+    return this.getToken(payload);
   }
 
-  async getToken(id: number): Promise<TokenResponseDto> {
-    const user = await this.userRepository.findOne({ where: { id } });
-    if (!user) throw new UnauthorizedException('존재하지 않는 유저입니다.');
+  async login(loginInfo: LoginRequestDto): Promise<TokenResponseDto> {
+    const { email, password } = loginInfo;
 
-    const payload: JwtPayload = {
-      id,
-      name: user.name,
-      signedAt: Date.now().toString(),
-    };
+    const payload = await this.validateUser(email, password);
+
+    return this.getToken(payload);
+  }
+
+  private async getToken(payload: JwtPayload): Promise<TokenResponseDto> {
     const accessToken = this.jwtService.sign(payload, {
-      expiresIn: '1h',
+      expiresIn: '30m',
       secret: process.env.JWT_SECRET_KEY,
     });
 
@@ -117,87 +81,56 @@ export class AuthService {
       expiresIn: '30d',
       secret: process.env.JWT_REFRESH_SECRET_KEY,
     });
-    await this.refreshTokenRepository.insert({
-      token: refreshToken,
-      user,
-    });
+    await this.authRepository.insertToken(refreshToken, payload.id);
 
     return new TokenResponseDto(accessToken, refreshToken);
   }
 
-  async signup(signupInfo: SignupRequestDto): Promise<number> {
+  async signup(signupInfo: SignupRequestDto): Promise<TokenResponseDto> {
     const { password, name, email } = signupInfo;
-    if (!email || !password || !name)
-      throw new BadRequestException('필수 정보를 입력해주세요.');
-    if (!email.endsWith('@korea.ac.kr'))
-      throw new BadRequestException('korea.ac.kr 이메일이 아닙니다.');
-    if (!/^[a-z0-9]{6,16}$/.test(password))
-      throw new BadRequestException(
-        '비밀번호는 6~16자의 영문 소문자와 숫자로만 입력해주세요.',
-      );
 
-    const existingUser = await this.userRepository.findOne({
-      where: {
-        email,
-      },
-    });
-    if (existingUser) throw new BadRequestException('사용중인 이메일입니다.');
+    const existingUser = await this.userRepository.findByEmail(email);
+    if (existingUser) throwKudogException('EMAIL_ALREADY_USED');
 
-    const mailAuthentication = await this.emailAuthenticationRepository.findOne(
-      {
-        where: {
-          email,
-        },
-        order: { createdAt: 'DESC' },
-      },
-    );
+    const mailAuthentication =
+      await this.authRepository.findNewestEmailAuth(email);
+
     if (!mailAuthentication || mailAuthentication.authenticated !== true)
-      throw new BadRequestException('인증되지 않은 이메일입니다.');
+      throwKudogException('EMAIL_NOT_VALIDATED');
     if (mailAuthentication.createdAt.getTime() + 1000 * 60 * 10 < Date.now())
-      throw new RequestTimeoutException(
-        '인증 후 너무 오랜 시간이 지났습니다. 다시 인증해주세요.',
-      );
+      throwKudogException('EMAIL_VALIDATION_EXPIRED');
+
     const passwordHash = await hash(password, this.saltOrRounds);
-    const user = this.userRepository.create({
-      email,
-      name,
-      passwordHash,
-    });
-    await this.userRepository.save(user);
+
+    const user = await this.userRepository.insert(email, name, passwordHash);
     const userCount = await this.userRepository.count();
     this.channelService.sendMessageToKudog(`가입자 수 ${userCount}명 돌파🔥`);
-    return user.id;
+    const payload = {
+      id: user.id,
+      name: user.name,
+    };
+    return this.getToken(payload);
   }
 
   async changePwdRequest(dto: ChangePasswordRequestDto): Promise<void> {
     const { email } = dto;
-    if (!email || !email.endsWith('@korea.ac.kr'))
-      throw new BadRequestException('korea.ac.kr 이메일을 입력하세요.');
 
-    const user = await this.userRepository.findOne({
-      where: { email },
-    });
+    const user = await this.userRepository.findByEmail(email);
 
-    if (!user)
-      throw new NotFoundException('해당 이메일의 유저가 존재하지 않습니다.');
+    if (!user) throwKudogException('EMAIL_NOT_FOUND');
 
-    const existingEntity = await this.changePwdAuthRepository.findOne({
-      where: { user: { id: user.id } },
-    });
+    const existingEntity =
+      await this.authRepository.findNewestChangePwdAuthByUserId(user.id);
 
     if (
       existingEntity &&
       existingEntity.createdAt.getTime() + 1000 * 10 > new Date().getTime()
     )
-      throw new HttpException(
-        '잠시 후에 다시 시도해주세요',
-        HttpStatus.TOO_MANY_REQUESTS,
-      );
+      throwKudogException('TOO_MANY_REQUESTS');
 
-    if (existingEntity)
-      await this.changePwdAuthRepository.remove(existingEntity);
-
-    const code = Math.floor(Math.random() * 1000000).toString();
+    const code = Math.floor(Math.random() * 1000000)
+      .toString()
+      .padStart(6, '0');
     try {
       await this.mailerService.sendMail({
         from: process.env.MAIL_USER,
@@ -206,72 +139,48 @@ export class AuthService {
         html: `인증 번호 ${code}를 입력해주세요.`,
       });
     } catch (err) {
-      throw new HttpException(
-        '알 수 없는 이유로 메일 전송에 실패했습니다. 잠시 후에 다시 시도해주세요.',
-        510,
-      );
+      throwKudogException('EMAIL_SEND_FAILED');
     }
-    const entity = this.changePwdAuthRepository.create({
-      user,
-      code,
-    });
-    await this.changePwdAuthRepository.save(entity);
+    await this.authRepository.insertChangePwdAuth(user.id, code);
   }
 
-  async logout(payload: RefreshTokenPayload): Promise<void> {
-    const token = await this.refreshTokenRepository.findOne({
-      where: { user: { id: payload.id }, token: payload.refreshToken },
-    });
-    if (!token) throw new NotFoundException('존재하지 않는 유저입니다.');
+  async logout(refreshToken: string): Promise<void> {
+    const token = await this.authRepository.findByToken(refreshToken);
+    if (!token) throwKudogException('JWT_TOKEN_INVALID');
 
-    await this.refreshTokenRepository.remove(token);
+    await this.authRepository.removeToken(token);
   }
 
   async verifyChangePwdCode(
     dto: VerifyChangePasswordRequestDto,
   ): Promise<void> {
     const { code } = dto;
-    const entity = await this.changePwdAuthRepository.findOne({
-      where: { code },
-      order: { createdAt: 'DESC' },
-    });
+    const entity = await this.authRepository.findChangePwdAuthByCode(code);
 
-    if (!entity)
-      throw new BadRequestException('인증 코드가 일치하지 않습니다.');
-    if (entity.createdAt.getTime() + 1000 * 60 * 3 < new Date().getTime()) {
-      await this.changePwdAuthRepository.remove(entity);
-      throw new RequestTimeoutException(
-        '인증 요청 이후 3분이 지났습니다. 다시 메일 전송을 해주세요.',
-      );
-    }
+    if (!entity) throwKudogException('CODE_NOT_CORRECT');
 
-    entity.expireAt = new Date(new Date().getTime() + 1000 * 60 * 10);
-    entity.authenticated = true;
-    await this.changePwdAuthRepository.save(entity);
+    if (entity.createdAt.getTime() + 1000 * 60 * 3 < Date.now())
+      throwKudogException('CODE_EXPIRED');
+    await this.authRepository.authenticatePwdCode(entity);
   }
 
   async changePassword(dto: ChangePasswordDto): Promise<void> {
     const { email, password } = dto;
-    const user = await this.userRepository.findOne({
-      where: { email },
-    });
-    if (!user) throw new NotFoundException('존재하지 않는 유저입니다.');
+    const user = await this.userRepository.findByEmail(email);
+    if (!user) throwKudogException('USER_NOT_FOUND');
 
-    const entity = await this.changePwdAuthRepository.findOne({
-      where: { user },
-    });
+    const entity = await this.authRepository.findNewestChangePwdAuthByUserId(
+      user.id,
+    );
 
     if (!entity || !entity.authenticated)
-      throw new UnauthorizedException('인증 코드 인증이 완료되지 않았습니다.');
+      throwKudogException('CODE_NOT_VALIDATED');
 
-    if (entity.expireAt.getTime() + 1000 * 60 * 10 < new Date().getTime()) {
-      throw new RequestTimeoutException(
-        '인증 이후 10분이 지났습니다. 다시 메일 전송을 해주세요.',
-      );
+    if (entity.createdAt.getTime() + 1000 * 60 * 10 < Date.now()) {
+      throwKudogException('CODE_VALIDATION_EXPIRED');
     }
 
     const passwordHash = await hash(password, this.saltOrRounds);
-    user.passwordHash = passwordHash;
-    await this.userRepository.save(user);
+    await this.userRepository.changePwd(user, passwordHash);
   }
 }

@@ -6,28 +6,25 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import {
   ChangePwdAuthenticationEntity,
   EmailAuthenticationEntity,
-  KudogUser,
   RefreshTokenEntity,
 } from 'src/entities';
+import { UsersModule } from '../users/users.module';
 import { AuthController } from './auth.controller';
+import { AuthRepository } from './auth.repository';
 import { AuthService } from './auth.service';
-import { JwtStrategy as AccessStrategy } from './passport/accessToken.strategy';
-import { LocalStrategy } from './passport/local.strategy';
-import { JwtStrategy as RefreshStrategy } from './passport/refreshToken.strategy';
-
 @Module({
   imports: [
     TypeOrmModule.forFeature([
-      KudogUser,
       ChangePwdAuthenticationEntity,
       EmailAuthenticationEntity,
       RefreshTokenEntity,
     ]),
-    MailerModule,
     JwtModule.register({}),
+    UsersModule,
+    MailerModule,
     ChannelModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, RefreshStrategy, AccessStrategy, LocalStrategy],
+  providers: [AuthService, AuthRepository],
 })
 export class AuthModule {}

@@ -54,36 +54,42 @@
     "message": "인증 코드가 만료되었습니다. 다시 인증을 시도해주세요."
   },
 
-
   "LOGIN_FAILED": {
     "errorCode": 4010,
     "statusCode": 401,
     "name": "LOGIN_FAILED",
     "message": "이메일 또는 비밀번호가 일치하지 않습니다."
   },
-  "TODO_REFRESH": {
+  "LOGIN_REQUIRED": {
     "errorCode": 4011,
     "statusCode": 401,
-    "name": "TODO_REFRESH",
-    "message": "할."
+    "name": "LOGIN_REQUIRED",
+    "message": "토큰이 없거나 만료되었습니다. 로그인해주세요."
   },
-  "INVALID_ACCESS_TOKEN": {
+  "JWT_TOKEN_EXPIRED": {
     "errorCode": 4012,
     "statusCode": 401,
-    "name": "INVALID_ACCESS_TOKEN",
-    "message": "유효하지 않은 토큰입니다."
+    "name": "JWT_TOKEN_EXPIRED",
+    "message": "JWT TOKEN이 만료되었습니다. 리프레시를 시도해주세요."
   },
-  "ACCESS_TOKEN_EXPIRED":{
+  "JWT_TOKEN_INVALID": {
     "errorCode": 4013,
     "statusCode": 401,
-    "name": "TOKEN_EXPIRED",
-    "message": "ACCESS TOKEN 만료. 리프레시를 시도해주세요"
+    "name": "JWT_TOKEN_INVALID",
+    "message": "JWT TOKEN이 유효하지 않습니다."
   },
+
   "USER_NOT_FOUND": {
     "errorCode": 4040,
     "statusCode": 404,
     "name": "USER_NOT_FOUND",
     "message": "사용자를 찾을 수 없습니다."
+  },
+  "EMAIL_NOT_FOUND": {
+    "errorCode": 4041,
+    "statusCode": 404,
+    "name": "EMAIL_NOT_FOUND",
+    "message": "이메일을 찾을 수 없습니다."
   },
 
   "INVALID_PAGE_QUERY": {

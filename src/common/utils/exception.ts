@@ -24,6 +24,6 @@ export class HttpException extends Error {
   }
 }
 
-export function throwKudogException(name: ExceptionNames) {
+export function throwKudogException(name: ExceptionNames): never {
   throw new HttpException(name);
 }

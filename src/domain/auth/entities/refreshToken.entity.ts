@@ -1,17 +1,19 @@
 import { KudogUser } from 'src/entities';
 import {
-  Entity,
   Column,
+  CreateDateColumn,
+  Entity,
+  Index,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   RelationId,
-  JoinColumn,
 } from 'typeorm';
 
 @Entity('refresh_token')
 export class RefreshTokenEntity {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @ManyToOne(
     () => KudogUser,
@@ -21,11 +23,15 @@ export class RefreshTokenEntity {
     },
   )
   @JoinColumn({ name: 'userId' })
-  user: KudogUser;
+  user!: KudogUser;
 
   @RelationId((refreshToken: RefreshTokenEntity) => refreshToken.user)
-  userId: number;
+  userId!: number;
 
-  @Column()
-  token: string;
+  @Index()
+  @Column({ type: 'varchar', length: 255 })
+  token!: string;
+
+  @CreateDateColumn()
+  createdAt!: Date;
 }

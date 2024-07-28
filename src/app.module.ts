@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { MailerModule } from '@nestjs-modules/mailer';
-import { Module } from '@nestjs/common';
+import { type MiddlewareConsumer, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -18,6 +18,7 @@ import { ScrapModule } from './domain/scrap/scrap.module';
 import { SubscribeModule } from './domain/subscribe/subscribe.module';
 import { UsersModule } from './domain/users/users.module';
 import { FetchModule } from './fetch/fetch.module';
+import { AuthMiddleware } from './middlewares/auth.middleware';
 
 @Module({
   imports: [
@@ -85,4 +86,8 @@ import { FetchModule } from './fetch/fetch.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(AuthMiddleware).forRoutes('*');
+  }
+}

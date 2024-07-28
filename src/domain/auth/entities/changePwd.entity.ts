@@ -2,34 +2,37 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
+  ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
+  RelationId,
 } from 'typeorm';
 import { KudogUser } from '../../../entities/kudogUser.entity';
 
 @Entity('change_pwd_authentication')
 export class ChangePwdAuthenticationEntity {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
-  @OneToOne(
+  @ManyToOne(
     () => KudogUser,
     () => undefined,
     { onDelete: 'CASCADE' },
   )
-  @JoinColumn()
-  user: KudogUser;
+  @JoinColumn({ name: 'userId' })
+  user!: KudogUser;
+  @RelationId((entity: ChangePwdAuthenticationEntity) => entity.user)
+  userId!: number;
 
   @CreateDateColumn()
-  createdAt: Date;
-
-  @Column({ nullable: true })
-  expireAt?: Date;
+  createdAt!: Date;
 
   @Column({ default: false })
-  authenticated: boolean;
+  authenticated!: boolean;
 
+  @Index()
   @Column()
-  code: string;
+  code!: string;
 }

@@ -2,26 +2,25 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
 @Entity('email_authentication')
 export class EmailAuthenticationEntity {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
+  @Index()
   @Column()
-  email: string;
+  email!: string;
 
   @CreateDateColumn()
-  createdAt: Date;
-
-  @Column({ nullable: true })
-  expireAt?: Date;
+  createdAt!: Date;
 
   @Column({ default: false })
-  authenticated: boolean;
+  authenticated!: boolean;
 
   @Column()
-  code: string;
+  code!: string;
 }

@@ -1,11 +1,17 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import {
-  ScrapBoxEntity,
-  SubscribeBoxEntity,
   NotificationEntity,
   NotificationTokenEntity,
   RefreshTokenEntity,
+  ScrapBoxEntity,
+  SubscribeBoxEntity,
 } from 'src/entities';
+import {
+  Column,
+  Entity,
+  Index,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { ProviderBookmark } from './providerBookmark.entity';
 
 @Entity('kudog_user')
@@ -13,6 +19,7 @@ export class KudogUser {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Index()
   @Column()
   email: string;
 
