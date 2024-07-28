@@ -9,7 +9,7 @@ RUN corepack enable
 RUN yarn set version 4.3.1
 
 COPY . .
-
+RUN YARN_CHECKSUM_BEHAVIOR=reset
 RUN yarn
 
 RUN yarn build
