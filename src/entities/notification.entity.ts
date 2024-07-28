@@ -1,22 +1,26 @@
+import { KudogUser } from 'src/entities';
 import {
-  Entity,
   Column,
-  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  Entity,
   JoinColumn,
   ManyToOne,
-  CreateDateColumn,
+  PrimaryGeneratedColumn,
   RelationId,
 } from 'typeorm';
-import { KudogUser } from 'src/entities';
 
 @Entity('notification')
 export class NotificationEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => KudogUser, (user) => user.notifications, {
-    onDelete: 'CASCADE',
-  })
+  @ManyToOne(
+    () => KudogUser,
+    (user) => user.notifications,
+    {
+      onDelete: 'CASCADE',
+    },
+  )
   @JoinColumn({ name: 'user_id' })
   user: KudogUser;
 

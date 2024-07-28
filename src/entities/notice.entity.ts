@@ -27,10 +27,16 @@ export class Notice {
   @Column()
   url: string;
 
-  @ManyToOne(() => CategoryEntity, (category) => category.notices)
+  @ManyToOne(
+    () => CategoryEntity,
+    (category) => category.notices,
+  )
   category: CategoryEntity;
 
-  @OneToMany(() => ScrapEntity, (scrap) => scrap.notice)
+  @OneToMany(
+    () => ScrapEntity,
+    (scrap) => scrap.notice,
+  )
   scraps: ScrapEntity[];
 
   @Column({ default: 0 })

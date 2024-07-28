@@ -14,15 +14,23 @@ export class ScrapEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => ScrapBoxEntity, (scrapBox) => scrapBox.scraps, {
-    onDelete: 'CASCADE',
-  })
+  @ManyToOne(
+    () => ScrapBoxEntity,
+    (scrapBox) => scrapBox.scraps,
+    {
+      onDelete: 'CASCADE',
+    },
+  )
   @JoinColumn({ name: 'scrap_box_id' })
   scrapBox: ScrapBoxEntity;
 
-  @ManyToOne(() => Notice, (notice) => notice.scraps, {
-    onDelete: 'CASCADE',
-  })
+  @ManyToOne(
+    () => Notice,
+    (notice) => notice.scraps,
+    {
+      onDelete: 'CASCADE',
+    },
+  )
   @JoinColumn({ name: 'notice_id' })
   notice: Notice;
 

@@ -10,9 +10,15 @@ export class ProviderEntity {
   @Column()
   name: string;
 
-  @OneToMany(() => CategoryEntity, (category) => category.provider)
+  @OneToMany(
+    () => CategoryEntity,
+    (category) => category.provider,
+  )
   categories: CategoryEntity[];
 
-  @OneToMany(() => ProviderBookmark, (bookmark) => bookmark.provider)
+  @OneToMany(
+    () => ProviderBookmark,
+    (bookmark) => bookmark.provider,
+  )
   bookmarks: ProviderBookmark[];
 }

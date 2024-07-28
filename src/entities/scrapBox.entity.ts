@@ -14,9 +14,13 @@ export class ScrapBoxEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => KudogUser, (user) => user.scrapBoxes, {
-    onDelete: 'CASCADE',
-  })
+  @ManyToOne(
+    () => KudogUser,
+    (user) => user.scrapBoxes,
+    {
+      onDelete: 'CASCADE',
+    },
+  )
   @JoinColumn({ name: 'user_id' })
   user: KudogUser;
 
@@ -24,7 +28,10 @@ export class ScrapBoxEntity {
   @Column({ name: 'user_id' })
   userId: number;
 
-  @OneToMany(() => ScrapEntity, (scrap) => scrap.scrapBox)
+  @OneToMany(
+    () => ScrapEntity,
+    (scrap) => scrap.scrapBox,
+  )
   scraps: ScrapEntity[];
 
   @Column({ default: '나의 스크랩함' })

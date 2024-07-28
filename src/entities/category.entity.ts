@@ -24,10 +24,16 @@ export class CategoryEntity {
   @Column({ type: 'enum', enum: CategoryMap, default: CategoryMap.공지사항 })
   mappedCategory: CategoryMap;
 
-  @ManyToOne(() => ProviderEntity, (provider) => provider.categories)
+  @ManyToOne(
+    () => ProviderEntity,
+    (provider) => provider.categories,
+  )
   provider: ProviderEntity;
 
-  @OneToMany(() => Notice, (notice) => notice.category)
+  @OneToMany(
+    () => Notice,
+    (notice) => notice.category,
+  )
   notices: Notice[];
 
   @OneToMany(
