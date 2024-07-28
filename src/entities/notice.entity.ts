@@ -1,3 +1,4 @@
+import { CategoryEntity, ScrapEntity } from 'src/entities';
 import {
   Column,
   Entity,
@@ -5,7 +6,6 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { CategoryEntity, ScrapEntity } from 'src/entities';
 
 @Entity('notice')
 export class Notice {

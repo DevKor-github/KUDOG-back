@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ScrapBoxRequestDto } from './scrapBoxRequest.dto';
 import { ScrapBoxEntity } from 'src/entities';
+import { ScrapBoxRequestDto } from './scrapBoxRequest.dto';
 
 export class ScrapBoxResponseDto extends ScrapBoxRequestDto {
   @ApiProperty({

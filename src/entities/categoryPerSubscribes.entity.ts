@@ -1,5 +1,5 @@
-import { Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 import { CategoryEntity, SubscribeBoxEntity } from 'src/entities';
+import { Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 @Entity('category_per_subscribeBox')
 export class CategoryPerSubscribeBoxEntity {
   @ManyToOne(

@@ -1,6 +1,6 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { ProviderEntity } from 'src/entities';
 import { CategoryListResponseDto } from './categoryListResponse.dto';
-import { ApiProperty } from '@nestjs/swagger';
 
 export class ProviderListResponseDto {
   @ApiProperty({

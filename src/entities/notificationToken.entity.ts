@@ -1,11 +1,11 @@
 import { KudogUser } from 'src/entities';
 import {
-  Entity,
   Column,
+  Entity,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   RelationId,
-  JoinColumn,
 } from 'typeorm';
 
 @Entity('notification_token')

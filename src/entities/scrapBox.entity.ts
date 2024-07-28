@@ -1,3 +1,4 @@
+import { KudogUser, ScrapEntity } from 'src/entities';
 import {
   Column,
   Entity,
@@ -7,7 +8,6 @@ import {
   PrimaryGeneratedColumn,
   RelationId,
 } from 'typeorm';
-import { KudogUser, ScrapEntity } from 'src/entities';
 
 @Entity('scrap_box')
 export class ScrapBoxEntity {

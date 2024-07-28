@@ -1,3 +1,5 @@
+import { getHHMMdate, yesterdayTimeStamp } from '@/common/utils/date';
+import { MailerService } from '@nestjs-modules/mailer';
 import {
   BadRequestException,
   ConflictException,
@@ -5,6 +7,7 @@ import {
   NotFoundException,
   RequestTimeoutException,
 } from '@nestjs/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   EmailAuthenticationEntity,
@@ -13,9 +16,6 @@ import {
   SubscribeBoxEntity,
 } from 'src/entities';
 import { Between, In, Repository } from 'typeorm';
-import { MailerService } from '@nestjs-modules/mailer';
-import { Cron, CronExpression } from '@nestjs/schedule';
-import { getHHMMdate, yesterdayTimeStamp } from '@/common/utils/date';
 
 @Injectable()
 export class MailService {

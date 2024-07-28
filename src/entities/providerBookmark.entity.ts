@@ -1,5 +1,5 @@
+import { KudogUser, ProviderEntity } from 'src/entities';
 import { Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
-import { ProviderEntity, KudogUser } from 'src/entities';
 
 @Entity('provider_bookmark')
 export class ProviderBookmark {

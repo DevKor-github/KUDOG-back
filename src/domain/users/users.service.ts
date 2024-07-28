@@ -1,9 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { hash } from 'bcrypt';
 import { KudogUser, ProviderBookmark } from 'src/entities';
 import { Repository } from 'typeorm';
 import { ModifyInfoRequestDto, UserInfoResponseDto } from './dtos/userInfo.dto';
-import { hash } from 'bcrypt';
 
 @Injectable()
 export class UsersService {

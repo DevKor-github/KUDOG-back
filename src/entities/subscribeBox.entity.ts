@@ -1,3 +1,4 @@
+import { KudogUser } from 'src/entities';
 import {
   Column,
   Entity,
@@ -7,7 +8,6 @@ import {
   PrimaryGeneratedColumn,
   RelationId,
 } from 'typeorm';
-import { KudogUser } from 'src/entities';
 import { CategoryPerSubscribeBoxEntity } from './categoryPerSubscribes.entity';
 
 @Entity('subscribe_box')

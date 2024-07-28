@@ -1,3 +1,4 @@
+import { Notice } from 'src/entities';
 import {
   Column,
   Entity,
@@ -6,7 +7,6 @@ import {
   PrimaryGeneratedColumn,
   RelationId,
 } from 'typeorm';
-import { Notice } from 'src/entities';
 import { ScrapBoxEntity } from './scrapBox.entity';
 
 @Entity('scrap')

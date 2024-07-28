@@ -54,7 +54,6 @@ describe('authMiddleware', () => {
     const payload: JwtPayload = {
       id: 1,
       name: 'test',
-      signedAt: Date.now().toString(),
     };
     const options = { expiresIn: -200 };
     const token = jwt.sign(payload, JWT_SECRET_KEY, options);

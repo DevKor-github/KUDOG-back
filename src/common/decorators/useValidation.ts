@@ -8,7 +8,6 @@ export function UseValidation(exceptions: ExceptionNames[]): MethodDecorator {
       new ValidationPipe({
         transform: true,
         exceptionFactory(errs) {
-
           const err = Object.values(errs[0].contexts)[0].exception;
           throwKudogException(err);
         },

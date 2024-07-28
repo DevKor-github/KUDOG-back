@@ -1,4 +1,7 @@
 import type { MethodNames } from '@/common/types/method';
+import { AddRequestRequestDto } from '@/domain/notice/dtos/AddRequestRequest.dto';
+import { NoticeInfoResponseDto } from '@/domain/notice/dtos/NoticeInfoResponse.dto';
+import { NoticeListResponseDto } from '@/domain/notice/dtos/NoticeListResponse.dto';
 import type { NoticeController } from '@/domain/notice/notice.controller';
 import {
   ApiBody,
@@ -8,9 +11,6 @@ import {
   ApiParam,
   ApiQuery,
 } from '@nestjs/swagger';
-import { AddRequestRequestDto } from '@/domain/notice/dtos/AddRequestRequest.dto';
-import { NoticeInfoResponseDto } from '@/domain/notice/dtos/NoticeInfoResponse.dto';
-import { NoticeListResponseDto } from '@/domain/notice/dtos/NoticeListResponse.dto';
 import { ApiPagination } from './common.decorator';
 
 type NoticeEndpoints = MethodNames<NoticeController>;

@@ -1,5 +1,5 @@
-import { NoticeListResponseDto } from 'src/domain/notice/dtos/NoticeListResponse.dto';
 import { ApiProperty } from '@nestjs/swagger';
+import { NoticeListResponseDto } from 'src/domain/notice/dtos/NoticeListResponse.dto';
 import { Notice, ScrapBoxEntity, SubscribeBoxEntity } from 'src/entities';
 import { SubscribeBoxResponseDto } from './subscribeBoxResponse.dto';
 
