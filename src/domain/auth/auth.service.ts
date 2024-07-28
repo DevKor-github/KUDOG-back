@@ -127,7 +127,6 @@ export class AuthService {
       existingEntity.createdAt.getTime() + 1000 * 10 > new Date().getTime()
     )
       throwKudogException('TOO_MANY_REQUESTS');
-
     const code = Math.floor(Math.random() * 1000000)
       .toString()
       .padStart(6, '0');
