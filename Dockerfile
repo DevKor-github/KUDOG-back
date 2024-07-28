@@ -10,7 +10,7 @@ RUN yarn set version 4.3.1
 
 COPY . .
 
-RUN yarn
+RUN YARN_CHECKSUM_BEHAVIOR=reset yarn
 
 RUN yarn build
 
