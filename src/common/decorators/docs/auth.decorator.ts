@@ -1,3 +1,4 @@
+import { ApiKudogExceptionResponse } from '@/common/decorators';
 import type { MethodNames } from '@/common/types/method';
 import type { AuthController } from '@/domain/auth/auth.controller';
 import { LoginRequestDto } from '@/domain/auth/dtos/loginRequestDto';
@@ -9,7 +10,6 @@ import {
   ApiOkResponse,
   ApiOperation,
 } from '@nestjs/swagger';
-import { ApiKudogExceptionResponse } from '@/common/decorators';
 
 type AuthEndpoints = MethodNames<AuthController>;
 
@@ -43,10 +43,6 @@ const AuthDocsMap: Record<AuthEndpoints, MethodDecorator[]> = {
       'EMAIL_VALIDATION_EXPIRED',
       'EMAIL_NOT_VALIDATED',
       'EMAIL_ALREADY_USED',
-      'EMAIL_NOT_IN_KOREA_DOMAIN',
-      'PASSWORD_INVALID_FORMAT',
-      //TODO: ERROR instantize
-      'TODO_INVALID',
     ]),
   ],
   refresh: [
@@ -65,8 +61,7 @@ const AuthDocsMap: Record<AuthEndpoints, MethodDecorator[]> = {
       description: '토큰 재발급 성공',
       type: TokenResponseDto,
     }),
-    //TODO:TODO:
-    ApiKudogExceptionResponse(['TODO_REFRESH']),
+    ApiKudogExceptionResponse(['LOGIN_REQUIRED']),
   ],
   logout: [
     ApiOperation({
@@ -80,7 +75,7 @@ const AuthDocsMap: Record<AuthEndpoints, MethodDecorator[]> = {
       name: 'authorization',
       required: true,
     }),
-    ApiKudogExceptionResponse(['INVALID_ACCESS_TOKEN', 'USER_NOT_FOUND']),
+    ApiKudogExceptionResponse(['JWT_TOKEN_INVALID']),
     ApiOkResponse({
       description: 'logout 성공',
     }),
@@ -91,7 +86,7 @@ const AuthDocsMap: Record<AuthEndpoints, MethodDecorator[]> = {
       description:
         '회원 탈퇴합니다. authorization header에 Bearer ${accessToken} 을 담아주세요.',
     }),
-    ApiKudogExceptionResponse(['INVALID_ACCESS_TOKEN']),
+    ApiKudogExceptionResponse(['USER_NOT_FOUND']),
     ApiOkResponse({
       description: '회원 탈퇴 성공',
     }),
@@ -105,10 +100,8 @@ const AuthDocsMap: Record<AuthEndpoints, MethodDecorator[]> = {
       description: '이메일 전송 성공. 3분 안에 인증 코드를 입력해주세요.',
     }),
     ApiKudogExceptionResponse([
-      'USER_NOT_FOUND',
+      'EMAIL_NOT_FOUND',
       'TOO_MANY_REQUESTS',
-      'EMAIL_NOT_IN_KOREA_DOMAIN',
-      'TODO_INVALID',
       'EMAIL_SEND_FAILED',
     ]),
   ],
@@ -137,8 +130,7 @@ const AuthDocsMap: Record<AuthEndpoints, MethodDecorator[]> = {
     ApiKudogExceptionResponse([
       'USER_NOT_FOUND',
       'CODE_NOT_VALIDATED',
-      'CODE_EXPIRED',
-      'TODO_INVALID',
+      'CODE_VALIDATION_EXPIRED',
     ]),
   ],
 };

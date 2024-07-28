@@ -1,7 +1,8 @@
 import { InjectToken, InjectUser, NamedController } from '@/common/decorators';
 import { AuthDocs } from '@/common/decorators/docs';
+import { UseValidation } from '@/common/decorators/useValidation';
 import { JwtPayload } from '@/common/types/auth';
-import { Body, Delete, Header, Post, Put } from '@nestjs/common';
+import { Body, Delete, Post, Put } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import {
   ChangePasswordDto,
@@ -18,11 +19,13 @@ import { UseJwtGuard } from './guards/jwt.guard';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @UseValidation(['NOT_ACCEPTABLE', 'EMAIL_NOT_VALID', 'PASSWORD_NOT_VALID'])
   @Post('/login')
   async login(@Body() body: LoginRequestDto): Promise<TokenResponseDto> {
     return this.authService.login(body);
   }
 
+  @UseValidation(['NOT_ACCEPTABLE', 'EMAIL_NOT_VALID', 'PASSWORD_NOT_VALID'])
   @Post('/signup')
   async signup(@Body() body: SignupRequestDto): Promise<TokenResponseDto> {
     return this.authService.signup(body);
@@ -49,6 +52,7 @@ export class AuthController {
     return this.authService.deleteUser(user.id);
   }
 
+  @UseValidation(['NOT_ACCEPTABLE', 'EMAIL_NOT_VALID'])
   @Post('/change-password/request')
   async changePwdRequest(
     @Body() body: ChangePasswordRequestDto,
@@ -56,6 +60,7 @@ export class AuthController {
     return this.authService.changePwdRequest(body);
   }
 
+  @UseValidation(['NOT_ACCEPTABLE'])
   @Post('/change-password/verify')
   async verifyChangePwdCode(
     @Body() body: VerifyChangePasswordRequestDto,
@@ -63,6 +68,7 @@ export class AuthController {
     return this.authService.verifyChangePwdCode(body);
   }
 
+  @UseValidation(['NOT_ACCEPTABLE', 'EMAIL_NOT_VALID', 'PASSWORD_NOT_VALID'])
   @Put('/change-password')
   async changePassword(@Body() body: ChangePasswordDto): Promise<void> {
     return this.authService.changePassword(body);

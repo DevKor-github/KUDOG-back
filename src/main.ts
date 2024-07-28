@@ -1,4 +1,4 @@
-import { ExceptionFilter, ValidationPipe } from '@nestjs/common';
+import { ExceptionFilter } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
@@ -37,7 +37,6 @@ async function bootstrap() {
   const logger = app.get(Logger);
   app.useLogger(logger);
   app.useGlobalFilters(...filters);
-  app.useGlobalPipes(new ValidationPipe({ transform: true }));
 
   await app.listen(3050);
 }

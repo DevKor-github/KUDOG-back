@@ -17,7 +17,7 @@ const CategoryDocsMap: Record<CategoryEndpoints, MethodDecorator[]> = {
       description: '학부 리스트',
       type: [ProviderListResponseDto],
     }),
-    ApiKudogExceptionResponse(['ACCESS_TOKEN_EXPIRED']),
+    ApiKudogExceptionResponse([]),
   ],
   getCategories: [
     ApiOperation({
@@ -36,7 +36,7 @@ const CategoryDocsMap: Record<CategoryEndpoints, MethodDecorator[]> = {
       description: '스크랩학부 소속 카테고리들',
       type: [CategoryListResponseDto],
     }),
-    ApiKudogExceptionResponse(['ACCESS_TOKEN_EXPIRED', 'TODO_INVALID']),
+    ApiKudogExceptionResponse([]),
   ],
   getBookmarkedProviders: [
     ApiOperation({
@@ -48,7 +48,7 @@ const CategoryDocsMap: Record<CategoryEndpoints, MethodDecorator[]> = {
       description: '사용자의 즐겨찾는 학과 목록',
       type: [ProviderListResponseDto],
     }),
-    ApiKudogExceptionResponse(['ACCESS_TOKEN_EXPIRED']),
+    ApiKudogExceptionResponse([]),
   ],
 };
 

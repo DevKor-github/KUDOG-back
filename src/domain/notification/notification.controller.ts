@@ -1,11 +1,11 @@
-import { InjectAccessUser, NamedController } from '@/common/decorators';
+import { InjectUser, NamedController } from '@/common/decorators';
 import { UsePagination } from '@/common/decorators';
 import { NotificationDocs } from '@/common/decorators/docs';
 import { PageQuery } from '@/common/dtos/pageQuery';
 import { PageResponse } from '@/common/dtos/pageResponse';
 import { JwtPayload } from '@/common/types/auth';
 import { Body, Delete, Get, Post } from '@nestjs/common';
-import { JwtAccessGuard } from '../auth/passport/accessToken.strategy';
+import { UseJwtGuard } from '../auth/guards/jwt.guard';
 import { NotificationInfoResponseDto } from './dtos/noticiationInfoResponse.dto';
 import { TokenRequestDto } from './dtos/tokenRequest.dto';
 import { NotificationService } from './notification.service';
@@ -15,61 +15,54 @@ import { NotificationService } from './notification.service';
 export class NotificationController {
   constructor(private readonly notificationService: NotificationService) {}
 
-  @JwtAccessGuard()
+  @UseJwtGuard()
   @Get('')
   async getNotifications(
-    @InjectAccessUser() user: JwtPayload,
+    @InjectUser() user: JwtPayload,
     @UsePagination() pageQuery: PageQuery,
   ): Promise<PageResponse<NotificationInfoResponseDto>> {
     return this.notificationService.getNotifications(user.id, pageQuery);
   }
 
-  @JwtAccessGuard()
+  @UseJwtGuard()
   @Get('/new')
   async getNewNotifications(
-    @InjectAccessUser() user: JwtPayload,
+    @InjectUser() user: JwtPayload,
     @UsePagination() pageQuery: PageQuery,
   ): Promise<PageResponse<NotificationInfoResponseDto>> {
-    return this.notificationService.getNewNotifications(
-      user.id,
-      pageQuery,
-    );
+    return this.notificationService.getNewNotifications(user.id, pageQuery);
   }
 
-  @JwtAccessGuard()
+  @UseJwtGuard()
   @Post('/token')
   async registerToken(
-    @InjectAccessUser() user: JwtPayload,
+    @InjectUser() user: JwtPayload,
     @Body() body: TokenRequestDto,
   ): Promise<void> {
     return this.notificationService.registerToken(user.id, body.token);
   }
 
-  @JwtAccessGuard()
+  @UseJwtGuard()
   @Delete('/token')
   async deleteToken(
-    @InjectAccessUser() user: JwtPayload,
+    @InjectUser() user: JwtPayload,
     @Body() body: TokenRequestDto,
   ): Promise<void> {
     return this.notificationService.deleteToken(user.id, body.token);
   }
 
-  @JwtAccessGuard()
+  @UseJwtGuard()
   @Get('/status')
   async getTokenStatus(
-    @InjectAccessUser() user: JwtPayload,
+    @InjectUser() user: JwtPayload,
     @Body() body: TokenRequestDto,
   ): Promise<boolean> {
     return this.notificationService.getTokenStatus(user.id, body.token);
   }
 
-  @JwtAccessGuard()
+  @UseJwtGuard()
   @Get('/test')
-  async sendNotification(@InjectAccessUser() user: JwtPayload): Promise<void> {
-    return this.notificationService.sendNotification(
-      [user.id],
-      'test',
-      'test',
-    );
+  async sendNotification(@InjectUser() user: JwtPayload): Promise<void> {
+    return this.notificationService.sendNotification([user.id], 'test', 'test');
   }
 }
