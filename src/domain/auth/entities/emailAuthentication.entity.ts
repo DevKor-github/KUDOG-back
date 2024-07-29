@@ -21,6 +21,7 @@ export class EmailAuthenticationEntity {
   @Column({ default: false })
   authenticated!: boolean;
 
+  @Index()
   @Column()
   code!: string;
 }
