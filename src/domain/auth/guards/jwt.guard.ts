@@ -1,5 +1,4 @@
 import { ApiKudogExceptionResponse } from '@/common/decorators';
-import type { JwtPayload } from '@/common/types/auth';
 import { throwKudogException } from '@/common/utils/exception';
 import {
   type CanActivate,

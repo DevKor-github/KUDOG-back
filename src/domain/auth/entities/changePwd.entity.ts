@@ -5,7 +5,6 @@ import {
   Index,
   JoinColumn,
   ManyToOne,
-  OneToOne,
   PrimaryGeneratedColumn,
   RelationId,
 } from 'typeorm';
