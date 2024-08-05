@@ -1,24 +1,27 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { KudogUser, ProviderBookmark } from 'src/entities';
+import { hash } from 'bcrypt';
+import { KudogUserEntity, ProviderBookmarkEntity } from 'src/entities';
 import { Repository } from 'typeorm';
 import { ModifyInfoRequestDto, UserInfoResponseDto } from './dtos/userInfo.dto';
-import { hash } from 'bcrypt';
 
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectRepository(KudogUser)
-    private readonly userRepository: Repository<KudogUser>,
-    @InjectRepository(ProviderBookmark)
-    private readonly providerBookmarkRepository: Repository<ProviderBookmark>,
+    @InjectRepository(KudogUserEntity)
+    private readonly userRepository: Repository<KudogUserEntity>,
+    @InjectRepository(ProviderBookmarkEntity)
+    private readonly ProviderBookmarkEntityRepository: Repository<ProviderBookmarkEntity>,
   ) {}
   saltOrRounds = 10;
 
   async getUserInfo(id: number): Promise<UserInfoResponseDto> {
     const user = await this.userRepository.findOne({
       where: { id },
-      relations: ['providerBookmarks', 'providerBookmarks.provider'],
+      relations: [
+        'ProviderBookmarkEntitys',
+        'ProviderBookmarkEntitys.provider',
+      ],
     });
     if (!user) throw new NotFoundException('존재하지 않는 유저입니다.');
 
@@ -41,17 +44,20 @@ export class UsersService {
     }
     if (dto.sendTime) user.sendTime = dto.sendTime;
 
-    if (dto.providerBookmarks) {
-      await this.providerBookmarkRepository.delete({
+    if (dto.ProviderBookmarkEntitys) {
+      await this.ProviderBookmarkEntityRepository.delete({
         user: { id },
       });
-      const providerBookmarks = dto.providerBookmarks.map((providerId) =>
-        this.providerBookmarkRepository.create({
-          user: { id },
-          provider: { id: providerId },
-        }),
+      const ProviderBookmarkEntitys = dto.ProviderBookmarkEntitys.map(
+        (providerId) =>
+          this.ProviderBookmarkEntityRepository.create({
+            user: { id },
+            provider: { id: providerId },
+          }),
       );
-      await this.providerBookmarkRepository.insert(providerBookmarks);
+      await this.ProviderBookmarkEntityRepository.insert(
+        ProviderBookmarkEntitys,
+      );
     }
     await this.userRepository.save(user);
   }

@@ -1,83 +1,76 @@
-import { Body, Controller, Delete, Post, Put, UseGuards } from '@nestjs/common';
+import { InjectToken, InjectUser, NamedController } from '@/common/decorators';
+import { AuthDocs } from '@/common/decorators/docs';
+import { UseValidation } from '@/common/decorators/useValidation';
+import { JwtPayload } from '@/common/types/auth';
+import { Body, Delete, Post, Put } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { SignupRequestDto } from './dtos/signupRequest.dto';
-import { AuthGuard } from '@nestjs/passport';
-import { ApiTags } from '@nestjs/swagger';
-import { TokenResponseDto } from './dtos/tokenResponse.dto';
 import {
   ChangePasswordDto,
   ChangePasswordRequestDto,
   VerifyChangePasswordRequestDto,
 } from './dtos/changePwdRequest.dto';
-import { Docs } from 'src/decorators/docs/auth.decorator';
-import {
-  InjectAccessUser,
-  InjectRefreshUser,
-  injectLocalUser,
-} from 'src/decorators';
-import { JwtPayload, RefreshTokenPayload } from 'src/interfaces/auth';
+import type { LoginRequestDto } from './dtos/loginRequestDto';
+import { SignupRequestDto } from './dtos/signupRequest.dto';
+import { TokenResponseDto } from './dtos/tokenResponse.dto';
+import { UseJwtGuard } from './guards/jwt.guard';
 
-@Controller('auth')
-@ApiTags('auth')
+@AuthDocs
+@NamedController('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @UseGuards(AuthGuard('local'))
+  @UseValidation(['NOT_ACCEPTABLE', 'EMAIL_NOT_VALID', 'PASSWORD_NOT_VALID'])
   @Post('/login')
-  @Docs('login')
-  async login(@injectLocalUser() user: number): Promise<TokenResponseDto> {
-    return await this.authService.getToken(user);
+  async login(@Body() body: LoginRequestDto): Promise<TokenResponseDto> {
+    return this.authService.login(body);
   }
 
+  @UseValidation(['NOT_ACCEPTABLE', 'EMAIL_NOT_VALID', 'PASSWORD_NOT_VALID'])
   @Post('/signup')
-  @Docs('signup')
   async signup(@Body() body: SignupRequestDto): Promise<TokenResponseDto> {
-    const id = await this.authService.signup(body);
-    return await this.authService.getToken(id);
+    return this.authService.signup(body);
   }
 
-  @UseGuards(AuthGuard('jwt-refresh'))
+  @UseJwtGuard()
   @Post('/refresh')
-  @Docs('refresh')
   async refresh(
-    @InjectRefreshUser() user: RefreshTokenPayload,
+    @InjectUser() user: JwtPayload,
+    @InjectToken() token: string,
   ): Promise<TokenResponseDto> {
-    return await this.authService.refreshJWT(user);
+    return this.authService.refreshJWT(user, token);
   }
 
-  @UseGuards(AuthGuard('jwt-refresh'))
+  @UseJwtGuard()
   @Delete('/logout')
-  @Docs('logout')
-  async logout(@InjectRefreshUser() user: RefreshTokenPayload): Promise<void> {
-    await this.authService.logout(user);
+  async logout(@InjectToken() token: string): Promise<void> {
+    return this.authService.logout(token);
   }
 
-  @UseGuards(AuthGuard('jwt-access'))
+  @UseJwtGuard()
   @Delete('/user-info')
-  @Docs('deleteUser')
-  async deleteUser(@InjectAccessUser() user: JwtPayload): Promise<void> {
-    await this.authService.deleteUser(user.id);
+  async deleteUser(@InjectUser() user: JwtPayload): Promise<void> {
+    return this.authService.deleteUser(user.id);
   }
 
+  @UseValidation(['NOT_ACCEPTABLE', 'EMAIL_NOT_VALID'])
   @Post('/change-password/request')
-  @Docs('changePwdRequest')
   async changePwdRequest(
     @Body() body: ChangePasswordRequestDto,
   ): Promise<void> {
-    await this.authService.changePwdRequest(body);
+    return this.authService.changePwdRequest(body);
   }
 
+  @UseValidation(['NOT_ACCEPTABLE'])
   @Post('/change-password/verify')
-  @Docs('verifyChangePwdCode')
   async verifyChangePwdCode(
     @Body() body: VerifyChangePasswordRequestDto,
   ): Promise<void> {
-    await this.authService.verifyChangePwdCode(body);
+    return this.authService.verifyChangePwdCode(body);
   }
 
+  @UseValidation(['NOT_ACCEPTABLE', 'EMAIL_NOT_VALID', 'PASSWORD_NOT_VALID'])
   @Put('/change-password')
-  @Docs('changePassword')
   async changePassword(@Body() body: ChangePasswordDto): Promise<void> {
-    await this.authService.changePassword(body);
+    return this.authService.changePassword(body);
   }
 }

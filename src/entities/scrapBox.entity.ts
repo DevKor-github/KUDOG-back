@@ -1,3 +1,4 @@
+import { KudogUserEntity, ScrapEntity } from 'src/entities';
 import {
   Column,
   Entity,
@@ -7,7 +8,6 @@ import {
   PrimaryGeneratedColumn,
   RelationId,
 } from 'typeorm';
-import { KudogUser, ScrapEntity } from 'src/entities';
 
 @Entity('scrap_box')
 export class ScrapBoxEntity {
@@ -15,14 +15,14 @@ export class ScrapBoxEntity {
   id: number;
 
   @ManyToOne(
-    () => KudogUser,
+    () => KudogUserEntity,
     (user) => user.scrapBoxes,
     {
       onDelete: 'CASCADE',
     },
   )
   @JoinColumn({ name: 'user_id' })
-  user: KudogUser;
+  user: KudogUserEntity;
 
   @RelationId((scrapBox: ScrapBoxEntity) => scrapBox.user)
   @Column({ name: 'user_id' })

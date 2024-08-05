@@ -1,7 +1,7 @@
-import { NoticeListResponseDto } from 'src/domain/notice/dtos/NoticeListResponse.dto';
-import { ScrapBoxResponseDto } from './scrapBoxResponse.dto';
 import { ApiProperty } from '@nestjs/swagger';
+import { NoticeListResponseDto } from 'src/domain/notice/dtos/NoticeListResponse.dto';
 import { ScrapBoxEntity } from 'src/entities';
+import { ScrapBoxResponseDto } from './scrapBoxResponse.dto';
 
 export class ScrapBoxResponseWithNotices extends ScrapBoxResponseDto {
   @ApiProperty({

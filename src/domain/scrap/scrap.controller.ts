@@ -1,79 +1,66 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Post,
-  Param,
-  Put,
-  Delete,
-  UseGuards,
-} from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
-import { AuthGuard } from '@nestjs/passport';
-import { ScrapService } from './scrap.service';
-import { ScrapBoxRequestDto } from './dtos/scrapBoxRequest.dto';
-import { InjectAccessUser } from 'src/decorators';
-import { JwtPayload } from 'src/interfaces/auth';
-import { ScrapBoxResponseDto } from './dtos/scrapBoxResponse.dto';
-import { Docs } from 'src/decorators/docs/scrap.decorator';
-import { ScrapBoxResponseWithNotices } from './dtos/scrapBoxResponseWithNotices.dto';
-import { UsePagination } from 'src/decorators';
-import { PageQuery } from 'src/interfaces/pageQuery';
-import { PageResponse } from 'src/interfaces/pageResponse';
+import { InjectUser, NamedController } from '@/common/decorators';
+import { UsePagination } from '@/common/decorators';
+
+import { ScrapDocs } from '@/common/decorators/docs';
+import { PageQuery } from '@/common/dtos/pageQuery';
+import { PageResponse } from '@/common/dtos/pageResponse';
+import { JwtPayload } from '@/common/types/auth';
+import { Body, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { IntValidationPipe } from 'src/pipes/intValidation.pipe';
-@ApiTags('Scrap')
-@Controller('scrap')
+import { UseJwtGuard } from '../auth/guards/jwt.guard';
+import { ScrapBoxRequestDto } from './dtos/scrapBoxRequest.dto';
+import { ScrapBoxResponseDto } from './dtos/scrapBoxResponse.dto';
+import { ScrapBoxResponseWithNotices } from './dtos/scrapBoxResponseWithNotices.dto';
+import { ScrapService } from './scrap.service';
+
+@ScrapDocs
+@NamedController('scrap')
 export class ScrapController {
   constructor(private readonly scrapService: ScrapService) {}
 
-  @UseGuards(AuthGuard('jwt-access'))
+  @UseJwtGuard()
   @Post('/box')
-  @Docs('createScrapBox')
   async createScrapBox(
     @Body() body: ScrapBoxRequestDto,
-    @InjectAccessUser() user: JwtPayload,
+    @InjectUser() user: JwtPayload,
   ): Promise<ScrapBoxResponseDto> {
-    return await this.scrapService.createScrapBox(user.id, body);
+    return this.scrapService.createScrapBox(user.id, body);
   }
 
-  @UseGuards(AuthGuard('jwt-access'))
+  @UseJwtGuard()
   @Get('/box/:scrapBoxId')
-  @Docs('getScrapBoxInfo')
   async getScrapBoxInfo(
     @Param('scrapBoxId', IntValidationPipe) scrapBoxId: number,
-    @InjectAccessUser() user: JwtPayload,
+    @InjectUser() user: JwtPayload,
   ): Promise<ScrapBoxResponseWithNotices> {
-    return await this.scrapService.getScrapBoxInfo(user.id, scrapBoxId);
+    return this.scrapService.getScrapBoxInfo(user.id, scrapBoxId);
   }
 
-  @UseGuards(AuthGuard('jwt-access'))
+  @UseJwtGuard()
   @Get('/box')
-  @Docs('getScrapBoxes')
   async getScrapBoxes(
-    @InjectAccessUser() user: JwtPayload,
+    @InjectUser() user: JwtPayload,
     @UsePagination() pageQuery: PageQuery,
   ): Promise<PageResponse<ScrapBoxResponseDto>> {
-    return await this.scrapService.getScrapBoxes(user.id, pageQuery);
+    return this.scrapService.getScrapBoxes(user.id, pageQuery);
   }
 
-  @UseGuards(AuthGuard('jwt-access'))
+  @UseJwtGuard()
   @Put('/box/:scrapBoxId')
-  @Docs('updateScrapBox')
   async updateScrapBox(
     @Param('scrapBoxId', IntValidationPipe) scrapBoxId: number,
-    @InjectAccessUser() user: JwtPayload,
+    @InjectUser() user: JwtPayload,
     @Body() body: ScrapBoxRequestDto,
   ): Promise<ScrapBoxResponseDto> {
-    return await this.scrapService.updateScrapBox(scrapBoxId, user.id, body);
+    return this.scrapService.updateScrapBox(scrapBoxId, user.id, body);
   }
 
-  @UseGuards(AuthGuard('jwt-access'))
+  @UseJwtGuard()
   @Delete('/box/:scrapBoxId')
-  @Docs('deleteScrapBox')
   async deleteScrapBox(
     @Param('scrapBoxId', IntValidationPipe) scrapBoxId: number,
-    @InjectAccessUser() user: JwtPayload,
+    @InjectUser() user: JwtPayload,
   ): Promise<void> {
-    return await this.scrapService.deleteScrapBox(scrapBoxId, user.id);
+    return this.scrapService.deleteScrapBox(scrapBoxId, user.id);
   }
 }

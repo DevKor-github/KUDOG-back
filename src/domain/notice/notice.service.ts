@@ -1,18 +1,18 @@
+import { PageQuery } from '@/common/dtos/pageQuery';
+import { PageResponse } from '@/common/dtos/pageResponse';
+import { ChannelService } from '@/domain/channel/channel.service';
 import {
   ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Notice, ScrapEntity, ScrapBoxEntity } from 'src/entities';
+import { Notice, ScrapBoxEntity, ScrapEntity } from 'src/entities';
 import { Repository } from 'typeorm';
-import { NoticeListResponseDto } from './dtos/NoticeListResponse.dto';
-import { NoticeInfoResponseDto } from './dtos/NoticeInfoResponse.dto';
-import { NoticeFilterRequestDto } from './dtos/NoticeFilterRequest.dto';
-import { PageResponse } from 'src/interfaces/pageResponse';
-import { PageQuery } from 'src/interfaces/pageQuery';
-import { ChannelService } from 'src/channel/channel.service';
 import { AddRequestRequestDto } from './dtos/AddRequestRequest.dto';
+import { NoticeFilterRequestDto } from './dtos/NoticeFilterRequest.dto';
+import { NoticeInfoResponseDto } from './dtos/NoticeInfoResponse.dto';
+import { NoticeListResponseDto } from './dtos/NoticeListResponse.dto';
 
 @Injectable()
 export class NoticeService {

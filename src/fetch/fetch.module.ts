@@ -1,15 +1,15 @@
+import { ChannelService } from '@/domain/channel/channel.service';
 import { Module } from '@nestjs/common';
-import { FetchService } from './fetch.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { MailModule } from 'src/domain/mail/mail.module';
+import { NotificationModule } from 'src/domain/notification/notification.module';
 import {
   CategoryEntity,
-  KudogUser,
+  KudogUserEntity,
   Notice,
   ProviderEntity,
 } from 'src/entities';
-import { ChannelService } from 'src/channel/channel.service';
-import { MailModule } from 'src/domain/mail/mail.module';
-import { NotificationModule } from 'src/domain/notification/notification.module';
+import { FetchService } from './fetch.service';
 
 @Module({
   providers: [FetchService, ChannelService],
@@ -18,7 +18,7 @@ import { NotificationModule } from 'src/domain/notification/notification.module'
       Notice,
       ProviderEntity,
       CategoryEntity,
-      KudogUser,
+      KudogUserEntity,
     ]),
     MailModule,
     NotificationModule,

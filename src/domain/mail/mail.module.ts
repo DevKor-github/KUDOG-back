@@ -1,20 +1,20 @@
+import { MailerModule } from '@nestjs-modules/mailer';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { MailController } from './mail.controller';
-import { MailService } from './mail.service';
-import { MailerModule } from '@nestjs-modules/mailer';
 import {
   EmailAuthenticationEntity,
-  KudogUser,
+  KudogUserEntity,
   Notice,
   SubscribeBoxEntity,
 } from 'src/entities';
+import { MailController } from './mail.controller';
+import { MailService } from './mail.service';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       EmailAuthenticationEntity,
-      KudogUser,
+      KudogUserEntity,
       SubscribeBoxEntity,
       Notice,
     ]),

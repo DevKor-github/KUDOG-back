@@ -1,86 +1,68 @@
-import { Controller, Get, Body, UseGuards, Post, Delete } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { AuthGuard } from '@nestjs/passport';
-import { InjectAccessUser } from 'src/decorators';
-import { JwtPayload } from 'src/interfaces/auth';
-import { Docs } from 'src/decorators/docs/notification.decorator';
-import { NotificationService } from './notification.service';
+import { InjectUser, NamedController } from '@/common/decorators';
+import { UsePagination } from '@/common/decorators';
+import { NotificationDocs } from '@/common/decorators/docs';
+import { PageQuery } from '@/common/dtos/pageQuery';
+import { PageResponse } from '@/common/dtos/pageResponse';
+import { JwtPayload } from '@/common/types/auth';
+import { Body, Delete, Get, Post } from '@nestjs/common';
+import { UseJwtGuard } from '../auth/guards/jwt.guard';
 import { NotificationInfoResponseDto } from './dtos/noticiationInfoResponse.dto';
-import { PageResponse } from 'src/interfaces/pageResponse';
 import { TokenRequestDto } from './dtos/tokenRequest.dto';
-import { PageQuery } from 'src/interfaces/pageQuery';
-import { UsePagination } from 'src/decorators';
+import { NotificationService } from './notification.service';
 
-@Controller('notifications')
-@ApiTags('notifications')
+@NotificationDocs
+@NamedController('notification')
 export class NotificationController {
   constructor(private readonly notificationService: NotificationService) {}
 
-  @UseGuards(AuthGuard('jwt-access'))
+  @UseJwtGuard()
   @Get('')
-  @Docs('getNotifications')
   async getNotifications(
-    @InjectAccessUser() user: JwtPayload,
+    @InjectUser() user: JwtPayload,
     @UsePagination() pageQuery: PageQuery,
   ): Promise<PageResponse<NotificationInfoResponseDto>> {
-    return await this.notificationService.getNotifications(user.id, pageQuery);
+    return this.notificationService.getNotifications(user.id, pageQuery);
   }
 
-  @UseGuards(AuthGuard('jwt-access'))
+  @UseJwtGuard()
   @Get('/new')
-  @Docs('getNewNotifications')
   async getNewNotifications(
-    @InjectAccessUser() user: JwtPayload,
+    @InjectUser() user: JwtPayload,
     @UsePagination() pageQuery: PageQuery,
   ): Promise<PageResponse<NotificationInfoResponseDto>> {
-    return await this.notificationService.getNewNotifications(
-      user.id,
-      pageQuery,
-    );
+    return this.notificationService.getNewNotifications(user.id, pageQuery);
   }
 
-  @UseGuards(AuthGuard('jwt-access'))
+  @UseJwtGuard()
   @Post('/token')
-  @Docs('registerToken')
   async registerToken(
-    @InjectAccessUser() user: JwtPayload,
+    @InjectUser() user: JwtPayload,
     @Body() body: TokenRequestDto,
   ): Promise<void> {
-    return await this.notificationService.registerToken(user.id, body.token);
+    return this.notificationService.registerToken(user.id, body.token);
   }
 
-  @UseGuards(AuthGuard('jwt-access'))
+  @UseJwtGuard()
   @Delete('/token')
-  @Docs('deleteToken')
   async deleteToken(
-    @InjectAccessUser() user: JwtPayload,
+    @InjectUser() user: JwtPayload,
     @Body() body: TokenRequestDto,
   ): Promise<void> {
-    return await this.notificationService.deleteToken(user.id, body.token);
+    return this.notificationService.deleteToken(user.id, body.token);
   }
 
-  @UseGuards(AuthGuard('jwt-access'))
+  @UseJwtGuard()
   @Get('/status')
-  @Docs('getTokenStatus')
   async getTokenStatus(
-    @InjectAccessUser() user: JwtPayload,
+    @InjectUser() user: JwtPayload,
     @Body() body: TokenRequestDto,
   ): Promise<boolean> {
-    return await this.notificationService.getTokenStatus(user.id, body.token);
+    return this.notificationService.getTokenStatus(user.id, body.token);
   }
 
-  @UseGuards(AuthGuard('jwt-access'))
-  @ApiOperation({
-    summary: 'FCM test',
-    description:
-      'JWT만 보내주면, 해당 유저가 등록한 기기에 모두 알림을 보냅니다',
-  })
+  @UseJwtGuard()
   @Get('/test')
-  async sendNotification(@InjectAccessUser() user: JwtPayload): Promise<void> {
-    return await this.notificationService.sendNotification(
-      [user.id],
-      'test',
-      'test',
-    );
+  async sendNotification(@InjectUser() user: JwtPayload): Promise<void> {
+    return this.notificationService.sendNotification([user.id], 'test', 'test');
   }
 }

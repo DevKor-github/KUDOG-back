@@ -1,9 +1,9 @@
+import { ChannelService } from '@/domain/channel/channel.service';
 import { Module } from '@nestjs/common';
-import { NoticeService } from './notice.service';
-import { NoticeController } from './notice.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Notice, ScrapEntity, ScrapBoxEntity } from 'src/entities';
-import { ChannelService } from 'src/channel/channel.service';
+import { Notice, ScrapBoxEntity, ScrapEntity } from 'src/entities';
+import { NoticeController } from './notice.controller';
+import { NoticeService } from './notice.service';
 
 @Module({
   providers: [NoticeService, ChannelService],

@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { SubscribeService } from './subscribe.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import {
   CategoryEntity,
   CategoryPerSubscribeBoxEntity,
@@ -7,8 +7,8 @@ import {
   ScrapBoxEntity,
   SubscribeBoxEntity,
 } from 'src/entities';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { SubscribeController } from './subscribe.controller';
+import { SubscribeService } from './subscribe.service';
 
 @Module({
   controllers: [SubscribeController],

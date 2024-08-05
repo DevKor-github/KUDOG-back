@@ -1,3 +1,5 @@
+import { PageQuery } from '@/common/dtos/pageQuery';
+import { PageResponse } from '@/common/dtos/pageResponse';
 import {
   ForbiddenException,
   Injectable,
@@ -7,11 +9,9 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { ScrapBoxEntity } from 'src/entities';
 import { Repository } from 'typeorm';
-import { ScrapBoxResponseDto } from './dtos/scrapBoxResponse.dto';
 import { ScrapBoxRequestDto } from './dtos/scrapBoxRequest.dto';
+import { ScrapBoxResponseDto } from './dtos/scrapBoxResponse.dto';
 import { ScrapBoxResponseWithNotices } from './dtos/scrapBoxResponseWithNotices.dto';
-import { PageResponse } from 'src/interfaces/pageResponse';
-import { PageQuery } from 'src/interfaces/pageQuery';
 
 @Injectable()
 export class ScrapService {

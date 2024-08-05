@@ -47,7 +47,6 @@ jobs:
           echo "MAIL_USER=${{ secrets.MAIL_USER }}" >> .env
           echo "MAIL_PW=${{ secrets.MAIL_PW }}" >> .env
           echo "JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}" >> .env
-          echo "JWT_REFRESH_SECRET_KEY=${{ secrets.JWT_REFRESH_SECRET_KEY }}" >> .env
           echo "CHANNEL_API_KEY=${{ secrets.CHANNEL_API_KEY }}" >> .env
           echo "CHANNEL_API_SECRET=${{ secrets.CHANNEL_API_SECRET }}" >> .env
           echo "DISCORD_TOKEN=${{secrets.DISCORD_TOKEN}}" >> .env
@@ -67,6 +66,8 @@ jobs:
           echo "FCM_CLIENT_CERT_URL=${{ secrets.FCM_CLIENT_CERT_URL }}" >> .env
           echo "FCM_UNIVERSE_DOMAIN=${{ secrets.FCM_UNIVERSE_DOMAIN }}" >> .env
           echo "PY_TOKEN=${{ secrets.PY_TOKEN }}" >> .env
+          echo "REDIS_HOST=${{ secrets.REDIS_HOST }}" >> .env
+          echo "REDIS_PORT=${{ secrets.REDIS_PORT }}" >> .env
           cat .env
       - name: Run Docker
         run: |

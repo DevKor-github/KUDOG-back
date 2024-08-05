@@ -1,3 +1,5 @@
+import { getHHMMdate, yesterdayTimeStamp } from '@/common/utils/date';
+import { MailerService } from '@nestjs-modules/mailer';
 import {
   BadRequestException,
   ConflictException,
@@ -5,17 +7,15 @@ import {
   NotFoundException,
   RequestTimeoutException,
 } from '@nestjs/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   EmailAuthenticationEntity,
-  KudogUser,
+  KudogUserEntity,
   Notice,
   SubscribeBoxEntity,
 } from 'src/entities';
 import { Between, In, Repository } from 'typeorm';
-import { MailerService } from '@nestjs-modules/mailer';
-import { Cron, CronExpression } from '@nestjs/schedule';
-import { getHHMMdate, yesterdayTimeStamp } from 'src/utils/date';
 
 @Injectable()
 export class MailService {
@@ -23,8 +23,8 @@ export class MailService {
     private readonly mailerService: MailerService,
     @InjectRepository(EmailAuthenticationEntity)
     private readonly emailAuthenticationRepository: Repository<EmailAuthenticationEntity>,
-    @InjectRepository(KudogUser)
-    private readonly kudogUserRepository: Repository<KudogUser>,
+    @InjectRepository(KudogUserEntity)
+    private readonly KudogUserEntityRepository: Repository<KudogUserEntity>,
     @InjectRepository(SubscribeBoxEntity)
     private readonly subscribeBoxRepository: Repository<SubscribeBoxEntity>,
     @InjectRepository(Notice)
@@ -41,7 +41,7 @@ export class MailService {
   }
 
   async sendVerificationCode(to: string): Promise<void> {
-    const existingUser = await this.kudogUserRepository.findOne({
+    const existingUser = await this.KudogUserEntityRepository.findOne({
       where: { email: to },
     });
     if (existingUser) throw new ConflictException('사용중인 이메일입니다.');
@@ -83,7 +83,7 @@ export class MailService {
   }
 
   async checkVerificationCode(email: string, code: string): Promise<void> {
-    const existingUser = await this.kudogUserRepository.findOne({
+    const existingUser = await this.KudogUserEntityRepository.findOne({
       where: { email: email },
     });
     if (existingUser) throw new ConflictException('사용중인 이메일입니다.');

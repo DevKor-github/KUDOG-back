@@ -1,33 +1,30 @@
-import { Body, Controller, Get, Put, UseGuards } from '@nestjs/common';
-import { UsersService } from './users.service';
-import { AuthGuard } from '@nestjs/passport';
-import { ApiTags } from '@nestjs/swagger';
+import { InjectUser, NamedController } from '@/common/decorators';
+import { UserDocs } from '@/common/decorators/docs';
+import { JwtPayload } from '@/common/types/auth';
+import { Body, Get, Put } from '@nestjs/common';
+import { UseJwtGuard } from '../auth/guards/jwt.guard';
 import { ModifyInfoRequestDto, UserInfoResponseDto } from './dtos/userInfo.dto';
-import { Docs } from 'src/decorators/docs/user.decorator';
-import { InjectAccessUser } from 'src/decorators';
-import { JwtPayload } from 'src/interfaces/auth';
+import { UsersService } from './users.service';
 
-@Controller('users')
-@ApiTags('user')
+@UserDocs
+@NamedController('users')
 export class UsersController {
   constructor(private readonly userService: UsersService) {}
 
-  @UseGuards(AuthGuard('jwt-access'))
+  @UseJwtGuard()
   @Get('/info')
-  @Docs('getUserInfo')
   async getUserInfo(
-    @InjectAccessUser() user: JwtPayload,
+    @InjectUser() user: JwtPayload,
   ): Promise<UserInfoResponseDto> {
-    return await this.userService.getUserInfo(user.id);
+    return this.userService.getUserInfo(user.id);
   }
 
-  @UseGuards(AuthGuard('jwt-access'))
+  @UseJwtGuard()
   @Put('/info')
-  @Docs('modifyUserInfo')
   async modifyUserInfo(
-    @InjectAccessUser() user: JwtPayload,
+    @InjectUser() user: JwtPayload,
     @Body() body: ModifyInfoRequestDto,
   ): Promise<void> {
-    return await this.userService.modifyUserInfo(user.id, body);
+    return this.userService.modifyUserInfo(user.id, body);
   }
 }
