@@ -8,7 +8,6 @@ interface KudogErrorResponse {
 }
 
 export type ExceptionNames = keyof typeof ERROR;
-
 export const EXCEPTIONS: { [key in ExceptionNames]: KudogErrorResponse } =
   ERROR;
 

@@ -3,7 +3,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import {
   EmailAuthenticationEntity,
-  KudogUser,
+  KudogUserEntity,
   Notice,
   SubscribeBoxEntity,
 } from 'src/entities';
@@ -14,7 +14,7 @@ import { MailService } from './mail.service';
   imports: [
     TypeOrmModule.forFeature([
       EmailAuthenticationEntity,
-      KudogUser,
+      KudogUserEntity,
       SubscribeBoxEntity,
       Notice,
     ]),

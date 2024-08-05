@@ -1,13 +1,10 @@
-import {
-  ChangePwdAuthenticationEntity,
-  EmailAuthenticationEntity,
-  RefreshTokenEntity,
-} from '@/entities';
 import { Injectable } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { type DataSource, LessThan, Repository } from 'typeorm';
-
+import { ChangePwdAuthenticationEntity } from './entities/changePwd.entity';
+import { EmailAuthenticationEntity } from './entities/emailAuthentication.entity';
+import { RefreshTokenEntity } from './entities/refreshToken.entity';
 @Injectable()
 export class AuthRepository {
   private changePwdAuthEntityRepository: Repository<ChangePwdAuthenticationEntity>;

@@ -1,4 +1,4 @@
-import { KudogUser } from 'src/entities';
+import { KudogUserEntity } from 'src/entities';
 import {
   Column,
   Entity,
@@ -8,7 +8,7 @@ import {
   PrimaryGeneratedColumn,
   RelationId,
 } from 'typeorm';
-import { CategoryPerSubscribeBoxEntity } from './categoryPerSubscribes.entity';
+import { CategoryPerSubscribeBoxEntity } from '../domain/subscribe/entities/categoryPerSubscribes.entity';
 
 @Entity('subscribe_box')
 export class SubscribeBoxEntity {
@@ -16,15 +16,15 @@ export class SubscribeBoxEntity {
   id: number;
 
   @ManyToOne(
-    () => KudogUser,
+    () => KudogUserEntity,
     (user) => user.subscribeBoxes,
     {
       onDelete: 'CASCADE',
     },
   )
   @JoinColumn({ name: 'user_id' })
-  user: KudogUser;
-
+  user: KudogUserEntity;
+  @Column()
   @RelationId((subscribeBox: SubscribeBoxEntity) => subscribeBox.user)
   userId: number;
 

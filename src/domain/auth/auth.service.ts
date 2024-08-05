@@ -1,11 +1,11 @@
 import { JwtPayload } from '@/common/types/auth';
 import { throwKudogException } from '@/common/utils/exception';
 import { ChannelService } from '@/domain/channel/channel.service';
+import { UserRepository } from '@/domain/users/user.repository';
 import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { compare, hash } from 'bcrypt';
-import { UserRepository } from '../users/user.repository';
 import { AuthRepository } from './auth.repository';
 import {
   ChangePasswordDto,

@@ -1,6 +1,6 @@
 import { ApiProperty, PartialType, PickType } from '@nestjs/swagger';
 import { SignupRequestDto } from 'src/domain/auth/dtos/signupRequest.dto';
-import { KudogUser } from 'src/entities';
+import { KudogUserEntity } from 'src/entities';
 
 export class ModifyInfoRequestDto extends PartialType(
   PickType(SignupRequestDto, ['email', 'name', 'password'] as const),
@@ -15,7 +15,7 @@ export class ModifyInfoRequestDto extends PartialType(
     description: '즐겨찾는 학과 수정 by id',
     example: ['14', '23', '11'],
   })
-  providerBookmarks?: number[];
+  ProviderBookmarkEntitys?: number[];
 }
 
 export class UserInfoResponseDto {
@@ -29,13 +29,13 @@ export class UserInfoResponseDto {
   sendTime: string;
 
   @ApiProperty({ example: ['미디어학부', 'KUPID', '정보대학'] })
-  providerBookmarks: string[];
+  ProviderBookmarkEntitys: string[];
 
-  constructor(entity: KudogUser) {
+  constructor(entity: KudogUserEntity) {
     this.name = entity.name;
     this.email = entity.email;
     this.sendTime = entity.sendTime;
-    this.providerBookmarks = entity.providerBookmarks.map(
+    this.ProviderBookmarkEntitys = entity.ProviderBookmarkEntitys.map(
       (bookmark) => bookmark.provider.name,
     );
   }

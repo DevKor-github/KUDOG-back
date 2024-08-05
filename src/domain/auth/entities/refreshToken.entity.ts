@@ -1,4 +1,4 @@
-import { KudogUser } from 'src/entities';
+import { KudogUserEntity } from '@/domain/users/entities/kudogUser.entity';
 import {
   Column,
   CreateDateColumn,
@@ -16,20 +16,20 @@ export class RefreshTokenEntity {
   id!: number;
 
   @ManyToOne(
-    () => KudogUser,
+    () => KudogUserEntity,
     (user) => user.refreshTokens,
     {
       onDelete: 'CASCADE',
     },
   )
   @JoinColumn({ name: 'userId' })
-  user!: KudogUser;
-
+  user!: KudogUserEntity;
+  @Column()
   @RelationId((refreshToken: RefreshTokenEntity) => refreshToken.user)
   userId!: number;
 
   @Index()
-  @Column({ type: 'varchar', length: 255 })
+  @Column()
   token!: string;
 
   @CreateDateColumn()

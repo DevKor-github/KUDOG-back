@@ -1,4 +1,5 @@
 import { ApiKudogExceptionResponse } from '@/common/decorators';
+import { FindOneParams } from '@/common/dtos/findOneParams.dto';
 import type { MethodNames } from '@/common/types/method';
 import type { CategoryController } from '@/domain/category/category.controller';
 import { ProviderListResponseDto } from '@/domain/category/dtos/ProviderListResponse.dto';
@@ -17,7 +18,6 @@ const CategoryDocsMap: Record<CategoryEndpoints, MethodDecorator[]> = {
       description: '학부 리스트',
       type: [ProviderListResponseDto],
     }),
-    ApiKudogExceptionResponse([]),
   ],
   getCategories: [
     ApiOperation({
@@ -26,17 +26,14 @@ const CategoryDocsMap: Record<CategoryEndpoints, MethodDecorator[]> = {
         'DB의 학부 소속 카테고리 리스트 조회. Authoization 헤더에 Bearer ${accessToken}을 넣어주세요',
     }),
     ApiParam({
-      name: 'id',
       description: '학부 id',
-      type: Number,
-      required: true,
-      example: 1,
+      type: FindOneParams,
+      name: 'id',
     }),
     ApiOkResponse({
       description: '스크랩학부 소속 카테고리들',
       type: [CategoryListResponseDto],
     }),
-    ApiKudogExceptionResponse([]),
   ],
   getBookmarkedProviders: [
     ApiOperation({
@@ -48,7 +45,6 @@ const CategoryDocsMap: Record<CategoryEndpoints, MethodDecorator[]> = {
       description: '사용자의 즐겨찾는 학과 목록',
       type: [ProviderListResponseDto],
     }),
-    ApiKudogExceptionResponse([]),
   ],
 };
 

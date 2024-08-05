@@ -1,8 +1,9 @@
 import { InjectUser, NamedController } from '@/common/decorators';
-import { CategoryDocs } from '@/common/decorators/docs/category.decorator';
+import { CategoryDocs } from '@/common/decorators/docs';
+import { UseValidation } from '@/common/decorators/useValidation';
+import { FindOneParams } from '@/common/dtos/findOneParams.dto';
 import { JwtPayload } from '@/common/types/auth';
-import { IntValidationPipe } from '@/pipes/intValidation.pipe';
-import { Get, Param } from '@nestjs/common';
+import { Body, Get, Param, UsePipes, ValidationPipe } from '@nestjs/common';
 import { UseJwtGuard } from '../auth/guards/jwt.guard';
 import { CategoryService } from './category.service';
 import { ProviderListResponseDto } from './dtos/ProviderListResponse.dto';
@@ -20,10 +21,12 @@ export class CategoryController {
   }
 
   @UseJwtGuard()
+  @UseValidation(['NOT_ACCEPTABLE'])
   @Get('/by-providers/:id')
   async getCategories(
-    @Param('id', new IntValidationPipe()) id: number,
+    @Param() params: FindOneParams,
   ): Promise<CategoryListResponseDto[]> {
+    const { id } = params;
     return this.categoryService.getCategories(id);
   }
 

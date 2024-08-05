@@ -1,4 +1,4 @@
-import { KudogUser } from 'src/entities';
+import { KudogUserEntity } from 'src/entities';
 import {
   Column,
   CreateDateColumn,
@@ -15,15 +15,15 @@ export class NotificationEntity {
   id: number;
 
   @ManyToOne(
-    () => KudogUser,
+    () => KudogUserEntity,
     (user) => user.notifications,
     {
       onDelete: 'CASCADE',
     },
   )
   @JoinColumn({ name: 'user_id' })
-  user: KudogUser;
-
+  user: KudogUserEntity;
+  @Column()
   @RelationId((notification: NotificationEntity) => notification.user)
   userId: number;
 

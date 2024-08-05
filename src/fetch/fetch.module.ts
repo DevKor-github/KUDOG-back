@@ -5,7 +5,7 @@ import { MailModule } from 'src/domain/mail/mail.module';
 import { NotificationModule } from 'src/domain/notification/notification.module';
 import {
   CategoryEntity,
-  KudogUser,
+  KudogUserEntity,
   Notice,
   ProviderEntity,
 } from 'src/entities';
@@ -18,7 +18,7 @@ import { FetchService } from './fetch.service';
       Notice,
       ProviderEntity,
       CategoryEntity,
-      KudogUser,
+      KudogUserEntity,
     ]),
     MailModule,
     NotificationModule,

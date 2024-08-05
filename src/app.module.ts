@@ -33,6 +33,7 @@ import { AuthMiddleware } from './middlewares/auth.middleware';
       autoLoadEntities: true,
       logging: true,
       logger: new FileLogger('all', { logPath: './logs/orm.log' }),
+      synchronize: true,
     }),
     MailerModule.forRoot({
       transport: {

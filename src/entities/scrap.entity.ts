@@ -33,7 +33,7 @@ export class ScrapEntity {
   )
   @JoinColumn({ name: 'notice_id' })
   notice: Notice;
-
+  @Column()
   @RelationId((scrap: ScrapEntity) => scrap.notice)
   @Column({ name: 'notice_id' })
   noticeId: number;

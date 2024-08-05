@@ -1,6 +1,6 @@
-import { CategoryEntity } from 'src/entities';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { ProviderBookmark } from './providerBookmark.entity';
+import { CategoryEntity } from './category.entity';
+import { ProviderBookmarkEntity } from './providerBookmark.entity';
 
 @Entity('provider')
 export class ProviderEntity {
@@ -17,8 +17,8 @@ export class ProviderEntity {
   categories: CategoryEntity[];
 
   @OneToMany(
-    () => ProviderBookmark,
+    () => ProviderBookmarkEntity,
     (bookmark) => bookmark.provider,
   )
-  bookmarks: ProviderBookmark[];
+  bookmarks: ProviderBookmarkEntity[];
 }

@@ -1,32 +1,21 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { CategoryEntity, ProviderBookmark, ProviderEntity } from 'src/entities';
-import { Repository } from 'typeorm';
+import { CategoryRepository } from './category.repository';
 import { ProviderListResponseDto } from './dtos/ProviderListResponse.dto';
 import { CategoryListResponseDto } from './dtos/categoryListResponse.dto';
 @Injectable()
 export class CategoryService {
-  constructor(
-    @InjectRepository(ProviderEntity)
-    private readonly providerRepository: Repository<ProviderEntity>,
-    @InjectRepository(ProviderBookmark)
-    private readonly providerBookmarkRepository: Repository<ProviderBookmark>,
-    @InjectRepository(CategoryEntity)
-    private readonly categoryRepository: Repository<CategoryEntity>,
-  ) {}
+  constructor(private readonly categoryRepository: CategoryRepository) {}
 
   async getProviders(): Promise<ProviderListResponseDto[]> {
-    const providers = await this.providerRepository.find({
-      relations: ['categories'],
-    });
+    const providers =
+      await this.categoryRepository.getProvidersJoinCategories();
 
     return providers.map((provider) => new ProviderListResponseDto(provider));
   }
 
-  async getCategories(id: number): Promise<CategoryListResponseDto[]> {
-    const categories = await this.categoryRepository.find({
-      where: { provider: { id } },
-    });
+  async getCategories(providerId: number): Promise<CategoryListResponseDto[]> {
+    const categories =
+      await this.categoryRepository.getCategoriesByProviderId(providerId);
 
     return categories.map((category) => new CategoryListResponseDto(category));
   }
@@ -34,10 +23,10 @@ export class CategoryService {
   async getBookmarkedProviders(
     userId: number,
   ): Promise<ProviderListResponseDto[]> {
-    const bookmarks = await this.providerBookmarkRepository.find({
-      where: { user: { id: userId } },
-      relations: ['provider', 'provider.categories'],
-    });
+    const bookmarks =
+      await this.categoryRepository.getBookmarkedProvidersJoinCategories(
+        userId,
+      );
 
     return bookmarks.map(
       (bookmark) => new ProviderListResponseDto(bookmark.provider),

@@ -12,10 +12,10 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { ProviderBookmark } from './providerBookmark.entity';
+import { ProviderBookmarkEntity } from '../../category/entities/providerBookmark.entity';
 
 @Entity('kudog_user')
-export class KudogUser {
+export class KudogUserEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -60,10 +60,10 @@ export class KudogUser {
   refreshTokens: RefreshTokenEntity[];
 
   @OneToMany(
-    () => ProviderBookmark,
-    (providerBookmark) => providerBookmark.user,
+    () => ProviderBookmarkEntity,
+    (ProviderBookmarkEntity) => ProviderBookmarkEntity.user,
   )
-  providerBookmarks: ProviderBookmark[];
+  ProviderBookmarkEntitys: ProviderBookmarkEntity[];
 
   @Column({ default: '18:00' })
   sendTime: string;

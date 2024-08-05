@@ -1,3 +1,4 @@
+import { KudogUserEntity } from '@/domain/users/entities/kudogUser.entity';
 import {
   Column,
   CreateDateColumn,
@@ -8,7 +9,6 @@ import {
   PrimaryGeneratedColumn,
   RelationId,
 } from 'typeorm';
-import { KudogUser } from '../../../entities/kudogUser.entity';
 
 @Entity('change_pwd_authentication')
 export class ChangePwdAuthenticationEntity {
@@ -16,12 +16,13 @@ export class ChangePwdAuthenticationEntity {
   id!: number;
 
   @ManyToOne(
-    () => KudogUser,
+    () => KudogUserEntity,
     () => undefined,
     { onDelete: 'CASCADE' },
   )
   @JoinColumn({ name: 'userId' })
-  user!: KudogUser;
+  user!: KudogUserEntity;
+  @Column()
   @RelationId((entity: ChangePwdAuthenticationEntity) => entity.user)
   userId!: number;
 

@@ -1,5 +1,5 @@
 import { NamedController } from '@/common/decorators';
-import { MailDocs } from '@/common/decorators/docs/mail.decorator';
+import { MailDocs } from '@/common/decorators/docs';
 import { Body, Post } from '@nestjs/common';
 import { verifyCodeRequestDto } from './dtos/verifyCodeRequest.dto';
 import { verifyRequestDto } from './dtos/verifyRequest.dto';

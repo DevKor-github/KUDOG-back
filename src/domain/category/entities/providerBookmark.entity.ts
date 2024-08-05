@@ -1,8 +1,9 @@
-import { KudogUser, ProviderEntity } from 'src/entities';
+import { KudogUserEntity } from '@/domain/users/entities/kudogUser.entity';
 import { Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
+import { ProviderEntity } from './provider.entity';
 
 @Entity('provider_bookmark')
-export class ProviderBookmark {
+export class ProviderBookmarkEntity {
   @ManyToOne(
     () => ProviderEntity,
     (provider) => provider.bookmarks,
@@ -16,14 +17,14 @@ export class ProviderBookmark {
   providerId: number;
 
   @ManyToOne(
-    () => KudogUser,
-    (user) => user.providerBookmarks,
+    () => KudogUserEntity,
+    (user) => user.ProviderBookmarkEntitys,
     {
       onDelete: 'CASCADE',
     },
   )
   @JoinColumn({ name: 'user_id' })
-  user: KudogUser;
+  user: KudogUserEntity;
   @PrimaryColumn({ name: 'user_id', type: 'integer' })
   userId: number;
 }

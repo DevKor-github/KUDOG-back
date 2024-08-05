@@ -1,13 +1,15 @@
-import { Notice } from 'src/entities';
-import { ProviderEntity } from 'src/entities';
+import { Notice } from '@/domain/notice/entities/notice.entity';
+import { CategoryPerSubscribeBoxEntity } from '@/domain/subscribe/entities/categoryPerSubscribes.entity';
 import {
   Column,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  RelationId,
 } from 'typeorm';
-import { CategoryPerSubscribeBoxEntity } from './categoryPerSubscribes.entity';
+import { ProviderEntity } from './provider.entity';
 
 @Entity('category')
 export class CategoryEntity {
@@ -24,7 +26,12 @@ export class CategoryEntity {
     () => ProviderEntity,
     (provider) => provider.categories,
   )
+  @JoinColumn({ name: 'providerId' })
   provider: ProviderEntity;
+
+  @Column()
+  @RelationId((entity: CategoryEntity) => entity.provider)
+  providerId: number;
 
   @OneToMany(
     () => Notice,
